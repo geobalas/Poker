@@ -1,0 +1,209 @@
+body {
+  margin: 0;
+  background: #2E1F3E;
+  font-family: Arial;
+  color: #9880e9;
+  font-size: 1em;
+}
+input[type="text"],
+input[type="number"] {
+  padding: 8px;
+  width: 228px;
+  border: 1px solid #9880e9;
+  border-radius: 5px;
+  color: #9880e9;
+  font-size: 1.4em;
+}
+button,
+input[type="submit"],
+.button {
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid #9880e9;
+  border-radius: 5px;
+  color: #9880e9;
+  font-size: 2em;
+  font-weight: lighter;
+}
+button.small,
+input[type="submit"].small,
+.button.small {
+  font-size: 1em;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin-top: 0;
+}
+a {
+  text-decoration: none;
+  font-family: Arial;
+  color: #9880e9;
+  font-size: 1em;
+}
+.error {
+  color: #D64937;
+}
+#content {
+  margin: 0 auto;
+  width: 1024px;
+  height: 768px;
+}
+table,
+tr,
+th,
+td {
+  border: 1px solid #9880e9;
+  color: #9880e9;
+  border-collapse: collapse;
+  padding: 8px;
+}
+table {
+  width: 100%;
+}
+#table_wrap {
+  background-image: url('/images/bg.png');
+}
+div.row {
+  height: 25%;
+  width: 100%;
+}
+div.cell {
+  float: left;
+  width: 25%;
+  height: 100%;
+  position: relative;
+}
+div.cell button {
+  margin: 25% 25%;
+}
+div.double_cell {
+  float: left;
+  width: 50%;
+  height: 100%;
+}
+div.player_wrap {
+  padding: 16px;
+  background-color: rgba(46, 31, 62, 0.5);
+  border: 1px solid #9880e9;
+  border-radius: 5px;
+  color: #9880e9;
+  font-size: 1.4em;
+  font-weight: lighter;
+  text-align: center;
+  width: 128px;
+  margin: 60px auto;
+}
+div.player_wrap.top {
+  margin-top: 100px;
+}
+div.player_wrap.bottom {
+  margin-top: 20px;
+}
+div.player_wrap.left {
+  margin-left: 80px;
+}
+div.player_wrap.right {
+  margin-left: 20px;
+}
+div.player_wrap.active {
+  color: #be78e8;
+  border: 5px solid #be78e8;
+}
+div.player_wrap p {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0;
+}
+div.dealer_wrap {
+  position: absolute;
+}
+div.dealer_wrap#dealer_wrap_0 {
+  top: 170px;
+  left: 210px;
+}
+div.dealer_wrap#dealer_wrap_1 {
+  top: 130px;
+  left: 50px;
+}
+div.dealer_wrap#dealer_wrap_2 {
+  top: 130px;
+  left: 180px;
+}
+div.dealer_wrap#dealer_wrap_3 {
+  top: 170px;
+  left: 20px;
+}
+div.dealer_wrap#dealer_wrap_4 {
+  top: 130px;
+  left: 50px;
+}
+div.dealer_wrap#dealer_wrap_5 {
+  top: 20px;
+  left: -10px;
+}
+div.dealer_wrap#dealer_wrap_6 {
+  top: 30px;
+  left: 50px;
+}
+div.dealer_wrap#dealer_wrap_7 {
+  top: 30px;
+  left: 180px;
+}
+div.dealer_wrap#dealer_wrap_8 {
+  top: 20px;
+  left: 250px;
+}
+div.dealer_wrap#dealer_wrap_9 {
+  top: 130px;
+  left: 180px;
+}
+div.dealer_wrap .dealer_button {
+  border: 1px solid #9880e9;
+  border-radius: 20px;
+  height: 20px;
+  text-align: center;
+  width: 20px;
+  background-color: rgba(46, 31, 62, 0.5);
+}
+#to_lobby {
+  font-size: 1em;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+}
+#modal_wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+#modal_wrap #modal {
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 5px;
+  position: relative;
+  margin: 0 auto;
+  top: 200px;
+  width: 424px;
+  z-index: 2;
+}
+#modal_wrap #modal label {
+  font-size: large;
+}
+#modal_wrap #modal .input_left {
+  margin-right: 32px;
+}
+#modal_wrap #curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}

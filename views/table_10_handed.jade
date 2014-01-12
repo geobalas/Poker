@@ -1,0 +1,106 @@
+#table_wrap
+	#modal_wrap(ng-show="show_buy_in_modal")
+		#modal
+			form
+				h1 {{table.name}}
+				p Max buy in {{table.max_buy_in}}
+				p Min buy in {{table.min_buy_in}}
+				p You have a total of {{$root.total_chips}} chips
+				p.error(ng-show="buy_in_error") {{buy_in_error}}
+				input.input_left(type="number", ng-model="buy_in_amount", ng-trim="true")
+				input(type="submit", ng-click="sit_in(seat)", value="Sit in")
+		#curtain(ng-show="show_buy_in_modal" ng-click="show_buy_in_modal=false;")
+	.row
+		.cell
+			a#to_lobby.button(href="/") < Lobby
+			.player_wrap.top.left(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat==0}")
+				.sit_in(ng-show="!table.seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
+				.player_content(ng-show="table.seats[0].name")
+					p {{table.seats[0].name}}
+					p {{table.seats[0].chips}}
+			#dealer_wrap_0.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==0") D
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat==1}")
+				.sit_in(ng-show="!table.seats[1].name", ng-click="show_buy_in_modal=true; seat=1;") Sit In
+				.player_content(ng-show="table.seats[1].name")
+					p {{table.seats[1].name}}
+					p {{table.seats[1].chips}}
+			#dealer_wrap_1.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==1") D
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat==2}")
+				.sit_in(ng-show="!table.seats[2].name", ng-click="show_buy_in_modal=true; seat=2;") Sit In
+				.player_content(ng-show="table.seats[2].name")
+					p {{table.seats[2].name}}
+					p {{table.seats[2].chips}}
+			#dealer_wrap_2.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==2") D
+		.cell
+			.player_wrap.top.right(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat==3}")
+				.sit_in(ng-show="!table.seats[3].name", ng-click="show_buy_in_modal=true; seat=3;") Sit In
+				.player_content(ng-show="table.seats[3].name")
+					p {{table.seats[3].name}}
+					p {{table.seats[3].chips}}
+			#dealer_wrap_3.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==3") D
+	.row
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[9].name", ng-class="{active: table.active_seat==9}")
+				.sit_in(ng-show="!table.seats[9].name", ng-click="show_buy_in_modal=true; seat=9;") Sit In
+				.player_content(ng-show="table.seats[9].name")
+					p {{table.seats[9].name}}
+					p {{table.seats[9].chips}}
+			#dealer_wrap_9.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==9") D
+		.double_cell
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat==4}")
+				.sit_in(ng-show="!table.seats[4].name", ng-click="show_buy_in_modal=true; seat=4;") Sit In
+				.player_content(ng-show="table.seats[4].name")
+					p {{table.seats[4].name}}
+					p {{table.seats[4].chips}}
+			#dealer_wrap_4.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==4") D
+	.row
+		.cell
+			.player_wrap.bottom.left(ng-show="!$root.sitting_on_table || table.seats[8].name", ng-class="{active: table.active_seat==8}")
+				.sit_in(ng-show="!table.seats[8].name", ng-click="show_buy_in_modal=true; seat=8;") Sit In
+				.player_content(ng-show="table.seats[8].name")
+					p {{table.seats[8].name}}
+					p {{table.seats[8].chips}}
+			#dealer_wrap_8.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==8") D
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[7].name", ng-class="{active: table.active_seat==7}")
+				.sit_in(ng-show="!table.seats[7].name", ng-click="show_buy_in_modal=true; seat=7;") Sit In
+				.player_content(ng-show="table.seats[7].name")
+					p {{table.seats[7].name}}
+					p {{table.seats[7].chips}}
+			#dealer_wrap_7.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==7") D
+		.cell
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[6].name", ng-class="{active: table.active_seat==6}")
+				.sit_in(ng-show="!table.seats[6].name", ng-click="show_buy_in_modal=true; seat=6;") Sit In
+				.player_content(ng-show="table.seats[6].name")
+					p {{table.seats[6].name}}
+					p {{table.seats[6].chips}}
+			#dealer_wrap_6.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==6") D
+		.cell
+			.player_wrap.bottom.right(ng-show="!$root.sitting_on_table || table.seats[5].name", ng-class="{active: table.active_seat==5}")
+				.sit_in(ng-show="!table.seats[5].name", ng-click="show_buy_in_modal=true; seat=5;") Sit In
+				.player_content(ng-show="table.seats[5].name")
+					p {{table.seats[5].name}}
+					p {{table.seats[5].chips}}
+			#dealer_wrap_5.dealer_wrap
+				.dealer_button(ng-show="table.dealer_seat==5") D
+	.row
+		.cell
+			button(ng-click="leave_table()") Leave Table
+		.cell
+			button(ng-click="post_blind(false)", ng-show='post_small_blind || post_big_blind') Sit Out
+		.cell
+			button(ng-click="post_blind(true)", ng-show='post_small_blind') Small Blind ({{table.small_blind}})
+			button(ng-click="post_blind(true)", ng-show='post_big_blind') Big Blind ({{table.big_blind}})
+		.cell

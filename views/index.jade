@@ -1,0 +1,14 @@
+html(lang="en" ng-app="app")
+	head
+		title Poker
+		link(href="styles/styles.css" rel="stylesheet" type="text/css")
+		script(type="text/javascript", src="socket.io/socket.io.js")
+		//script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js")
+		script(type="text/javascript", src="scripts/libs/angular.min.js")
+		script(type="text/javascript", src="scripts/libs/angular-route.min.js")
+		script(type="text/javascript", src="scripts/app.js")
+		script(type="text/javascript", src="scripts/controllers/lobby.js")
+		script(type="text/javascript", src="scripts/controllers/table.js")
+	body
+		#content(ng-view)
+			

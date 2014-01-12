@@ -1,0 +1,18 @@
+#lobby
+	#modal_wrap(ng-show="!$root.screen_name")
+		#modal
+			form
+				label(for="screen_name_input") Enter your screen name
+				input.input_left(type="text", ng-model="new_screen_name", ng-trim="true")
+				input#submit_name(type="submit", ng-click="register()", value="Submit")
+		#curtain(ng-show="!$root.screen_name")
+	table
+		tr
+			th Name
+			th BB/SB
+			th Players
+		tr(ng-repeat="table in lobby_tables")
+			td 
+				a(href="/table_{{table.no_of_seats}}/{{table.id}}") {{table.name}}
+			td {{table.big_blind}}/{{table.small_blind}}
+			td {{table.players_sitting}}/{{table.no_of_seats}}

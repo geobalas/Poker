@@ -1,0 +1,17 @@
+{
+  "name": "Poker",
+  "version": "0.0.1",
+  "private": false,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "latest",
+    "jade": "*",
+    "mongoose": "*",
+    "less-middleware": "*",
+    "less": "*",
+    "socket.io": "latest",
+    "connect": "latest"
+  }
+}

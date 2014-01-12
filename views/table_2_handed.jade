@@ -1,0 +1,39 @@
+#table_wrap
+	#modal_wrap(ng-show="show_buy_in_modal")
+		#modal
+			form
+				p Max buy in {{max_buy_in}}
+				p Min buy in {{min_buy_in}}
+				p You have a total of {{$root.total_chips}} chips
+				input.input_left(type="text", ng-model="buy_in_amount", ng-trim="true")
+				input(type="submit", ng-click="sit_in(seat)", value="Sit in")
+	#curtain(ng-show="show_buy_in_modal")
+	.row
+		.cell
+		.cell
+		.cell
+		.cell
+	.row
+		.cell
+			.player_wrap(ng-show="!sitting_in || seats[0].name")
+				.sit_in(ng-show="!seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
+				.player_content(ng-show="seats[0].name")
+					p {{seats[0].name}}
+					p {{seats[0].chips}}
+		.double_cell
+		.cell
+			.player_wrap(ng-show="!sitting_in || seats[1].name")
+				.sit_in(ng-show="!seats[1].name", ng-click="show_buy_in_modal=true; seat=1;") Sit In
+				.player_content(ng-show="seats[1].name")
+					p {{seats[1].name}}
+					p {{seats[1].chips}}
+	.row
+		.cell
+		.cell
+		.cell
+		.cell
+	.row
+		.cell
+		.cell
+		.cell
+		.cell
