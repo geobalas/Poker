@@ -20,17 +20,17 @@ var Deck = function() {
 }
 
 
-// Method that suffles the deck
-Deck.prototype.suffle = function(){
+// Method that shuffles the deck
+Deck.prototype.shuffle = function(){
+  // Going back to the top of the deck
   this.next_card = 0;
-    var suffled_deck = [];
-    
-    for( var i=0 ; i<52 ; i++ ) {
-        var random_card = Math.floor( Math.random() * this.cards.length );
-        suffled_deck.push( this.cards[random_card] );
-        this.cards.splice( random_card, 1 );
-    }
-    this.cards = suffled_deck;
+  var shuffled_deck = [];
+
+  for( var i=0 ; i<52 ; i++ ) {
+      var random_card = this.cards.splice( Math.floor( Math.random() * this.cards.length ), 1 );
+      shuffled_deck = shuffled_deck.concat( random_card );
+  }
+  this.cards = shuffled_deck;
 }
 
 // Method that returns the next x cards of the deck
