@@ -19,6 +19,7 @@ var Table = function( id, name, no_of_seats, big_blind, small_blind, max_buy_in,
 	this.public.min_buy_in = min_buy_in;
 	this.public.max_buy_in = max_buy_in;
 	this.public.no_of_players_seated = 0;
+	this.public.no_of_players_sitting_in = 0;
 	this.public.phase = null;
 	this.public.pot = null;
 	this.public.dealer_seat = null;
@@ -32,7 +33,6 @@ var Table = function( id, name, no_of_seats, big_blind, small_blind, max_buy_in,
 	this.private_table = private_table;
 	this.seats = [];
 	this.players_in_hand = 0;
-	this.no_of_players_sitting_in = 0;
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
 		this.seats[i] = {};
 	}
@@ -46,6 +46,7 @@ Table.prototype.update_public_player_data = function() {
 		if( this.seats[i].name ) {
 			player_data[i].name = this.seats[i].name;
 			player_data[i].chips = this.seats[i].chips_in_play;
+			player_data[i].sits_in = this.seats[i].sits_in;
 			if( this.player_to_act.name ) {
 				player_data[i].acting = this.player_to_act.id === this.seats[i].id;
 			} else {
@@ -58,7 +59,7 @@ Table.prototype.update_public_player_data = function() {
 
 // Method that makes the doubly linked list of players
 Table.prototype.link_players = function() {
-	if( this.no_of_players_seated < 2) {
+	if( this.no_of_players_seated < 2 ) {
 		 return false;	
 	}
 	// The seat number of the first player of the link
@@ -68,10 +69,10 @@ Table.prototype.link_players = function() {
 	// For each seat
 	for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
 		// If a player is sitting on the current seat
-		if( this.seats[i].name ) {
+		if( this.seats[i].sits_in ) {
 			// Keep the seat on which the first player is sitting, so that
 			// they can be linked to the last player in the end
-			if( first_player_seat === false) {
+			if( !first_player_seat ) {
 				first_player_seat = i;
 				current_player = this.seats[i];
 			} else {
@@ -79,6 +80,8 @@ Table.prototype.link_players = function() {
 				this.seats[i].previous_player = current_player;
 				current_player = this.seats[i];
 			}
+			// Increase the counter of the players sitting in
+			this.public.no_of_players_sitting_in = 0;
 		}
 	}
 	// Linking the last player with the first player in order to form the "circle"
@@ -123,6 +126,15 @@ Table.prototype.init_small_blind = function() {
 		this.last_player_to_act = this.player_to_act.previous_player;
 	}
 	this.public.active_seat = this.player_to_act.seat;
+}
+
+Table.prototype.stop_game = function() {
+	this.public.phase = null;
+	this.public.pot = null;
+	this.public.active_seat = null;
+	this.player_to_act = {};
+	this.last_player_to_act = {};
+	this.game_is_on = false;
 }
 
 module.exports = Table;

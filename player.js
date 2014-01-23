@@ -20,14 +20,19 @@ var Player = function( id, socket, name, chips ) {
 	this.sitting_on_table = false;
 	// Flag that shows whether a player who is sitting on the table, wants to be dealt cards
 	this.sits_in = false;
-	// Flag that shows whether a player who is sitting in, has not folded their hand
-	this.is_in_hand = false;
 	// The number of the seat of the table that the player is sitting
 	this.seat = null;
 	// Reference to the player who is sitting after the current player
 	this.next_player = {};
 	// Reference to the player who is sitting before the current player
 	this.previous_player = {};
+}
+
+Player.prototype.unlink = function() {
+	if( this.next_player ) {
+		this.next_player.previous_player = this.previous_player;
+		this.previous_player.next_player = this.next_player;
+	}
 }
 
 module.exports = Player;
