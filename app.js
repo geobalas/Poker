@@ -7,9 +7,9 @@ var path = require('path');
 var url = require('url') ;
 var crypto = require('crypto');
 var connect = require('connect');
-var Table = require('./table');
-var Player = require('./player');
-var Deck = require('./deck');
+var Table = require('./poker_modules/table');
+var Player = require('./poker_modules/player');
+var Deck = require('./poker_modules/deck');
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -96,7 +96,9 @@ app.get('/table_data/:table_id', function( req, res ) {
 });
 
 io.sockets.on('connection', function( socket ) {
-	// When a player disconnects
+	/**
+	 * When a player disconnects
+	 */
 	socket.on( 'disconnect', function() {
 		// If the player was sitting on a table
 		if( typeof players[socket.id] !== 'undefined' && players[socket.id].sitting_on_table && tables[players[socket.id].sitting_on_table] ) {
@@ -117,6 +119,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * When a player leaves the table
+	 */
 	socket.on( 'leave_table', function( callback ) {
 		// If the player was sitting on a table
 		if( players[socket.id].sitting_on_table && tables[players[socket.id].sitting_on_table] ) {
@@ -137,6 +142,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * When a new player enters the application
+	 */
 	socket.on('register', function( data, callback ) {
 		// If a new screen name is posted
 		if( typeof data.new_screen_name !== 'undefined' ) {
@@ -156,7 +164,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
-	// When a player requests to sit on a table
+	/**
+	 * When a player requests to sit on a table
+	 */
 	socket.on('sit_on_the_table', function( data, callback ) {
 		if( 
 			// A seat has been specified
@@ -222,7 +232,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
-	// When a player requests to sit in
+	/**
+	 * When a player who sits on the table, requests to sit in
+	 */
 	socket.on('sit_in', function( callback ) {
 		if( 
 			players[socket.id].sitting_on_table
@@ -253,6 +265,10 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * When a player posts a blind
+	 * @param bool posted_blind (Shows if the user posted the blind or not)
+	 */
 	socket.on( 'post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;

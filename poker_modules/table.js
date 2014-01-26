@@ -38,7 +38,9 @@ var Table = function( id, name, no_of_seats, big_blind, small_blind, max_buy_in,
 	}
 }
 
-// Method that updates the public data of each player sitting on the table
+/**
+ * Method that updates the public data of each player sitting on the table
+ */
 Table.prototype.update_public_player_data = function() {
 	var player_data = [];
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
@@ -58,7 +60,9 @@ Table.prototype.update_public_player_data = function() {
 	this.public.seats = player_data;
 }
 
-// Method that makes the doubly linked list of players
+/**
+ * Method that makes the doubly linked list of players
+ */
 Table.prototype.link_players = function() {
 	if( this.public.no_of_players_sitting_in < 2 ) {
 		 return false;	
@@ -90,7 +94,9 @@ Table.prototype.link_players = function() {
 	return true;
 }
 
-// Method that starts a new game
+/**
+ * Method that starts a new game
+ */
 Table.prototype.initialize_game = function() {
 	// The game is on now
 	this.game_is_on = true;
@@ -117,9 +123,13 @@ Table.prototype.initialize_game = function() {
 	}
 }
 
-// Method that starts the "small blind" round
+/**
+ * Method that starts the "small blind" round
+ */
 Table.prototype.init_small_blind = function() {
+	// Set the table phase to 'small_blind'
 	this.phase = 'small_blind';
+	// If it's a heads up match, the dealer posts the small blind
 	if( this.heads_up ) {
 		this.player_to_act = this.seats[this.public.dealer_seat];
 		this.last_player_to_act = this.seats[this.public.dealer_seat].next_player;
@@ -130,13 +140,23 @@ Table.prototype.init_small_blind = function() {
 	this.public.active_seat = this.player_to_act.seat;
 }
 
+/**
+ * Changes the data of the table when a player leaves
+ */
 Table.prototype.player_left = function( seat ) {
-	if( this.seats[seat].name ) {	
+	// If someone is really sitting on that seat
+	if( this.seats[seat].name ) {
+		// Make the player sit out first
 		this.player_sat_out( seat );
+		// Empty the seat
 		this.seats[seat] = {};
+		// If the player who left was the dealer, and now there are 
+		// not enough players for the game, do not assign the dealer button to anyone
 		if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in < 2 ) {
 			this.dealer = {};
 		}
+		// If the player who left was the dealer, but the game is still on,
+		// give the dealer button to the previous player
 		else if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in >= 2 ) {
 			this.dealer = this.dealer.previous_player;
 		}
@@ -144,6 +164,9 @@ Table.prototype.player_left = function( seat ) {
 	}
 }
 
+/**
+ * Changes the data of the table when a player sits out
+ */
 Table.prototype.player_sat_out = function( seat ) {
 	this.public.no_of_players_sitting_in--;
 	if( this.public.no_of_players_sitting_in < 2 ) {
@@ -151,7 +174,9 @@ Table.prototype.player_sat_out = function( seat ) {
 	}
 }
 
-// Method that stops the game
+/**
+ * Method that stops the game
+ */
 Table.prototype.stop_game = function() {
 	this.public.phase = null;
 	this.public.pot = null;
