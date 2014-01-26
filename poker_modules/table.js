@@ -56,7 +56,6 @@ Table.prototype.update_public_player_data = function() {
 			}
 		}
 	}
-	console.log(player_data);
 	this.public.seats = player_data;
 }
 
