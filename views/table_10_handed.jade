@@ -13,87 +13,87 @@
 	.row
 		.cell
 			a#to_lobby.button(href="/") < Lobby
-			.player_wrap.top.left(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat==0}")
+			.player_wrap.top.left(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
 				.sit_in(ng-show="!table.seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
 				.player_content(ng-show="table.seats[0].name")
 					p {{table.seats[0].name}}
-					p(ng-show="table.seats[0].sits_in"){{table.seats[0].chips}}
-					p(ng-show="!table.seats[0].sits_in") Sitting Out
+					p(ng-show="table.seats[0].sitting_in"){{table.seats[0].chips}}
+					p(ng-show="!table.seats[0].sitting_in") Sitting Out
 			#dealer_wrap_0.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==0") D
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat==1}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
 				.sit_in(ng-show="!table.seats[1].name", ng-click="show_buy_in_modal=true; seat=1;") Sit In
 				.player_content(ng-show="table.seats[1].name")
 					p {{table.seats[1].name}}
-					p(ng-show="table.seats[1].sits_in"){{table.seats[1].chips}}
-					p(ng-show="!table.seats[1].sits_in") Sitting Out
+					p(ng-show="table.seats[1].sitting_in"){{table.seats[1].chips}}
+					p(ng-show="!table.seats[1].sitting_in") Sitting Out
 			#dealer_wrap_1.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==1") D
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat==2}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat===2}")
 				.sit_in(ng-show="!table.seats[2].name", ng-click="show_buy_in_modal=true; seat=2;") Sit In
 				.player_content(ng-show="table.seats[2].name")
 					p {{table.seats[2].name}}
-					p(ng-show="table.seats[2].sits_in"){{table.seats[2].chips}}
-					p(ng-show="!table.seats[2].sits_in") Sitting Out
+					p(ng-show="table.seats[2].sitting_in"){{table.seats[2].chips}}
+					p(ng-show="!table.seats[2].sitting_in") Sitting Out
 			#dealer_wrap_2.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==2") D
 		.cell
-			.player_wrap.top.right(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat==3}")
+			.player_wrap.top.right(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat===3}")
 				.sit_in(ng-show="!table.seats[3].name", ng-click="show_buy_in_modal=true; seat=3;") Sit In
 				.player_content(ng-show="table.seats[3].name")
 					p {{table.seats[3].name}}
-					p(ng-show="table.seats[3].sits_in"){{table.seats[3].chips}}
-					p(ng-show="!table.seats[3].sits_in") Sitting Out
+					p(ng-show="table.seats[3].sitting_in"){{table.seats[3].chips}}
+					p(ng-show="!table.seats[3].sitting_in") Sitting Out
 			#dealer_wrap_3.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==3") D
 	.row
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[9].name", ng-class="{active: table.active_seat==9}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[9].name", ng-class="{active: table.active_seat===9}")
 				.sit_in(ng-show="!table.seats[9].name", ng-click="show_buy_in_modal=true; seat=9;") Sit In
 				.player_content(ng-show="table.seats[9].name")
 					p {{table.seats[9].name}}
-					p(ng-show="table.seats[9].sits_in"){{table.seats[9].chips}}
-					p(ng-show="!table.seats[9].sits_in") Sitting Out
+					p(ng-show="table.seats[9].sitting_in"){{table.seats[9].chips}}
+					p(ng-show="!table.seats[9].sitting_in") Sitting Out
 			#dealer_wrap_9.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==9") D
 		.double_cell
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat==4}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat===4}")
 				.sit_in(ng-show="!table.seats[4].name", ng-click="show_buy_in_modal=true; seat=4;") Sit In
 				.player_content(ng-show="table.seats[4].name")
 					p {{table.seats[4].name}}
-					p(ng-show="table.seats[4].sits_in"){{table.seats[4].chips}}
-					p(ng-show="!table.seats[4].sits_in") Sitting Out
+					p(ng-show="table.seats[4].sitting_in"){{table.seats[4].chips}}
+					p(ng-show="!table.seats[4].sitting_in") Sitting Out
 			#dealer_wrap_4.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==4") D
 	.row
 		.cell
-			.player_wrap.bottom.left(ng-show="!$root.sitting_on_table || table.seats[8].name", ng-class="{active: table.active_seat==8}")
+			.player_wrap.bottom.left(ng-show="!$root.sitting_on_table || table.seats[8].name", ng-class="{active: table.active_seat===8}")
 				.sit_in(ng-show="!table.seats[8].name", ng-click="show_buy_in_modal=true; seat=8;") Sit In
 				.player_content(ng-show="table.seats[8].name")
 					p {{table.seats[8].name}}
-					p(ng-show="table.seats[8].sits_in"){{table.seats[8].chips}}
-					p(ng-show="!table.seats[8].sits_in") Sitting Out
+					p(ng-show="table.seats[8].sitting_in"){{table.seats[8].chips}}
+					p(ng-show="!table.seats[8].sitting_in") Sitting Out
 			#dealer_wrap_8.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==8") D
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[7].name", ng-class="{active: table.active_seat==7}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[7].name", ng-class="{active: table.active_seat===7}")
 				.sit_in(ng-show="!table.seats[7].name", ng-click="show_buy_in_modal=true; seat=7;") Sit In
 				.player_content(ng-show="table.seats[7].name")
 					p {{table.seats[7].name}}
-					p(ng-show="table.seats[7].sits_in"){{table.seats[7].chips}}
-					p(ng-show="!table.seats[7].sits_in") Sitting Out
+					p(ng-show="table.seats[7].sitting_in"){{table.seats[7].chips}}
+					p(ng-show="!table.seats[7].sitting_in") Sitting Out
 			#dealer_wrap_7.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==7") D
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[6].name", ng-class="{active: table.active_seat==6}")
+			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[6].name", ng-class="{active: table.active_seat===6}")
 				.sit_in(ng-show="!table.seats[6].name", ng-click="show_buy_in_modal=true; seat=6;") Sit In
 				.player_content(ng-show="table.seats[6].name")
 					p {{table.seats[6].name}}
-					p(ng-show="table.seats[6].sits_in"){{table.seats[6].chips}}
-					p(ng-show="!table.seats[6].sits_in") Sitting Out
+					p(ng-show="table.seats[6].sitting_in"){{table.seats[6].chips}}
+					p(ng-show="!table.seats[6].sitting_in") Sitting Out
 			#dealer_wrap_6.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==6") D
 		.cell
@@ -101,17 +101,17 @@
 				.sit_in(ng-show="!table.seats[5].name", ng-click="show_buy_in_modal=true; seat=5;") Sit In
 				.player_content(ng-show="table.seats[5].name")
 					p {{table.seats[5].name}}
-					p(ng-show="table.seats[5].sits_in"){{table.seats[5].chips}}
-					p(ng-show="!table.seats[5].sits_in") Sitting Out
+					p(ng-show="table.seats[5].sitting_in"){{table.seats[5].chips}}
+					p(ng-show="!table.seats[5].sitting_in") Sitting Out
 			#dealer_wrap_5.dealer_wrap
 				.dealer_button(ng-show="table.dealer_seat==5") D
 	.row
 		.cell
 			button(ng-click="leave_table()") Leave Table
 		.cell
-			button(ng-click="post_blind(false)", ng-show='post_small_blind || post_big_blind') Sit Out
-			button(ng-click="sit_in(false)", ng-show='sitting_on_table && !sitting_in') Sit In
+			button(ng-click="post_blind(false)", ng-show='action_state === "post_small_blind" || action_state === "post_big_blind"') Sit Out
+			button(ng-click="sit_in()", ng-show='$root.sitting_on_table !== null && !$root.sitting_in') Sit In
 		.cell
-			button(ng-click="post_blind(true)", ng-show='post_small_blind') Small Blind ({{table.small_blind}})
-			button(ng-click="post_blind(true)", ng-show='post_big_blind') Big Blind ({{table.big_blind}})
+			button(ng-click="post_blind(true)", ng-show='action_state === "post_small_blind"') Small Blind ({{table.small_blind}})
+			button(ng-click="post_blind(true)", ng-show='action_state === "post_big_blind"') Big Blind ({{table.big_blind}})
 		.cell

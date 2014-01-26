@@ -6,9 +6,9 @@
 app.controller( 'TableController', function( $scope, $rootScope, $http, $routeParams ) {
 	$scope.table = {};
 	$scope.showing_chips_modal = false;
-	$scope.post_small_blind = false;
-	$scope.post_big_blind = false;
+	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
+	$rootScope.sitting_on_table = null;
 
 	$http({
 		url: '/table_data/' + $routeParams.table_id,
@@ -37,6 +37,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		socket.emit( 'sit_in', function( response ){
 			if( response.success ){
 				$rootScope.sitting_in = true;
+				$rootScope.$digest();
 			}
 		});
 	}
@@ -44,10 +45,12 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.leave_table = function() {
 		socket.emit( 'leave_table', function( response ) {
 			if( response.success ) {
-				$rootScope.sitting_on_table = '';
+				$rootScope.sitting_on_table = null;
 				$rootScope.total_chips = response.total_chips;
 				$rootScope.sitting_in = false;
+				$scope.action_state = '';
 				$rootScope.$digest();
+				$scope.$digest();
 			}
 		});
 	}
@@ -57,8 +60,8 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 			if( response.success && !posted ) {
 				$rootScope.sitting_in = false;
 			}
-			$scope.post_small_blind = false;
-			$scope.post_big_blind = false;
+			$scope.action_state = '';
+			$scope.$digest();
 		});
 	}
 
@@ -70,22 +73,17 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	socket.on( 'player_sat_in', function( data ) {
 		$scope.table.seats[data.seat].name = data.player.name;
 		$scope.table.seats[data.seat].chips = data.player.chips;
-		$scope.table.seats[data.seat].sits_in = data.player.sits_in;
-		$scope.$digest();
-	});
-
-	socket.on( 'player_left', function( data ) {
-		$scope.table.seats = data.seats;
+		$scope.table.seats[data.seat].sitting_in = data.player.sitting_in;
 		$scope.$digest();
 	});
 
 	socket.on( 'post_small_blind', function( data ) {
-		$scope.post_small_blind = true;
+		$scope.action_state = 'post_small_blind';
 		$scope.$digest();
 	});
 
 	socket.on( 'sat_out', function() {
-		$scope.post_small_blind = true;
+		$scope.action_state = 'post_small_blind';
 		$scope.$digest();
 	});
 });

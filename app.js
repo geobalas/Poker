@@ -105,32 +105,13 @@ io.sockets.on('connection', function( socket ) {
 			// The table on which the player was sitting
 			var table_id = players[socket.id].sitting_on_table;
 			// Remove the player from the seat
-			tables[table_id].seats[seat] = {};
-			tables[table_id].public.no_of_players_seated--;
-			// If the player was sitting in, decrease the counter
-			if( players[socket.id].sits_in ) {
-				tables[table_id].public.no_of_players_sitting_in--;
-			}
-			if( tables[table_id].public.no_of_players_sitting_in < 2) {
-				tables[table_id].stop_game();
-				// Send the new table data to the players
-				tables[table_id].update_public_player_data();
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
-			}
-			// Remove the chips from play
-			players[socket.id].chips += players[socket.id].chips_in_play;
-			players[socket.id].chips_in_play = 0;
+			tables[table_id].player_left( seat );
+			players[socket.id].leave_table( seat );
+			// Remove the player from the socket room
+			socket.leave( 'table-' + this.sitting_on_table );
 			// Send the new table data
 			tables[table_id].update_public_player_data();
-			socket.broadcast.to( 'table-' + table_id ).emit( 'player_left', tables[table_id].public );
-			// Remove the player from the socket room
-			socket.leave( 'table-' + table_id );
-			players[socket.id].sitting_on_table = false;
-			// Removing the player from the doubly linked list
-			if( players[socket.id].next_player ) {
-				players[socket.id].next_player.previous_player = players[socket.id].previous_player;
-				players[socket.id].previous_player.next_player = players[socket.id].next_player;
-			}
+			socket.broadcast.to( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 			// Dettach the player object from the players array so that it can be destroyed by the garbage collector
 			delete players[socket.id];
 		}
@@ -144,31 +125,14 @@ io.sockets.on('connection', function( socket ) {
 			// The table on which the player was sitting
 			var table_id = players[socket.id].sitting_on_table;
 			// Remove the player from the seat
-			tables[table_id].seats[seat] = {};
-			tables[table_id].public.no_of_players_seated--;
-			// If the player was sitting in, decrease the counter
-			if( players[socket.id].sits_in ) {
-				tables[table_id].public.no_of_players_sitting_in--;
-			}
-			if( tables[table_id].public.no_of_players_sitting_in < 2) {
-				tables[table_id].stop_game();
-				// Send the new table data to the players
-				tables[table_id].update_public_player_data();
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
-			}
-			// Remove the chips from play
-			players[socket.id].chips += players[socket.id].chips_in_play;
-			players[socket.id].chips_in_play = 0;
-			players[socket.id].seat = null;
-			// Emit the new table data
-			var table_data = tables[table_id].public;
-			tables[table_id].update_public_player_data();
-			io.sockets.in( 'table-' + table_id ).emit( 'player_left', table_data );
+			tables[table_id].player_left( seat );
+			players[socket.id].leave_table( seat );
 			// Remove the player from the socket room
-			socket.leave( 'table-' + table_id );
-			players[socket.id].sitting_on_table = false;
-			// Removing the player from the doubly linked list
-			players[socket.id].unlink();
+			socket.leave( 'table-' + this.sitting_on_table );
+			// Emit the new table data
+			tables[table_id].update_public_player_data();
+			io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+			// Send the number of total chips back to the user
 			callback( { 'success': true, 'total_chips': players[socket.id].chips } );
 		}
 	});
@@ -209,10 +173,12 @@ io.sockets.on('connection', function( socket ) {
 			&& typeof tables[data.table_id].seats[data.seat].name === 'undefined'
 			// The player isn't sitting on any other tables
 			&& players[socket.id].sitting_on_table === false
-			// The chips chosen is a number
+			// The chips number chosen is a number
 			&& typeof data.chips !== 'undefined'
-			&& !isNaN(parseFloat(data.chips)) 
+			&& !isNaN(parseInt(data.chips)) 
 			&& isFinite(data.chips)
+			// The chips number is an integer
+			&& data.chips % 1 === 0
 		){
 			// The chips the player chose are less than the total chips the player has
 			if( data.chips > players[socket.id].chips )
@@ -221,7 +187,7 @@ io.sockets.on('connection', function( socket ) {
 				callback( { 'success': false, 'error': 'The amount of chips should be between the maximum and the minimum amount of allowed buy in' } );
 			else {
 				// The data that will be sent to the view
-				var player_data = { name: players[socket.id].name, chips: data.chips, sits_in: true };
+				var player_data = { name: players[socket.id].name, chips: data.chips, sitting_in: true };
 				// Remove the chips that player will have on the table, from the player object
 				players[socket.id].chips -= data.chips;
 				players[socket.id].chips_in_play = data.chips;
@@ -231,7 +197,7 @@ io.sockets.on('connection', function( socket ) {
 				tables[data.table_id].public.no_of_players_sitting_in++;
 				players[socket.id].seat = data.seat;
 				players[socket.id].sitting_on_table = data.table_id;
-				players[socket.id].sits_in = true;
+				players[socket.id].sitting_in = true;
 				// Give the response to the user
 				callback( { 'success': true, 'sitting_on_table': data.table_id } );
 				// Add the player to the socket room
@@ -247,46 +213,62 @@ io.sockets.on('connection', function( socket ) {
 					tables[data.table_id].update_public_player_data();
 					io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
 					// Start asking players to post the small blind
-					tables[data.table_id].player_to_act.socket.emit( 'post_small_blind', {'small_blind' : 10});
+					tables[data.table_id].player_to_act.socket.emit( 'post_small_blind' );
 				}
 			}
 		} else {
 			// If the user is not allowed to sit in, notify the user
 			callback( { 'success': false } );
 		}
+	});
 
-		// When a player requests to sit in
-		socket.on('sit_in', function( callback ) {
-			if( 
-				players[socket.id].sitting_on_table
-				&& !players[socket.id].sitting_in
-			) {
-
+	// When a player requests to sit in
+	socket.on('sit_in', function( callback ) {
+		if( 
+			players[socket.id].sitting_on_table
+			&& players[socket.id].seat
+			&& !players[socket.id].sitting_in
+		) {
+			// Getting the table id from the player object
+			var table_id = players[socket.id].sitting_on_table;
+			// The player is sitting in
+			players[socket.id].sitting_in = true;
+			tables[table_id].public.no_of_players_sitting_in++;
+			// If there are no players playing right now, try to initialize a game with the new player
+			if( !tables[table_id].game_is_on && tables[table_id].public.no_of_players_sitting_in > 1 ) {
+				// Initialize the game
+				tables[table_id].initialize_game();
+				tables[table_id].init_small_blind();
+				// Send the new table data to the players
+				tables[table_id].update_public_player_data();
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+				// Start asking players to post the small blind
+				tables[table_id].player_to_act.socket.emit( 'post_small_blind' );
+			} else {
+				// Send the new table data to the players
+				tables[table_id].update_public_player_data();
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 			}
+			callback( { 'success': true } );
 		}
+	});
 
-		socket.on( 'post_blind', function( posted_blind, callback ) {
-			if( players[socket.id].sitting_on_table !== 'undefined' ) {
-				var table_id = players[socket.id].sitting_on_table;
-				if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].phase === 'small_blind' ) {
-					if( posted_blind ) {
-						callback( { 'success': true } );
-						tables[table_id].init_big_blind();
-					} else {
-						players[socket.id].sits_in = false;
-						players[socket.id].unlink();
-						tables[table_id].public.no_of_players_sitting_in--;
-						tables[data.table_id].player_to_act.socket.emit('sat_out');
-						callback( { 'success': true } );
-						if( tables[table_id].public.no_of_players_sitting_in < 2) {
-							tables[table_id].stop_game();
-							// Send the new table data to the players
-							tables[data.table_id].update_public_player_data();
-							io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
-						}
-					}
+	socket.on( 'post_blind', function( posted_blind, callback ) {
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].phase === 'small_blind' ) {
+				if( posted_blind ) {
+					callback( { 'success': true } );
+					tables[table_id].init_big_blind();
+				} else {
+					tables[table_id].player_sat_out( players[socket.id].seat );
+					players[socket.id].sit_out();
+					// Send the new table data to the players
+					tables[table_id].update_public_player_data();
+					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+					callback( { 'success': true } );
 				}
 			}
-		});
+		}
 	});
 });

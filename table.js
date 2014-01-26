@@ -46,7 +46,7 @@ Table.prototype.update_public_player_data = function() {
 		if( this.seats[i].name ) {
 			player_data[i].name = this.seats[i].name;
 			player_data[i].chips = this.seats[i].chips_in_play;
-			player_data[i].sits_in = this.seats[i].sits_in;
+			player_data[i].sitting_in = this.seats[i].sitting_in;
 			if( this.player_to_act.name ) {
 				player_data[i].acting = this.player_to_act.id === this.seats[i].id;
 			} else {
@@ -54,12 +54,13 @@ Table.prototype.update_public_player_data = function() {
 			}
 		}
 	}
+	console.log(player_data);
 	this.public.seats = player_data;
 }
 
 // Method that makes the doubly linked list of players
 Table.prototype.link_players = function() {
-	if( this.no_of_players_seated < 2 ) {
+	if( this.public.no_of_players_sitting_in < 2 ) {
 		 return false;	
 	}
 	// The seat number of the first player of the link
@@ -69,7 +70,7 @@ Table.prototype.link_players = function() {
 	// For each seat
 	for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
 		// If a player is sitting on the current seat
-		if( this.seats[i].sits_in ) {
+		if( this.seats[i].sitting_in ) {
 			// Keep the seat on which the first player is sitting, so that
 			// they can be linked to the last player in the end
 			if( !first_player_seat ) {
@@ -80,8 +81,6 @@ Table.prototype.link_players = function() {
 				this.seats[i].previous_player = current_player;
 				current_player = this.seats[i];
 			}
-			// Increase the counter of the players sitting in
-			this.public.no_of_players_sitting_in = 0;
 		}
 	}
 	// Linking the last player with the first player in order to form the "circle"
@@ -95,22 +94,25 @@ Table.prototype.link_players = function() {
 Table.prototype.initialize_game = function() {
 	// The game is on now
 	this.game_is_on = true;
-	if( this.public.no_of_players_seated === 2 ) {
+	if( this.public.no_of_players_sitting_in === 2 ) {
 		this.heads_up = true;
 	}
 	// Creating the linked list of players
 	this.link_players();
 	// Giving the dealer button to a random player
-	var random_dealer_seat = Math.floor( Math.random() * this.public.no_of_players_seated );
-	var current_player = {};
-	for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
-		if( this.seats[i].name ) {
-			current_player = this.seats[i];
-			for( var j=0 ; j<=random_dealer_seat ; j++ ) {
-				current_player = current_player.next_player;
+	if( !this.dealer.seat ) {
+		var random_dealer_seat = Math.floor( Math.random() * this.public.no_of_players_sitting_in );	
+		var current_player = {};
+		// Assinging the dealer button to the random player
+		for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
+			if( this.seats[i].name ) {
+				current_player = this.seats[i];
+				for( var j=0 ; j<=random_dealer_seat ; j++ ) {
+					current_player = current_player.next_player;
+				}
+				this.public.dealer_seat = current_player.seat;
+				this.dealer = current_player;
 			}
-			this.public.dealer_seat = current_player.seat;
-			this.dealer = current_player;
 		}
 	}
 }
@@ -128,6 +130,28 @@ Table.prototype.init_small_blind = function() {
 	this.public.active_seat = this.player_to_act.seat;
 }
 
+Table.prototype.player_left = function( seat ) {
+	if( this.seats[seat].name ) {	
+		this.player_sat_out( seat );
+		this.seats[seat] = {};
+		if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in < 2 ) {
+			this.dealer = {};
+		}
+		else if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in >= 2 ) {
+			this.dealer = this.dealer.previous_player;
+		}
+		this.public.no_of_players_seated--;
+	}
+}
+
+Table.prototype.player_sat_out = function( seat ) {
+	this.public.no_of_players_sitting_in--;
+	if( this.public.no_of_players_sitting_in < 2 ) {
+		this.stop_game();
+	}
+}
+
+// Method that stops the game
 Table.prototype.stop_game = function() {
 	this.public.phase = null;
 	this.public.pot = null;
