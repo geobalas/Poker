@@ -70,10 +70,9 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		$scope.$digest();
 	});
 
-	socket.on( 'player_sat_in', function( data ) {
-		$scope.table.seats[data.seat].name = data.player.name;
-		$scope.table.seats[data.seat].chips = data.player.chips;
-		$scope.table.seats[data.seat].sitting_in = data.player.sitting_in;
+	socket.on( 'game_stopped', function( data ) {
+		$scope.table = data;
+		$scope.action_state = '';
 		$scope.$digest();
 	});
 

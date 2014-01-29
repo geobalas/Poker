@@ -39,27 +39,6 @@ var Table = function( id, name, no_of_seats, big_blind, small_blind, max_buy_in,
 }
 
 /**
- * Method that updates the public data of each player sitting on the table
- */
-Table.prototype.update_public_player_data = function() {
-	var player_data = [];
-	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
-		player_data[i] = {};
-		if( this.seats[i].name ) {
-			player_data[i].name = this.seats[i].name;
-			player_data[i].chips = this.seats[i].chips_in_play;
-			player_data[i].sitting_in = this.seats[i].sitting_in;
-			if( this.player_to_act.name ) {
-				player_data[i].acting = this.player_to_act.id === this.seats[i].id;
-			} else {
-				player_data[i].acting = false;
-			}
-		}
-	}
-	this.public.seats = player_data;
-}
-
-/**
  * Method that makes the doubly linked list of players
  */
 Table.prototype.link_players = function() {
@@ -73,7 +52,7 @@ Table.prototype.link_players = function() {
 	// For each seat
 	for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
 		// If a player is sitting on the current seat
-		if( this.seats[i].sitting_in ) {
+		if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 			// Keep the seat on which the first player is sitting, so that
 			// they can be linked to the last player in the end
 			if( !first_player_seat ) {
@@ -99,9 +78,7 @@ Table.prototype.link_players = function() {
 Table.prototype.initialize_game = function() {
 	// The game is on now
 	this.game_is_on = true;
-	if( this.public.no_of_players_sitting_in === 2 ) {
-		this.heads_up = true;
-	}
+	this.heads_up = this.public.no_of_players_sitting_in === 2;
 	// Creating the linked list of players
 	this.link_players();
 	// Giving the dealer button to a random player
@@ -110,7 +87,7 @@ Table.prototype.initialize_game = function() {
 		var current_player = {};
 		// Assinging the dealer button to the random player
 		for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
-			if( this.seats[i].name ) {
+			if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 				current_player = this.seats[i];
 				for( var j=0 ; j<=random_dealer_seat ; j++ ) {
 					current_player = current_player.next_player;
@@ -140,15 +117,25 @@ Table.prototype.init_small_blind = function() {
 }
 
 /**
+ * Sets the public data of the player that will be sent along with the table data
+ */
+Table.prototype.player_sat_on_the_table = function( seat ) {
+	this.public.seats[seat] = this.seats[seat].public;
+}
+
+/**
  * Changes the data of the table when a player leaves
  */
 Table.prototype.player_left = function( seat ) {
 	// If someone is really sitting on that seat
-	if( this.seats[seat].name ) {
-		// Make the player sit out first
-		this.player_sat_out( seat );
+	if( this.seats[seat].id ) {
+		// If the player is sitting in, make them sit out first
+		if( this.seats[seat].public.sitting_in ) {
+			this.player_sat_out( seat );
+		}
 		// Empty the seat
 		this.seats[seat] = {};
+		this.public.seats[seat] = {};
 		// If the player who left was the dealer, and now there are 
 		// not enough players for the game, do not assign the dealer button to anyone
 		if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in < 2 ) {
