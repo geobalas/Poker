@@ -1,15 +1,17 @@
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-var http = require('http');
-var path = require('path');
-var url = require('url') ;
-var crypto = require('crypto');
-var connect = require('connect');
-var Table = require('./poker_modules/table');
-var Player = require('./poker_modules/player');
-var Deck = require('./poker_modules/deck');
+var express = require('express'),
+	app = express(),
+	server = require('http').createServer(app),
+	io = require('socket.io').listen(server),
+	http = require('http'),
+	path = require('path'),
+	url = require('url') ,
+	crypto = require('crypto'),
+	connect = require('connect'),
+	MongoStore = require('connect-mongo')(express),
+	passportSocketIo = require('passport.socketio'),
+	Table = require('./poker_modules/table'),
+	Player = require('./poker_modules/player'),
+	Deck = require('./poker_modules/deck');
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -18,11 +20,16 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('0nl!n3p0k3r@pp444'));
-app.use(express.session({secret: '0nl!n3p0k3r@pp444'}));
 app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.session({
+    secret: '0nl!n3p0k3r@pp444',
+    store: new MongoStore({
+    	db: 'poker_sessions'
+    })
+}));
 
 // Development Only
 if ('development' == app.get('env')) {
@@ -93,6 +100,32 @@ app.get('/table_data/:table_id', function( req, res ) {
 		res.send( { 'table': tables[req.params.table_id].public } );
 	}
 });
+
+io.set('authorization', passportSocketIo.authorize({
+  cookieParser: express.cookieParser,
+  key:         'express.sid',       // the name of the cookie where express/connect stores its session_id
+  secret:      '0nl!n3p0k3r@pp444',    // the session_secret to parse the cookie
+  store:       MongoStore,	        // we NEED to use a sessionstore. no memorystore please
+  success:     onAuthorizeSuccess,  // *optional* callback on success - read more below
+  fail:        onAuthorizeFail,     // *optional* callback on fail/error - read more below
+}));
+
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+
+  // The accept-callback still allows us to decide whether to
+  // accept the connection or not.
+  accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.log('failed connection to socket.io:', message);
+
+  // We use this callback to log all of our failed connections.
+  accept(null, false);
+}
 
 io.sockets.on('connection', function( socket ) {
 	/**

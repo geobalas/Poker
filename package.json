@@ -11,6 +11,8 @@
     "less": "*",
     "less-middleware": "*",
     "socket.io": "latest",
-    "connect": "latest"
+    "connect": "latest",
+    "passport.socketio": "*",
+    "connect-mongo": "*"
   }
 }
