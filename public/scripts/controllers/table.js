@@ -81,6 +81,16 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		$scope.$digest();
 	});
 
+	socket.on( 'post_big_blind', function( data ) {
+		$scope.action_state = 'post_big_blind';
+		$scope.$digest();
+	});
+
+	socket.on( 'act_no_bets', function( data ) {
+		$scope.action_state = 'act_no_bets';
+		$scope.$digest();
+	});
+
 	socket.on( 'sat_out', function() {
 		$scope.action_state = 'post_small_blind';
 		$scope.$digest();

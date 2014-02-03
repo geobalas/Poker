@@ -108,10 +108,15 @@
 	.row
 		.cell
 			button(ng-click="leave_table()") Leave Table
+			button(ng-click="fold()", ng-show='action_state === "act_no_bet" || action_state === "act_bet"') Fold
 		.cell
 			button(ng-click="post_blind(false)", ng-show='action_state === "post_small_blind" || action_state === "post_big_blind"') Sit Out
 			button(ng-click="sit_in()", ng-show='$root.sitting_on_table !== null && !$root.sitting_in') Sit In
+			button(ng-click="check()", ng-show='action_state === "act_no_bet"') Check
+			button(ng-click="call()", ng-show='action_state === "act_bet"') Call
 		.cell
 			button(ng-click="post_blind(true)", ng-show='action_state === "post_small_blind"') Small Blind ({{table.small_blind}})
 			button(ng-click="post_blind(true)", ng-show='action_state === "post_big_blind"') Big Blind ({{table.big_blind}})
+			button(ng-click="bet()", ng-show='action_state === "act_no_bet"') Bet
+			button(ng-click="raise()", ng-show='action_state === "act_bet"') Raise
 		.cell

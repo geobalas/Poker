@@ -8,9 +8,8 @@
   "dependencies": {
     "express": "latest",
     "jade": "*",
-    "mongoose": "*",
-    "less-middleware": "*",
     "less": "*",
+    "less-middleware": "*",
     "socket.io": "latest",
     "connect": "latest"
   }

@@ -270,7 +270,18 @@ io.sockets.on('connection', function( socket ) {
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].phase === 'small_blind' ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
-					tables[table_id].init_big_blind();
+					if( tables[table_id].phase === 'small_blind' ) {
+						tables[table_id].next_player();
+						tables[table_id].init_big_blind();
+						// Start asking players to post the small blind
+						tables[table_id].player_to_act.socket.emit( 'post_big_blind' );
+					} else {
+						tables[table_id].init_preflop();
+						// Start asking players to post the small blind
+						tables[table_id].player_to_act.socket.emit( 'act_no_bets' );
+					}
+					// Send the new table data to the players
+					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 				} else {
 					tables[table_id].player_sat_out( players[socket.id].seat );
 					players[socket.id].sit_out();
