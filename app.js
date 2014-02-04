@@ -7,13 +7,9 @@ var express = require('express'),
 	url = require('url') ,
 	crypto = require('crypto'),
 	connect = require('connect'),
-	MongoStore = require('connect-mongo')(express),
-	passport = require('passport'),
-	passportSocketIo = require('passport.socketio'),
 	Table = require('./poker_modules/table'),
 	Player = require('./poker_modules/player'),
-	Deck = require('./poker_modules/deck'),
-	mongoStore = new MongoStore({db: 'poker_sessions'});
+	Deck = require('./poker_modules/deck');
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -22,10 +18,8 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use( express.cookieParser() );
-app.use(express.session({ store: mongoStore, key: 'express.sid', secret: 'poker_app' }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(express.cookieParser());
+app.use(express.session({ key: 'express.sid', secret: 'poker_app' }));
 app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -99,32 +93,6 @@ app.get('/table_data/:table_id', function( req, res ) {
 		res.send( { 'table': tables[req.params.table_id].public } );
 	}
 });
-
-io.set('authorization', passportSocketIo.authorize({
-  cookieParser: express.cookieParser,
-  key:         'express.sid',       // the name of the cookie where express/connect stores its session_id
-  secret:      'poker_app',    // the session_secret to parse the cookie
-  store:       mongoStore,	        // we NEED to use a sessionstore. no memorystore please
-  success:     onAuthorizeSuccess,  // *optional* callback on success - read more below
-  fail:        onAuthorizeFail,     // *optional* callback on fail/error - read more below
-}));
-
-function onAuthorizeSuccess(data, accept){
-  console.log('successful connection to socket.io');
-
-  // The accept-callback still allows us to decide whether to
-  // accept the connection or not.
-  accept(null, true);
-}
-
-function onAuthorizeFail(data, message, error, accept){
-  if(error)
-    throw new Error(message);
-  console.log('failed connection to socket.io:', message);
-
-  // We use this callback to log all of our failed connections.
-  accept(null, false);
-}
 
 io.sockets.on('connection', function( socket ) {
 	/**
@@ -296,7 +264,7 @@ io.sockets.on('connection', function( socket ) {
 	 * When a player posts a blind
 	 * @param bool posted_blind (Shows if the user posted the blind or not)
 	 */
-	socket.on( 'post_blind', function( posted_blind, callback ) {
+	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].phase === 'small_blind' ) {
@@ -315,8 +283,8 @@ io.sockets.on('connection', function( socket ) {
 					// Send the new table data to the players
 					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 				} else {
-					tables[table_id].player_sat_out( players[socket.id].seat );
 					players[socket.id].sit_out();
+					tables[table_id].player_sat_out( players[socket.id].seat );
 					// Send the new table data to the players
 					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 					callback( { 'success': true } );

@@ -114,7 +114,7 @@ Table.prototype.initialize_game = function() {
 	// Creating the linked list of players
 	this.link_players();
 	// Giving the dealer button to a random player
-	if( !this.dealer.seat ) {
+	if( !this.dealer.sitting_in ) {
 		var random_dealer_seat = Math.floor( Math.random() * this.public.no_of_players_sitting_in );	
 		var current_player = {};
 		// Assinging the dealer button to the random player
@@ -185,23 +185,6 @@ Table.prototype.player_left = function( seat ) {
 		// Empty the seat
 		this.seats[seat] = {};
 		this.public.seats[seat] = {};
-		// If the player who left was the dealer, and now there are 
-		// not enough players for the game, do not assign the dealer button to anyone
-		if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in < 2 ) {
-			this.dealer = {};
-		}
-		// If the player who left was the dealer, but the game is still on,
-		// give the dealer button to the previous player
-		else if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in >= 2 ) {
-			this.dealer = this.dealer.previous_player;
-		}
-		// If the player 
-		if( this.last_position.id === this.seats[seat].id && this.public.no_of_players_sitting_in < 2 ) {
-			this.last_position = {};
-		}
-		else if( this.last_position.id === this.seats[seat].id && this.public.no_of_players_sitting_in >= 2 ) {
-			this.last_position = this.last_position.previous_player;
-		}
 		this.public.no_of_players_seated--;
 	}
 }
@@ -213,6 +196,35 @@ Table.prototype.player_sat_out = function( seat ) {
 	this.public.no_of_players_sitting_in--;
 	if( this.public.no_of_players_sitting_in < 2 ) {
 		this.stop_game();
+	}
+	else{
+		// If the player who left was the dealer, and now there are 
+		// not enough players for the game, do not assign the dealer button to anyone
+		if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in < 2 ) {
+			this.dealer = {};
+			this.public.dealer_seat = null;
+		}
+		// If the player who left was the dealer, but the game is still on,
+		// give the dealer button to the previous player
+		else if( this.public.dealer_seat == seat && this.public.no_of_players_sitting_in >= 2 ) {
+			this.dealer = this.dealer.previous_player;
+			this.public.dealer_seat = this.dealer.seat;
+		}
+		// If the player was the last player to act in the rounds and the game will stop,
+		// empty the last player to act object
+		if( this.last_position.id === this.seats[seat].id && this.public.no_of_players_sitting_in < 2 ) {
+			this.last_position = {};
+		}
+		// If the player was the last player to act in the rounds and the game will continue,
+		// the last player to act will be the previous player
+		else if( this.last_position.id === this.seats[seat].id && this.public.no_of_players_sitting_in >= 2 ) {
+			this.last_position = this.last_position.previous_player;
+		}
+		// If there were only two players but there are more players sitting in, waiting to play, start a new round
+		if ( this.seats[seat].previous_player.id == this.seats[seat].next_player.id ) {
+			this.stop_game();
+			this.initialize_game();
+		}
 	}
 }
 
