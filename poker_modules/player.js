@@ -6,21 +6,22 @@
  * @param int chips (the total amount of chip the user has)
  */
 var Player = function( id, socket, name, chips ) {
-	this.public = {};
+	this.public = {
+		// The name of the user
+		name: name,
+		// The chips that the player plays on the table
+		chips_in_play: 0,
+		// Flag that shows whether a player who is sitting on the table, wants to be dealt cards
+		sitting_in: false
+	};
 	// The user id
 	this.id = id;
 	// The socket object of the user
 	this.socket = socket;
-	// The name of the user
-	this.public.name = name;
 	// The chips that are available in the user's account
 	this.chips = chips;
-	// The chips that the player plays on the table
-	this.public.chips_in_play = 0;
 	// Is set to false if the player is not sitting on any tables, otherwise it's set to the table id
 	this.sitting_on_table = false;
-	// Flag that shows whether a player who is sitting on the table, wants to be dealt cards
-	this.public.sitting_in = false;
 	// The number of the seat of the table that the player is sitting
 	this.seat = null;
 	// Reference to the player who is sitting after the current player

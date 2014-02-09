@@ -8,6 +8,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.showing_chips_modal = false;
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
+	$scope.buy_in_amount = 200;
 	$rootScope.sitting_on_table = null;
 
 	$http({
@@ -63,6 +64,11 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 			$scope.action_state = '';
 			$scope.$digest();
 		});
+	}
+
+	$scope.next = function() {
+		console.log($scope.table.id);
+		socket.emit( 'next', $scope.table.id );
 	}
 
 	socket.on( 'table_data', function( data ) {

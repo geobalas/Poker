@@ -94,13 +94,17 @@ app.get('/table_data/:table_id', function( req, res ) {
 	}
 });
 
+app.get('/table_10/:table_id', function( req, res ) {
+	res.redirect('/');
+});
+
 io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player disconnects
 	 */
 	socket.on( 'disconnect', function() {
 		// If the player was sitting on a table
-		if( typeof players[socket.id] !== 'undefined' && players[socket.id].sitting_on_table && tables[players[socket.id].sitting_on_table] ) {
+		if( typeof players[socket.id] !== 'undefined' && players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
 			// The seat on which the player was sitting
 			var seat = players[socket.id].seat;
 			// The table on which the player was sitting
@@ -122,7 +126,7 @@ io.sockets.on('connection', function( socket ) {
 	 */
 	socket.on( 'leave_table', function( callback ) {
 		// If the player was sitting on a table
-		if( players[socket.id].sitting_on_table && tables[players[socket.id].sitting_on_table] ) {
+		if( players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
 			// The seat on which the player was sitting
 			var seat = players[socket.id].seat;
 			// The table on which the player was sitting
@@ -210,18 +214,13 @@ io.sockets.on('connection', function( socket ) {
 				callback( { 'success': true, 'sitting_on_table': data.table_id } );
 				// Add the player to the socket room
 				socket.join( 'table-' + data.table_id );
-				// Notify the table that the user has sat in
-				io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
 				// If there are no players playing right now, try to initialize a game with the new player
 				if( !tables[data.table_id].game_is_on && tables[data.table_id].public.no_of_players_sitting_in > 1 ) {
 					// Initialize the game
 					tables[data.table_id].initialize_game();
-					tables[data.table_id].init_small_blind();
-					// Send the new table data to the players
-					io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
-					// Start asking players to post the small blind
-					tables[data.table_id].player_to_act.socket.emit( 'post_small_blind' );
 				}
+				// Notify the table that the user has sat in
+				io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
 			}
 		} else {
 			// If the user is not allowed to sit in, notify the user
@@ -235,7 +234,7 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('sit_in', function( callback ) {
 		if( 
 			players[socket.id].sitting_on_table
-			&& players[socket.id].seat
+			&& players[socket.id].seat !== null
 			&& !players[socket.id].public.sitting_in
 		) {
 			// Getting the table id from the player object
@@ -247,7 +246,6 @@ io.sockets.on('connection', function( socket ) {
 			if( !tables[table_id].game_is_on && tables[table_id].public.no_of_players_sitting_in > 1 ) {
 				// Initialize the game
 				tables[table_id].initialize_game();
-				tables[table_id].init_small_blind();
 				// Send the new table data to the players
 				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 				// Start asking players to post the small blind
@@ -267,12 +265,12 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].phase === 'small_blind' ) {
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].phase === 'small_blind' || tables[table_id].phase === 'big_blind' ) ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
 					if( tables[table_id].phase === 'small_blind' ) {
-						tables[table_id].next_player();
 						tables[table_id].init_big_blind();
+						tables[table_id].action_to_next_player();
 						// Start asking players to post the small blind
 						tables[table_id].player_to_act.socket.emit( 'post_big_blind' );
 					} else {
@@ -280,16 +278,19 @@ io.sockets.on('connection', function( socket ) {
 						// Start asking players to post the small blind
 						tables[table_id].player_to_act.socket.emit( 'act_no_bets' );
 					}
-					// Send the new table data to the players
-					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 				} else {
-					players[socket.id].sit_out();
 					tables[table_id].player_sat_out( players[socket.id].seat );
-					// Send the new table data to the players
-					io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 					callback( { 'success': true } );
 				}
+				// Send the new table data to the players
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 			}
 		}
+	});
+
+	socket.on('next', function( table_id ) {
+		tables[table_id].player_to_act = tables[table_id].player_to_act.next_player;
+		tables[table_id].public.active_seat = tables[table_id].player_to_act.seat;
+		io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 	});
 });
