@@ -9,6 +9,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
 	$scope.buy_in_amount = 200;
+	$scope.cards = null;
 	$rootScope.sitting_on_table = null;
 
 	$http({
@@ -89,6 +90,12 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 
 	socket.on( 'post_big_blind', function( data ) {
 		$scope.action_state = 'post_big_blind';
+		$scope.$digest();
+	});
+
+	socket.on( 'dealing_cards', function( cards ) {
+		$scope.cards = cards;
+		console.log( $scope.cards );
 		$scope.$digest();
 	});
 

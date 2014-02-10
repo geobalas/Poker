@@ -33,10 +33,10 @@ var players = [];
 var tables = [];
 var decks = [];
 
-tables[0] = new Table( 0, 'Sample 10-handed Table', 10, 2, 1, 200, 40, false );
-tables[1] = new Table( 1, 'Sample 6-handed Table', 6, 4, 2, 400, 80, false );
-tables[2] = new Table( 2, 'Sample 2-handed Table', 2, 8, 4, 800, 160, false );
-tables[3] = new Table( 3, 'Sample 6-handed Private Table', 6, 20, 10, 2000, 400, true );
+tables[0] = new Table( 0, 'Sample 10-handed Table', new Deck(), 10, 2, 1, 200, 40, false );
+tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), 6, 4, 2, 400, 80, false );
+tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), 2, 8, 4, 800, 160, false );
+tables[3] = new Table( 3, 'Sample 6-handed Private Table', new Deck(), 6, 20, 10, 2000, 400, true );
 
 for( var i=0 ; i<4 ; i++ ) {
 	decks[i] = new Deck();
@@ -111,11 +111,14 @@ io.sockets.on('connection', function( socket ) {
 			var table_id = players[socket.id].sitting_on_table;
 			// Remove the player from the seat
 			tables[table_id].player_left( seat );
-			players[socket.id].leave_table( seat );
 			// Remove the player from the socket room
-			socket.leave( 'table-' + this.sitting_on_table );
+			socket.leave( 'table-' + table_id );
 			// Send the new table data
-			socket.broadcast.to( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
+			if( !tables[table_id].game_is_on ) {
+				io.sockets.in( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
+			} else {
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+			}
 			// Dettach the player object from the players array so that it can be destroyed by the garbage collector
 			delete players[socket.id];
 		}
@@ -133,11 +136,12 @@ io.sockets.on('connection', function( socket ) {
 			var table_id = players[socket.id].sitting_on_table;
 			// Remove the player from the seat
 			tables[table_id].player_left( seat );
-			players[socket.id].leave_table( seat );
-			// Remove the player from the socket room
-			socket.leave( 'table-' + this.sitting_on_table );
 			// Emit the new table data
-			io.sockets.in( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
+			if( !tables[table_id].game_is_on ) {
+				io.sockets.in( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
+			} else {
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+			}
 			// Send the number of total chips back to the user
 			callback( { 'success': true, 'total_chips': players[socket.id].chips } );
 		}
@@ -265,18 +269,16 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].phase === 'small_blind' || tables[table_id].phase === 'big_blind' ) ) {
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
-					if( tables[table_id].phase === 'small_blind' ) {
+					if( tables[table_id].public.phase === 'small_blind' ) {
 						tables[table_id].init_big_blind();
 						tables[table_id].action_to_next_player();
 						// Start asking players to post the small blind
 						tables[table_id].player_to_act.socket.emit( 'post_big_blind' );
 					} else {
 						tables[table_id].init_preflop();
-						// Start asking players to post the small blind
-						tables[table_id].player_to_act.socket.emit( 'act_no_bets' );
 					}
 				} else {
 					tables[table_id].player_sat_out( players[socket.id].seat );
