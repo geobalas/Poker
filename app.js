@@ -34,8 +34,8 @@ var tables = [];
 var decks = [];
 
 tables[0] = new Table( 0, 'Sample 10-handed Table', new Deck(), 10, 2, 1, 200, 40, false );
-tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), 6, 4, 2, 400, 80, false );
-tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), 2, 8, 4, 800, 160, false );
+//tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), 6, 4, 2, 400, 80, false );
+//tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), 2, 8, 4, 800, 160, false );
 tables[3] = new Table( 3, 'Sample 6-handed Private Table', new Deck(), 6, 20, 10, 2000, 400, true );
 
 for( var i=0 ; i<4 ; i++ ) {

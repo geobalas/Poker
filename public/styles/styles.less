@@ -1,5 +1,5 @@
 @light_purple: #9880e9;
-@transparent_purple: rgba(46,31,62,0.5);
+@transparent_purple: rgba(46,31,62,0.9);
 @lavender: #BE78E8;
 
 body {
@@ -41,6 +41,10 @@ a {
 	font-family: Arial;
 	color: @light_purple;
 	font-size: 1em;
+}
+
+.hidden {
+	display: none;
 }
 
 .error {
@@ -106,6 +110,7 @@ div.player_wrap {
 	text-align: center;
 	width: 128px;
 	margin: 60px auto;
+	position: relative;
 	&.top {
 		margin-top: 100px;
 	}
@@ -126,6 +131,190 @@ div.player_wrap {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		margin: 0;
+	}
+	.cards {
+	    //height: 107px;
+	    height: 60px;
+	    left: 30px;
+	    position: absolute;
+	    top: -61px;
+	    width: 100px;
+	    display: none;
+	    .card:first-child {
+	    	left: 0;
+	    }
+	    .card {
+	    	background-image: url("/images/deck.png");
+		    background-size: 1040px auto;
+		    border-radius: 8px 8px 0 0;
+		    height: 100%;
+		    left: 28px;
+		    overflow: hidden;
+		    position: absolute;
+		    width: 71px;
+		    /**
+		     * CSS Sprites
+		     */
+	    	&.card-as {
+		    	background-position: -2px -2px;
+	    	}
+	    	&.card-ah {
+	    		background-position: -2px -337px;
+	    	}
+	    	&.card-ad {
+	    		background-position: -2px -226px;
+	    	}
+	    	&.card-ac {
+	    		background-position: -2px -112px;
+	    	}
+	    	&.card-ks {
+		    	background-position: -76px -2px;
+	    	}
+	    	&.card-kh {
+	    		background-position: -76px -337px;
+	    	}
+	    	&.card-kd {
+	    		background-position: -76px -226px;
+	    	}
+	    	&.card-kc {
+	    		background-position: -76px -112px;
+	    	}
+	    	&.card-qs {
+		    	background-position: -150px -2px;
+	    	}
+	    	&.card-qh {
+	    		background-position: -150px -337px;
+	    	}
+	    	&.card-qd {
+	    		background-position: -150px -226px;
+	    	}
+	    	&.card-qc {
+	    		background-position: -150px -112px;
+	    	}
+	    	&.card-js {
+		    	background-position: -224px -2px;
+	    	}
+	    	&.card-jh {
+	    		background-position: -224px -337px;
+	    	}
+	    	&.card-jd {
+	    		background-position: -224px -226px;
+	    	}
+	    	&.card-jc {
+	    		background-position: -224px -112px;
+	    	}
+	    	&.card-ts {
+		    	background-position: -298px -2px;
+	    	}
+	    	&.card-th {
+	    		background-position: -298px -337px;
+	    	}
+	    	&.card-td {
+	    		background-position: -298px -226px;
+	    	}
+	    	&.card-tc {
+	    		background-position: -298px -112px;
+	    	}
+	    	&.card-9s {
+		    	background-position: -372px -2px;
+	    	}
+	    	&.card-9h {
+	    		background-position: -372px -337px;
+	    	}
+	    	&.card-9d {
+	    		background-position: -372px -226px;
+	    	}
+	    	&.card-9c {
+	    		background-position: -372px -112px;
+	    	}
+	    	&.card-8s {
+		    	background-position: -447px -2px;
+	    	}
+	    	&.card-8h {
+	    		background-position: -447px -337px;
+	    	}
+	    	&.card-8d {
+	    		background-position: -447px -226px;
+	    	}
+	    	&.card-8c {
+	    		background-position: -447px -112px;
+	    	}
+	    	&.card-7s {
+		    	background-position: -521px -2px;
+	    	}
+	    	&.card-7h {
+	    		background-position: -521px -337px;
+	    	}
+	    	&.card-7d {
+	    		background-position: -521px -226px;
+	    	}
+	    	&.card-7c {
+	    		background-position: -521px -112px;
+	    	}
+	    	&.card-6s {
+		    	background-position: -595px -2px;
+	    	}
+	    	&.card-6h {
+	    		background-position: -595px -337px;
+	    	}
+	    	&.card-6d {
+	    		background-position: -595px -226px;
+	    	}
+	    	&.card-6c {
+	    		background-position: -595px -112px;
+	    	}
+	    	&.card-5s {
+		    	background-position: -670px -3px;
+	    	}
+	    	&.card-5h {
+	    		background-position: -670px -337px;
+	    	}
+	    	&.card-5d {
+	    		background-position: -670px -226px;
+	    	}
+	    	&.card-5c {
+	    		background-position: -670px -112px;
+	    	}
+	    	&.card-4s {
+		    	background-position: -744px -3px;
+	    	}
+	    	&.card-4h {
+	    		background-position: -744px -337px;
+	    	}
+	    	&.card-4d {
+	    		background-position: -744px -226px;
+	    	}
+	    	&.card-4c {
+	    		background-position: -744px -112px;
+	    	}
+	    	&.card-3s {
+		    	background-position: -818px -2px;
+	    	}
+	    	&.card-3h {
+	    		background-position: -818px -337px;
+	    	}
+	    	&.card-3d {
+	    		background-position: -818px -226px;
+	    	}
+	    	&.card-3c {
+	    		background-position: -818px -112px;
+	    	}
+	    	&.card-2s {
+		    	background-position: -892px -2px;
+	    	}
+	    	&.card-2h {
+	    		background-position: -892px -337px;
+	    	}
+	    	&.card-2d {
+	    		background-position: -892px -226px;
+	    	}
+	    	&.card-2c {
+	    		background-position: -892px -112px;
+	    	}
+	    	&.card-back {
+	    		background-position: -967px -112px;
+	    	}
+	    }
 	}
 }
 

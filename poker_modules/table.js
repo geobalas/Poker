@@ -117,6 +117,7 @@ Table.prototype.action_to_next_player = function() {
 			this.player_to_act.socket.emit( 'post_big_blind' );
 			break;
 		case 'preflop':
+			this.player_to_act.socket.emit( 'act_no_bets' );
 			break;
 	}
 }
@@ -226,17 +227,13 @@ Table.prototype.init_big_blind = function() {
 Table.prototype.init_preflop = function() {
 	// Set the table phase to 'preflop'
 	this.public.phase = 'preflop';
-	this.player_to_act = this.dealer.next_player;
-	this.last_player_to_act = this.dealer;
-	this.last_position = this.dealer;
-	this.public.active_seat = this.player_to_act.seat;
 	var current_player = this.player_to_act;
 	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
 		current_player.cards = this.deck.deal( 2 );
 		current_player.socket.emit( 'dealing_cards', current_player.cards );
 		current_player = current_player.next_player;
 	}
-	this.player_to_act.socket.emit( 'act_no_bets' );
+	this.action_to_next_player();
 }
 
 /**

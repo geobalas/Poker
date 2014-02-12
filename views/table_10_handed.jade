@@ -14,6 +14,9 @@
 		.cell
 			a#to_lobby.button(href="/", ng-show="!$root.sitting_on_table") < Lobby
 			.player_wrap.top.left(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
+				.cards
+					div.card
+					div.card
 				.sit_in(ng-show="!table.seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
 				.player_content(ng-show="table.seats[0].name")
 					p {{table.seats[0].name}}
