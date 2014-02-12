@@ -67,6 +67,9 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	/**
+	 * FOR DEBUGGING ONLY
+	 */
 	$scope.next = function() {
 		console.log($scope.table.id);
 		socket.emit( 'next', $scope.table.id );

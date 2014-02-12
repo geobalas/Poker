@@ -272,17 +272,24 @@ Table.prototype.player_left = function( seat ) {
 
 /**
  * Changes the data of the table when a player sits out
+ * @param int 	seat 			(the numeber of the seat)
+ * @param bool 	player_left		(flag that shows that the player actually left the table)
  */
 Table.prototype.player_sat_out = function( seat, player_left ) {
+	// Set the player_left parameter to false if it's not specified
 	if( typeof player_left == 'undefined' ) {
 		player_left = false;
 	}
+	// start_new_round will be set to true, if the player has left and
+	// a new round should be started after removing the player data completely
 	var start_new_round = false;
 	this.public.no_of_players_sitting_in--;
+	// If there are not enough players sitting in, stop the game
 	if( this.public.no_of_players_sitting_in < 2 ) {
 		this.seats[seat].sit_out();
 		this.stop_game();
-	} 
+	}
+	// If the player was playing in the current round
 	else if( this.seats[seat].public.in_hand ) {
 		this.no_of_players_in_hand--;
 		// If there were only two players but there are more players sitting in, waiting to play, start a new round

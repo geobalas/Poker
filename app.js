@@ -290,6 +290,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * ONLY FOR DEBUGGING
+	 */
 	socket.on('next', function( table_id ) {
 		tables[table_id].player_to_act = tables[table_id].player_to_act.next_player;
 		tables[table_id].public.active_seat = tables[table_id].player_to_act.seat;
