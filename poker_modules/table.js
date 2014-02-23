@@ -55,11 +55,14 @@ var Table = function( id, name, deck, no_of_seats, big_blind, small_blind, max_b
 	this.heads_up = false;
 	// The table is not displayed in the lobby
 	this.private_table = private_table;
+	// The number of players that currently hold cards in their hands
 	this.no_of_players_in_hand = 0;
 	// References to all the player objects in the table, indexed by seat number
 	this.seats = [];
 	// The deck of the table
 	this.deck = deck;
+	// If the pot has been raised for the current round
+	this.betted_pot = false;
 	// Initializing the empty seats
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
 		this.seats[i] = {};
@@ -94,6 +97,8 @@ Table.prototype.link_players = function() {
 			}
 			current_player.public.in_hand = true;
 			this.no_of_players_in_hand++;
+			current_player.cards = [];
+			current_player.public.has_cards = false;
 		}
 	}
 	// Linking the last player with the first player in order to form the "circle"
@@ -101,25 +106,6 @@ Table.prototype.link_players = function() {
 	this.seats[first_player_seat].previous_player = current_player;
 
 	return true;
-}
-
-/**
- * Making the next player the active one
- */
-Table.prototype.action_to_next_player = function() {
-	this.player_to_act = this.player_to_act.next_player;
-	this.public.active_seat = this.player_to_act.seat;
-	switch( this.public.phase ) {
-		case 'small_blind':
-			this.player_to_act.socket.emit( 'post_small_blind' );
-			break;
-		case 'big_blind':
-			this.player_to_act.socket.emit( 'post_big_blind' );
-			break;
-		case 'preflop':
-			this.player_to_act.socket.emit( 'act_no_bets' );
-			break;
-	}
 }
 
 /**
@@ -210,7 +196,7 @@ Table.prototype.init_small_blind = function() {
 	}
 	this.public.active_seat = this.player_to_act.seat;
 	// Start asking players to post the small blind
-	this.player_to_act.socket.emit( 'post_small_blind' );
+	this.player_to_act.socket.emit('post_small_blind');
 }
 
 /**
@@ -228,12 +214,85 @@ Table.prototype.init_preflop = function() {
 	// Set the table phase to 'preflop'
 	this.public.phase = 'preflop';
 	var current_player = this.player_to_act;
+	// The player that placed the big blind is the last player to act for the round
+	this.last_player_to_act = this.player_to_act;
 	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
 		current_player.cards = this.deck.deal( 2 );
+		current_player.public.has_cards = true;
 		current_player.socket.emit( 'dealing_cards', current_player.cards );
 		current_player = current_player.next_player;
 	}
 	this.action_to_next_player();
+}
+
+/**
+ * Method that starts the next phase of the round
+ */
+Table.prototype.init_next_phase = function( phase ) {
+	// Set the table phase to 'preflop'
+	this.public.phase = phase;
+	this.betted_pot = false;
+	this.player_to_act = this.last_position.next_player;
+	this.public.active_seat = this.player_to_act.seat;
+	this.last_player_to_act = this.last_position;
+	this.player_to_act.socket.emit('act_not_betted_pot');
+}
+
+/**
+ * Making the next player the active one
+ */
+Table.prototype.action_to_next_player = function() {
+	this.player_to_act = this.player_to_act.next_player;
+	this.public.active_seat = this.player_to_act.seat;
+	switch( this.public.phase ) {
+		case 'small_blind':
+			this.player_to_act.socket.emit( 'post_small_blind' );
+			break;
+		case 'big_blind':
+			this.player_to_act.socket.emit( 'post_big_blind' );
+			break;
+		case 'preflop':
+			this.player_to_act.socket.emit( 'act_betted_pot' );
+			break;
+		case 'flop':
+			if( this.betted_pot ) {
+				this.player_to_act.socket.emit( 'act_betted_pot' );
+			} else {
+				this.player_to_act.socket.emit( 'act_not_betted_pot' );
+			}
+			break;
+		case 'turn':
+			if( this.betted_pot ) {
+				this.player_to_act.socket.emit( 'act_betted_pot' );
+			} else {
+				this.player_to_act.socket.emit( 'act_not_betted_pot' );
+			}
+			break;
+		case 'river':
+			if( this.betted_pot ) {
+				this.player_to_act.socket.emit( 'act_betted_pot' );
+			} else {
+				this.player_to_act.socket.emit( 'act_not_betted_pot' );
+			}
+			break;
+	}
+}
+
+Table.prototype.end_phase = function() {
+	switch( this.public.phase ) {
+		case 'preflop':
+			this.init_next_phase( 'flop' );
+			break;
+		case 'flop':
+			this.init_next_phase( 'turn' );
+			break;
+		case 'turn':
+			this.init_next_phase( 'river' );
+			break;
+		case 'river':
+			this.new_round();
+			break;
+	}
 }
 
 /**
@@ -324,6 +383,20 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 }
 
 /**
+ * Method that makes the doubly linked list of players
+ */
+Table.prototype.remove_all_cards_from_play = function() {
+	// For each seat
+	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
+		// If a player is sitting on the current seat
+		if( typeof this.seats[i].public !== 'undefined' ) {
+			this.seats[i].cards = [];
+			this.seats[i].public.has_cards = false;
+		}
+	}
+}
+
+/**
  * Method that stops the game
  */
 Table.prototype.stop_game = function() {
@@ -332,6 +405,7 @@ Table.prototype.stop_game = function() {
 	this.public.active_seat = null;
 	this.player_to_act = {};
 	this.last_player_to_act = {};
+	this.remove_all_cards_from_play();
 	this.game_is_on = false;
 }
 

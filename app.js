@@ -290,6 +290,23 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	socket.on('check', function( callback ){
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].raised_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+				callback( { 'success': true } );
+				if( tables[table_id].last_player_to_act.socket.id === socket.id ) {
+					tables[table_id].end_phase();
+				} else {
+					tables[table_id].action_to_next_player();
+				}
+				// Send the new table data to the players
+				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+			}
+		}
+	});
+
 	/**
 	 * ONLY FOR DEBUGGING
 	 */

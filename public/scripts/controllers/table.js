@@ -9,7 +9,8 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
 	$scope.buy_in_amount = 200;
-	$scope.cards = null;
+	$scope.my_cards = ['',''];
+	$scope.my_seat = null;
 	$rootScope.sitting_on_table = null;
 
 	$http({
@@ -26,6 +27,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 				$rootScope.sitting_on_table = response.sitting_on_table;
 				$rootScope.sitting_in = true;
 				$scope.buy_in_error = null;
+				$scope.my_seat = seat;
 			} else {
 				if( response.error ) {
 					$scope.buy_in_error = response.error;
@@ -67,6 +69,15 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	$scope.check = function() {
+		socket.emit( 'check', function( response ) {
+			if( response.success ) {
+				$scope.action_state = '';
+				$scope.$digest();
+			}
+		});
+	}
+
 	/**
 	 * FOR DEBUGGING ONLY
 	 */
@@ -97,13 +108,19 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	});
 
 	socket.on( 'dealing_cards', function( cards ) {
-		$scope.cards = cards;
-		console.log( $scope.cards );
+		$scope.my_cards[0] = 'card-'+cards[0];
+		$scope.my_cards[1] = 'card-'+cards[1];
 		$scope.$digest();
 	});
 
-	socket.on( 'act_no_bets', function( data ) {
-		$scope.action_state = 'act_no_bets';
+	socket.on( 'act_betted_pot', function() {
+		$scope.action_state = 'act_betted_pot';
+		$scope.$digest();
+	});
+
+	socket.on( 'act_not_betted_pot', function() {
+		$scope.action_state = 'act_not_betted_pot';
+		console.log($scope.action_state);
 		$scope.$digest();
 	});
 

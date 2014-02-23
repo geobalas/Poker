@@ -14,7 +14,9 @@ var Player = function( id, socket, name, chips ) {
 		// Flag that shows whether a player who is sitting on the table, wants to be dealt cards
 		sitting_in: false,
 		// Flag that shows if the player is playing in the current round
-		in_hand: false
+		in_hand: false,
+		// Flag that shows if the player is holding cards
+		has_cards: false
 	};
 	// The user id
 	this.id = id;
