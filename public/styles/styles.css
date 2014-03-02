@@ -91,6 +91,39 @@ div.double_cell {
   width: 50%;
   height: 100%;
 }
+div.controls div.cell {
+  width: 20%;
+}
+div.controls div.double_cell {
+  width: 40%;
+}
+div#chat div#messages {
+  border: 1px solid;
+  border-radius: 8px;
+  height: 63%;
+  margin: 8px 8px 0 8px;
+  background-color: #fff;
+  padding: 8px;
+  overflow: auto;
+}
+div#chat div#messages p {
+  margin: 0;
+  word-wrap: break-word;
+}
+div#chat input[type="submit"] {
+  font-size: 1.3em;
+  padding: 5px;
+  margin-top: 1px;
+  background-color: rgba(46, 31, 62, 0.9);
+  border-radius: 8px;
+}
+div#chat input[type="text"] {
+  width: 330px;
+  font-size: 1.3em;
+  margin-left: 8px;
+  padding: 5px;
+  border-radius: 8px;
+}
 div.player_wrap {
   padding: 16px;
   background-color: rgba(46, 31, 62, 0.9);
@@ -125,186 +158,197 @@ div.player_wrap p {
   overflow: hidden;
   margin: 0;
 }
-div.player_wrap .cards {
+div.player_wrap .player_cards {
+  overflow: hidden;
   height: 60px;
   left: 30px;
   position: absolute;
   top: -61px;
   width: 100px;
 }
-div.player_wrap .cards .card:first-child {
+div.player_wrap .player_cards .card:first-child {
   left: 0;
 }
-div.player_wrap .cards .card {
+div.player_wrap .player_cards .card {
+  left: 28px;
+  position: absolute;
+}
+div.board_wrap {
+  margin: 10px 48px;
+}
+div.board_wrap .card {
+  float: left;
+  margin-right: 10px;
+}
+.card {
   background-image: url("/images/deck.png");
   background-size: 1040px auto;
   border-radius: 8px 8px 0 0;
   height: 100%;
-  left: 28px;
   overflow: hidden;
-  position: absolute;
-  width: 71px;
+  width: 73px;
+  height: 109px;
   /**
-		     * CSS Sprites
-		     */
+	 * CSS Sprites
+	 */
 }
-div.player_wrap .cards .card.card-As {
+.card.card-As {
   background-position: -2px -2px;
 }
-div.player_wrap .cards .card.card-Ah {
+.card.card-Ah {
   background-position: -2px -338px;
 }
-div.player_wrap .cards .card.card-Ad {
+.card.card-Ad {
   background-position: -2px -226px;
 }
-div.player_wrap .cards .card.card-Ac {
+.card.card-Ac {
   background-position: -2px -113px;
 }
-div.player_wrap .cards .card.card-Ks {
+.card.card-Ks {
   background-position: -76px -2px;
 }
-div.player_wrap .cards .card.card-Kh {
+.card.card-Kh {
   background-position: -76px -338px;
 }
-div.player_wrap .cards .card.card-Kd {
+.card.card-Kd {
   background-position: -76px -226px;
 }
-div.player_wrap .cards .card.card-Kc {
+.card.card-Kc {
   background-position: -76px -113px;
 }
-div.player_wrap .cards .card.card-Qs {
+.card.card-Qs {
   background-position: -150px -2px;
 }
-div.player_wrap .cards .card.card-Qh {
+.card.card-Qh {
   background-position: -150px -338px;
 }
-div.player_wrap .cards .card.card-Qd {
+.card.card-Qd {
   background-position: -150px -226px;
 }
-div.player_wrap .cards .card.card-Qc {
+.card.card-Qc {
   background-position: -150px -113px;
 }
-div.player_wrap .cards .card.card-Js {
+.card.card-Js {
   background-position: -224px -2px;
 }
-div.player_wrap .cards .card.card-Jh {
+.card.card-Jh {
   background-position: -224px -338px;
 }
-div.player_wrap .cards .card.card-Jd {
+.card.card-Jd {
   background-position: -224px -226px;
 }
-div.player_wrap .cards .card.card-Jc {
+.card.card-Jc {
   background-position: -224px -113px;
 }
-div.player_wrap .cards .card.card-Ts {
+.card.card-Ts {
   background-position: -298px -2px;
 }
-div.player_wrap .cards .card.card-Th {
+.card.card-Th {
   background-position: -298px -338px;
 }
-div.player_wrap .cards .card.card-Td {
+.card.card-Td {
   background-position: -298px -226px;
 }
-div.player_wrap .cards .card.card-Tc {
+.card.card-Tc {
   background-position: -298px -113px;
 }
-div.player_wrap .cards .card.card-9s {
+.card.card-9s {
   background-position: -372px -2px;
 }
-div.player_wrap .cards .card.card-9h {
+.card.card-9h {
   background-position: -372px -338px;
 }
-div.player_wrap .cards .card.card-9d {
+.card.card-9d {
   background-position: -372px -226px;
 }
-div.player_wrap .cards .card.card-9c {
+.card.card-9c {
   background-position: -372px -113px;
 }
-div.player_wrap .cards .card.card-8s {
+.card.card-8s {
   background-position: -447px -2px;
 }
-div.player_wrap .cards .card.card-8h {
+.card.card-8h {
   background-position: -447px -338px;
 }
-div.player_wrap .cards .card.card-8d {
+.card.card-8d {
   background-position: -447px -226px;
 }
-div.player_wrap .cards .card.card-8c {
+.card.card-8c {
   background-position: -447px -113px;
 }
-div.player_wrap .cards .card.card-7s {
+.card.card-7s {
   background-position: -521px -2px;
 }
-div.player_wrap .cards .card.card-7h {
+.card.card-7h {
   background-position: -521px -338px;
 }
-div.player_wrap .cards .card.card-7d {
+.card.card-7d {
   background-position: -521px -226px;
 }
-div.player_wrap .cards .card.card-7c {
+.card.card-7c {
   background-position: -521px -113px;
 }
-div.player_wrap .cards .card.card-6s {
+.card.card-6s {
   background-position: -595px -2px;
 }
-div.player_wrap .cards .card.card-6h {
+.card.card-6h {
   background-position: -595px -338px;
 }
-div.player_wrap .cards .card.card-6d {
+.card.card-6d {
   background-position: -595px -226px;
 }
-div.player_wrap .cards .card.card-6c {
+.card.card-6c {
   background-position: -595px -113px;
 }
-div.player_wrap .cards .card.card-5s {
+.card.card-5s {
   background-position: -670px -3px;
 }
-div.player_wrap .cards .card.card-5h {
+.card.card-5h {
   background-position: -670px -338px;
 }
-div.player_wrap .cards .card.card-5d {
+.card.card-5d {
   background-position: -670px -226px;
 }
-div.player_wrap .cards .card.card-5c {
+.card.card-5c {
   background-position: -670px -113px;
 }
-div.player_wrap .cards .card.card-4s {
+.card.card-4s {
   background-position: -744px -3px;
 }
-div.player_wrap .cards .card.card-4h {
+.card.card-4h {
   background-position: -744px -338px;
 }
-div.player_wrap .cards .card.card-4d {
+.card.card-4d {
   background-position: -744px -226px;
 }
-div.player_wrap .cards .card.card-4c {
+.card.card-4c {
   background-position: -746px -113px;
 }
-div.player_wrap .cards .card.card-3s {
+.card.card-3s {
   background-position: -818px -2px;
 }
-div.player_wrap .cards .card.card-3h {
+.card.card-3h {
   background-position: -818px -338px;
 }
-div.player_wrap .cards .card.card-3d {
+.card.card-3d {
   background-position: -818px -226px;
 }
-div.player_wrap .cards .card.card-3c {
+.card.card-3c {
   background-position: -819px -113px;
 }
-div.player_wrap .cards .card.card-2s {
+.card.card-2s {
   background-position: -892px -2px;
 }
-div.player_wrap .cards .card.card-2h {
+.card.card-2h {
   background-position: -892px -338px;
 }
-div.player_wrap .cards .card.card-2d {
+.card.card-2d {
   background-position: -892px -226px;
 }
-div.player_wrap .cards .card.card-2c {
+.card.card-2c {
   background-position: -894px -113px;
 }
-div.player_wrap .cards .card.card-back {
+.card.card-back {
   background-position: -967px -113px;
 }
 div.dealer_wrap {

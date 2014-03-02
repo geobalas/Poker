@@ -3,6 +3,7 @@
 		#modal
 			form
 				label(for="screen_name_input") Enter your screen name
+				p.error(ng-show="register_error") {{register_error}}
 				input.input_left(type="text", ng-model="new_screen_name", ng-trim="true")
 				input#submit_name(type="submit", ng-click="register()", value="Submit")
 		#curtain(ng-show="!$root.screen_name")

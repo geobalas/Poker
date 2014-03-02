@@ -9,7 +9,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
 	$scope.buy_in_amount = 200;
-	$scope.my_cards = ['',''];
+	$scope.my_cards = ['', ''];
 	$scope.my_seat = null;
 	$rootScope.sitting_on_table = null;
 
@@ -20,14 +20,21 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		$scope.table = data.table;
 	});
 
+	socket.emit( 'enter_room', { 'table_id': $routeParams.table_id } );
+
+	$scope.leave_room = function() {
+		socket.emit( 'leave_room' );
+	};
+
 	$scope.sit_on_the_table = function( seat ) {
 		socket.emit( 'sit_on_the_table', { 'seat': seat, 'table_id': $routeParams.table_id, 'chips': $scope.buy_in_amount }, function( response ){
 			if( response.success ){
 				$scope.show_buy_in_modal = false;
-				$rootScope.sitting_on_table = response.sitting_on_table;
+				$rootScope.sitting_on_table = $routeParams.table_id;
 				$rootScope.sitting_in = true;
 				$scope.buy_in_error = null;
 				$scope.my_seat = seat;
+				$scope.$digest();
 			} else {
 				if( response.error ) {
 					$scope.buy_in_error = response.error;
@@ -78,14 +85,6 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
-	/**
-	 * FOR DEBUGGING ONLY
-	 */
-	$scope.next = function() {
-		console.log($scope.table.id);
-		socket.emit( 'next', $scope.table.id );
-	}
-
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
 		$scope.$digest();
@@ -120,7 +119,6 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 
 	socket.on( 'act_not_betted_pot', function() {
 		$scope.action_state = 'act_not_betted_pot';
-		console.log($scope.action_state);
 		$scope.$digest();
 	});
 
@@ -128,4 +126,32 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		$scope.action_state = 'post_small_blind';
 		$scope.$digest();
 	});
+
+	/**
+	 * Chat
+	 */
+	$scope.send_message = function() {
+		if ( $scope.message_text.trim() ) {
+			var message = $scope.message_text.trim();
+			var message_box = document.querySelector('#messages');
+			socket.emit( 'send_message', message );
+
+			var message_element = angular.element( '<p><b>You</b>: ' + html_entities( message ) + '</p>' );
+			angular.element( message_box ).append( message_element );
+			message_box.scrollTop = message_box.scrollHeight;
+			$scope.message_text = '';
+		}
+	}
+
+	socket.on( 'receive_message', function( data ) {
+		var message_box = document.querySelector('#messages');
+		var message_element = angular.element( '<p><b>' + data.sender + '</b>: ' + data.message + '</p>' );
+		angular.element( message_box ).append( message_element );
+		message_box.scrollTop = message_box.scrollHeight;
+		$scope.message_text = '';
+	});
+
+	function html_entities(str) {
+	    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	}
 });

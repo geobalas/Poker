@@ -24,6 +24,8 @@ var Player = function( id, socket, name, chips ) {
 	this.socket = socket;
 	// The chips that are available in the user's account
 	this.chips = chips;
+	// The room that send the table events to the player
+	this.room = null;
 	// Is set to false if the player is not sitting on any tables, otherwise it's set to the table id
 	this.sitting_on_table = false;
 	// The number of the seat of the table that the player is sitting

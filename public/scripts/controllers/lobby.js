@@ -14,12 +14,17 @@ app.controller('LobbyController', function( $scope, $rootScope, $http ) {
 	$scope.register = function() {
 		// If there is some trimmed value for a new screen name
 		if( $scope.new_screen_name ) {
-			socket.emit( 'register', { 'new_screen_name': $scope.new_screen_name, 'socket_id': socket.socket.sessionid }, function( response ){
+			socket.emit( 'register', { 'new_screen_name': $scope.new_screen_name }, function( response ){
 				if( response.success ){
 					$rootScope.screen_name = response.screen_name;
 					$rootScope.total_chips = response.total_chips;
+					$scope.register_error = '';
 					$rootScope.$digest();
 				}
+				else if( response.message ) {
+					$scope.register_error = response.message;
+				}
+				$scope.$digest();
 			});
 		}
 	}

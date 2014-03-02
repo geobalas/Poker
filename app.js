@@ -5,7 +5,6 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	url = require('url') ,
-	crypto = require('crypto'),
 	connect = require('connect'),
 	Table = require('./poker_modules/table'),
 	Player = require('./poker_modules/player'),
@@ -17,9 +16,6 @@ app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(express.cookieParser());
-app.use(express.session({ key: 'express.sid', secret: 'poker_app' }));
 app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,16 +27,7 @@ if ('development' == app.get('env')) {
 
 var players = [];
 var tables = [];
-var decks = [];
-
-tables[0] = new Table( 0, 'Sample 10-handed Table', new Deck(), 10, 2, 1, 200, 40, false );
-//tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), 6, 4, 2, 400, 80, false );
-//tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), 2, 8, 4, 800, 160, false );
-tables[3] = new Table( 3, 'Sample 6-handed Private Table', new Deck(), 6, 20, 10, 2000, 400, true );
-
-for( var i=0 ; i<4 ; i++ ) {
-	decks[i] = new Deck();
-}
+var event_emitter = {};
 
 server.listen(3000);
 console.log('Listening on port 3000');
@@ -77,14 +64,29 @@ app.get('/table_10_handed.html', function( req, res ) {
 	res.render('table_10_handed');
 });
 
+// If the table is requested manually, redirect to lobby.
+app.get('/table_10/:table_id', function( req, res ) {
+	res.redirect('/');
+});
+
 // The 6-seat table markup
 app.get('/table_6_handed.html', function( req, res ) {
 	res.render('table_6_handed');
 });
 
+// If the table is requested manually, redirect to lobby.
+app.get('/table_6/:table_id', function( req, res ) {
+	res.redirect('/');
+});
+
 // The 2-seat table markup
 app.get('/table_2_handed.html', function( req, res ) {
 	res.render('table_2_handed');
+});
+
+// If the table is requested manually, redirect to lobby.
+app.get('/table_2/:table_id', function( req, res ) {
+	res.redirect('/');
 });
 
 // The table data
@@ -94,32 +96,48 @@ app.get('/table_data/:table_id', function( req, res ) {
 	}
 });
 
-app.get('/table_10/:table_id', function( req, res ) {
-	res.redirect('/');
-});
-
 io.sockets.on('connection', function( socket ) {
+
+	/**
+	 * When a player enters a room
+	 */
+	socket.on( 'enter_room', function( data ) {
+		if( players[socket.id].room === null ) {
+			// Add the player to the socket room
+			socket.join( 'table-' + data.table_id );
+			// Add the room to the player's data
+			players[socket.id].room = data.table_id;
+		}
+	});
+
+	/**
+	 * When a player leaves a room
+	 */
+	socket.on( 'leave_room', function() {
+		if( players[socket.id].room !== null && players[socket.id].sitting_on_table === false ) {
+			// Remove the player from the socket room
+			socket.leave( 'table-' + players[socket.id].room );
+			// Remove the room to the player's data
+			players[socket.id].room = null;
+		}
+	});
+
 	/**
 	 * When a player disconnects
 	 */
 	socket.on( 'disconnect', function() {
-		// If the player was sitting on a table
-		if( typeof players[socket.id] !== 'undefined' && players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
-			// The seat on which the player was sitting
-			var seat = players[socket.id].seat;
-			// The table on which the player was sitting
-			var table_id = players[socket.id].sitting_on_table;
-			// Remove the player from the seat
-			tables[table_id].player_left( seat );
-			// Remove the player from the socket room
-			socket.leave( 'table-' + table_id );
-			// Send the new table data
-			if( !tables[table_id].game_is_on ) {
-				io.sockets.in( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
-			} else {
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+		// If the socket points to a player object
+		if( typeof players[socket.id] !== 'undefined' ) {
+			// If the player was sitting on a table
+			if( players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
+				// The seat on which the player was sitting
+				var seat = players[socket.id].seat;
+				// The table on which the player was sitting
+				var table_id = players[socket.id].sitting_on_table;
+				// Remove the player from the seat
+				tables[table_id].player_left( seat );
 			}
-			// Dettach the player object from the players array so that it can be destroyed by the garbage collector
+			// Remove the player object from the players array
 			delete players[socket.id];
 		}
 	});
@@ -136,12 +154,6 @@ io.sockets.on('connection', function( socket ) {
 			var table_id = players[socket.id].sitting_on_table;
 			// Remove the player from the seat
 			tables[table_id].player_left( seat );
-			// Emit the new table data
-			if( !tables[table_id].game_is_on ) {
-				io.sockets.in( 'table-' + table_id ).emit( 'game_stopped', tables[table_id].public );
-			} else {
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
-			}
 			// Send the number of total chips back to the user
 			callback( { 'success': true, 'total_chips': players[socket.id].chips } );
 		}
@@ -156,16 +168,27 @@ io.sockets.on('connection', function( socket ) {
 			var new_screen_name = data.new_screen_name.trim();
 			// If the new screen name is not an empty string
 			if( new_screen_name && typeof players[socket.id] === 'undefined' ) {
-				// Create the player object
-				var player_id = socket.id + Math.ceil(Math.random() * 999999);
-				// Creating the player object
-				players[socket.id] = new Player( player_id, socket, new_screen_name, 1000 );
-				callback( { success: true, screen_name: new_screen_name, total_chips: players[socket.id].chips } );
+				var name_exists = false;
+				for( var i in players ) {
+					if( players[i].public.name && players[i].public.name == new_screen_name ) {
+						name_exists = true;
+						break;
+					}
+				}
+				if( !name_exists ) {
+					// Create the player object
+					var player_id = socket.id + Math.ceil(Math.random() * 999999);
+					// Creating the player object
+					players[socket.id] = new Player( player_id, socket, new_screen_name, 1000 );
+					callback( { 'success': true, screen_name: new_screen_name, total_chips: players[socket.id].chips } );
+				} else {
+					callback( { 'success': false, 'message': 'This name is taken' } );
+				}
 			} else {
-				callback( { success: false } );
+				callback( { 'success': false, 'message': 'Please enter a screen name' } );
 			}
 		} else {
-			callback( { success: false } );
+			callback( { 'success': false, 'message': '' } );
 		}
 	});
 
@@ -188,6 +211,8 @@ io.sockets.on('connection', function( socket ) {
 			&& typeof tables[data.table_id].seats[data.seat].public === 'undefined'
 			// The player isn't sitting on any other tables
 			&& players[socket.id].sitting_on_table === false
+			// The player had joined the room of the table
+			&& players[socket.id].room === data.table_id
 			// The chips number chosen is a number
 			&& typeof data.chips !== 'undefined'
 			&& !isNaN(parseInt(data.chips)) 
@@ -207,24 +232,11 @@ io.sockets.on('connection', function( socket ) {
 				// Add the table info in the player object
 				players[socket.id].seat = data.seat;
 				players[socket.id].sitting_on_table = data.table_id;
-				players[socket.id].public.sitting_in = true;
-				// Add them to the table data
-				tables[data.table_id].seats[data.seat] = players[socket.id];
-				tables[data.table_id].player_sat_on_the_table( data.seat );
-				// Increase the counters of the table
-				tables[data.table_id].public.no_of_players_seated++;
-				tables[data.table_id].public.no_of_players_sitting_in++;
+
 				// Give the response to the user
-				callback( { 'success': true, 'sitting_on_table': data.table_id } );
-				// Add the player to the socket room
-				socket.join( 'table-' + data.table_id );
-				// If there are no players playing right now, try to initialize a game with the new player
-				if( !tables[data.table_id].game_is_on && tables[data.table_id].public.no_of_players_sitting_in > 1 ) {
-					// Initialize the game
-					tables[data.table_id].initialize_game();
-				}
-				// Notify the table that the user has sat in
-				io.sockets.in( 'table-' + data.table_id ).emit( 'table_data', tables[data.table_id].public );
+				callback( { 'success': true } );
+				// Add the player to the table
+				tables[data.table_id].player_sat_on_the_table( players[socket.id], data.seat );
 			}
 		} else {
 			// If the user is not allowed to sit in, notify the user
@@ -236,28 +248,10 @@ io.sockets.on('connection', function( socket ) {
 	 * When a player who sits on the table but is not sitting in, requests to sit in
 	 */
 	socket.on('sit_in', function( callback ) {
-		if( 
-			players[socket.id].sitting_on_table
-			&& players[socket.id].seat !== null
-			&& !players[socket.id].public.sitting_in
-		) {
+		if( players[socket.id].sitting_on_table && players[socket.id].seat !== null && !players[socket.id].public.sitting_in ) {
 			// Getting the table id from the player object
 			var table_id = players[socket.id].sitting_on_table;
-			// The player is sitting in
-			players[socket.id].public.sitting_in = true;
-			tables[table_id].public.no_of_players_sitting_in++;
-			// If there are no players playing right now, try to initialize a game with the new player
-			if( !tables[table_id].game_is_on && tables[table_id].public.no_of_players_sitting_in > 1 ) {
-				// Initialize the game
-				tables[table_id].initialize_game();
-				// Send the new table data to the players
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
-				// Start asking players to post the small blind
-				tables[table_id].player_to_act.socket.emit( 'post_small_blind' );
-			} else {
-				// Send the new table data to the players
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
-			}
+			tables[table_id].player_sat_in( players[socket.id].seat );
 			callback( { 'success': true } );
 		}
 	});
@@ -267,7 +261,7 @@ io.sockets.on('connection', function( socket ) {
 	 * @param bool posted_blind (Shows if the user posted the blind or not)
 	 */
 	socket.on('post_blind', function( posted_blind, callback ) {
-		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) ) {
 				if( posted_blind ) {
@@ -275,17 +269,14 @@ io.sockets.on('connection', function( socket ) {
 					if( tables[table_id].public.phase === 'small_blind' ) {
 						tables[table_id].init_big_blind();
 						tables[table_id].action_to_next_player();
-						// Start asking players to post the small blind
-						tables[table_id].player_to_act.socket.emit( 'post_big_blind' );
 					} else {
+						// The player posted the big blind
 						tables[table_id].init_preflop();
 					}
 				} else {
 					tables[table_id].player_sat_out( players[socket.id].seat );
 					callback( { 'success': true } );
 				}
-				// Send the new table data to the players
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 			}
 		}
 	});
@@ -301,18 +292,29 @@ io.sockets.on('connection', function( socket ) {
 				} else {
 					tables[table_id].action_to_next_player();
 				}
-				// Send the new table data to the players
-				io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
 			}
 		}
 	});
 
-	/**
-	 * ONLY FOR DEBUGGING
-	 */
-	socket.on('next', function( table_id ) {
-		tables[table_id].player_to_act = tables[table_id].player_to_act.next_player;
-		tables[table_id].public.active_seat = tables[table_id].player_to_act.seat;
-		io.sockets.in( 'table-' + table_id ).emit( 'table_data', tables[table_id].public );
+	socket.on('send_message', function( message ) {
+		message = message.trim();
+		if( message && players[socket.id].room ) {
+			socket.broadcast.to( 'table-' + players[socket.id].room ).emit( 'receive_message', { 'message': html_entities( message ), 'sender': players[socket.id].public.name } );
+		}
 	});
 });
+
+var event_emitter = function( table_id ) {
+	return function ( event_name, event_data ) {
+		io.sockets.in( 'table-' + table_id ).emit( event_name, event_data );
+	}
+}
+
+function html_entities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+tables[0] = new Table( 0, 'Sample 10-handed Table', new Deck(), event_emitter(0), 10, 2, 1, 200, 40, false );
+tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), event_emitter(1), 6, 4, 2, 400, 80, false );
+tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), event_emitter(2), 2, 8, 4, 800, 160, false );
+tables[3] = new Table( 3, 'Sample 6-handed Private Table', new Deck(), event_emitter(3), 6, 20, 10, 2000, 400, true );

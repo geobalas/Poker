@@ -9,7 +9,7 @@
  * @param int min_buy_in (the minimum amount of chips that one can bring to the table)
  * @param bool private_table (flag that shows whether the table will be shown in the lobby)
  */
-var Table = function( id, name, deck, no_of_seats, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
+var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
 	// All the public table data
 	this.public = {
 		// The table id
@@ -39,7 +39,9 @@ var Table = function( id, name, deck, no_of_seats, big_blind, small_blind, max_b
 		// The public data of the players, indexed by their seats
 		seats: [],
 		// The phase of the game ('small_blind', 'big_blind', 'preflop'... etc)
-		phase: null
+		phase: null,
+		// The cards on the board
+		board: ['', '', '', '', '']
 	};
 	// Reference to the dealer player object
 	this.dealer = {};
@@ -63,6 +65,8 @@ var Table = function( id, name, deck, no_of_seats, big_blind, small_blind, max_b
 	this.deck = deck;
 	// If the pot has been raised for the current round
 	this.betted_pot = false;
+	// The function that emits the events of the table
+	this.event_emitter = event_emitter;
 	// Initializing the empty seats
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
 		this.seats[i] = {};
@@ -115,6 +119,7 @@ Table.prototype.initialize_game = function() {
 	if( this.public.no_of_players_sitting_in > 1 ) {
 		// The game is on now
 		this.game_is_on = true;
+		this.public.board = ['', '', '', '', ''];
 		this.deck.shuffle();
 		this.heads_up = this.public.no_of_players_sitting_in === 2;
 		// Creating the linked list of players
@@ -146,6 +151,7 @@ Table.prototype.initialize_game = function() {
  */
 Table.prototype.new_round = function() {
 	if( this.game_is_on && this.public.no_of_players_sitting_in > 1 ) {
+		this.public.board = ['', '', '', '', ''];
 		this.deck.shuffle();
 		this.heads_up = this.public.no_of_players_sitting_in === 2;
 		// Creating the linked list of players
@@ -197,6 +203,7 @@ Table.prototype.init_small_blind = function() {
 	this.public.active_seat = this.player_to_act.seat;
 	// Start asking players to post the small blind
 	this.player_to_act.socket.emit('post_small_blind');
+	this.event_emitter( 'table_data', this.public );
 }
 
 /**
@@ -229,12 +236,24 @@ Table.prototype.init_preflop = function() {
  * Method that starts the next phase of the round
  */
 Table.prototype.init_next_phase = function( phase ) {
+	switch( phase ) {
+		case 'flop':
+			this.public.board = this.deck.deal( 3 ).concat(  ['', ''] );
+			break;
+		case 'turn':
+			this.public.board[3] = this.deck.deal( 1 )[0];
+			break;
+		case 'river':
+			this.public.board[4] = this.deck.deal( 1 )[0];
+			break;
+	}
 	// Set the table phase to 'preflop'
 	this.public.phase = phase;
 	this.betted_pot = false;
 	this.player_to_act = this.last_position.next_player;
 	this.public.active_seat = this.player_to_act.seat;
 	this.last_player_to_act = this.last_position;
+	this.event_emitter( 'table_data', this.public );
 	this.player_to_act.socket.emit('act_not_betted_pot');
 }
 
@@ -276,6 +295,7 @@ Table.prototype.action_to_next_player = function() {
 			}
 			break;
 	}
+	this.event_emitter( 'table_data', this.public );
 }
 
 Table.prototype.end_phase = function() {
@@ -298,8 +318,32 @@ Table.prototype.end_phase = function() {
 /**
  * Sets the public data of the player that will be sent along with the table data
  */
-Table.prototype.player_sat_on_the_table = function( seat ) {
-	this.public.seats[seat] = this.seats[seat].public;
+Table.prototype.player_sat_on_the_table = function( player, seat ) {
+	this.seats[seat] = player;
+	this.public.seats[seat] = player.public;
+
+	// Increase the counters of the table
+	this.public.no_of_players_seated++;
+	
+	this.player_sat_in( seat );
+}
+
+/**
+ * Sets the public data of the player that will be sent along with the table data
+ */
+Table.prototype.player_sat_in = function( seat ) {
+	// The player is sitting in
+	this.seats[seat].public.sitting_in = true;
+	this.public.no_of_players_sitting_in++;
+	
+	console.log('TO THE EMITTER!');
+	this.event_emitter( 'table_data', this.public );
+
+	// If there are no players playing right now, try to initialize a game with the new player
+	if( !this.game_is_on && this.public.no_of_players_sitting_in > 1 ) {
+		// Initialize the game
+		this.initialize_game();
+	}
 }
 
 /**
@@ -308,10 +352,10 @@ Table.prototype.player_sat_on_the_table = function( seat ) {
 Table.prototype.player_left = function( seat ) {
 	// If someone is really sitting on that seat
 	if( this.seats[seat].id ) {
-		var start_new_round = false;
+		var next_action = '';
 		// If the player is sitting in, make them sit out first
 		if( this.seats[seat].public.sitting_in ) {
-			start_new_round = this.player_sat_out( seat, true );
+			next_action = this.player_sat_out( seat, true );
 		}
 		this.seats[seat].leave_table();
 		// Empty the seat
@@ -323,8 +367,12 @@ Table.prototype.player_left = function( seat ) {
 			this.last_position = {};
 		}
 		this.seats[seat] = {};
-		if( start_new_round ) {
+		this.event_emitter( 'table_data', this.public );
+		if( next_action == 'new_round' ) {
 			this.new_round();
+		}
+		else if( next_action == 'end_phase' ) {
+			this.end_phase();
 		}
 	}
 }
@@ -333,6 +381,7 @@ Table.prototype.player_left = function( seat ) {
  * Changes the data of the table when a player sits out
  * @param int 	seat 			(the numeber of the seat)
  * @param bool 	player_left		(flag that shows that the player actually left the table)
+ * @return bool start_new_round	(shows whether a new round should start after the player sat down or not)
  */
 Table.prototype.player_sat_out = function( seat, player_left ) {
 	// Set the player_left parameter to false if it's not specified
@@ -341,7 +390,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 	}
 	// start_new_round will be set to true, if the player has left and
 	// a new round should be started after removing the player data completely
-	var start_new_round = false;
+	var next_action = '';
 	this.public.no_of_players_sitting_in--;
 	// If there are not enough players sitting in, stop the game
 	if( this.public.no_of_players_sitting_in < 2 ) {
@@ -357,7 +406,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 			if( !player_left ) {
 				this.new_round();
 			} else {
-				start_new_round = true;
+				next_action = 'new_round';
 			}
 		} else {
 			// If the player was the last player to act in the rounds and the game will continue,
@@ -368,18 +417,32 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 			if( this.last_player_to_act.seat === seat ) {
 				this.last_player_to_act = this.last_player_to_act.previous_player;
 			}
-			if( this.public.dealer_seat === seat ) {
-				this.dealer = this.dealer.previous_player;
-			}
-			if( this.player_to_act.seat === seat ) {
+			if( this.player_to_act.seat === seat && ( this.public.dealer_seat !== seat || ( this.public.dealer_seat === seat && this.public.phase == 'preflop' ) ) ) {
 				this.action_to_next_player();
 			}
-			this.seats[seat].sit_out();
+			if( this.public.dealer_seat === seat ) {
+				this.dealer = this.dealer.previous_player;
+				this.public.dealer_seat = this.dealer.seat;
+
+				if( this.player_to_act.seat === seat && this.public.phase != 'preflop' ) {
+					this.seats[seat].sit_out();
+					if( !player_left ) {
+						this.end_phase();
+					} else {
+						next_action = 'end_phase';
+					}
+				} else {
+					this.seats[seat].sit_out();
+				}
+			} else {
+				this.seats[seat].sit_out();
+			}
 		}
 	} else {
 		this.seats[seat].sit_out();
 	}
-	return start_new_round;
+	this.event_emitter( 'table_data', this.public );
+	return next_action;
 }
 
 /**
@@ -403,10 +466,12 @@ Table.prototype.stop_game = function() {
 	this.public.phase = null;
 	this.public.pot = null;
 	this.public.active_seat = null;
+	this.public.board = ['', '', '', '', ''];
 	this.player_to_act = {};
 	this.last_player_to_act = {};
 	this.remove_all_cards_from_play();
 	this.game_is_on = false;
+	this.event_emitter( 'game_stopped', this.public );
 }
 
 module.exports = Table;
