@@ -21,8 +21,8 @@ app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Development Only
-if ('development' == app.get('env')) {
-	app.use(express.errorHandler());
+if ( 'development' == app.get('env') ) {
+	app.use( express.errorHandler() );
 }
 
 var players = [];
@@ -64,7 +64,7 @@ app.get('/table_10_handed.html', function( req, res ) {
 	res.render('table_10_handed');
 });
 
-// If the table is requested manually, redirect to lobby.
+// If the table is requested manually, redirect to lobby
 app.get('/table_10/:table_id', function( req, res ) {
 	res.redirect('/');
 });
@@ -74,7 +74,7 @@ app.get('/table_6_handed.html', function( req, res ) {
 	res.render('table_6_handed');
 });
 
-// If the table is requested manually, redirect to lobby.
+// If the table is requested manually, redirect to lobby
 app.get('/table_6/:table_id', function( req, res ) {
 	res.redirect('/');
 });
@@ -84,7 +84,7 @@ app.get('/table_2_handed.html', function( req, res ) {
 	res.render('table_2_handed');
 });
 
-// If the table is requested manually, redirect to lobby.
+// If the table is requested manually, redirect to lobby
 app.get('/table_2/:table_id', function( req, res ) {
 	res.redirect('/');
 });
@@ -101,8 +101,8 @@ io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player enters a room
 	 */
-	socket.on( 'enter_room', function( data ) {
-		if( players[socket.id].room === null ) {
+	socket.on('enter_room', function( data ) {
+		if( typeof players[socket.id] !== 'undefined' && players[socket.id].room === null ) {
 			// Add the player to the socket room
 			socket.join( 'table-' + data.table_id );
 			// Add the room to the player's data
@@ -113,8 +113,8 @@ io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player leaves a room
 	 */
-	socket.on( 'leave_room', function() {
-		if( players[socket.id].room !== null && players[socket.id].sitting_on_table === false ) {
+	socket.on('leave_room', function() {
+		if( typeof players[socket.id] !== 'undefined' && players[socket.id].room !== null && players[socket.id].sitting_on_table === false ) {
 			// Remove the player from the socket room
 			socket.leave( 'table-' + players[socket.id].room );
 			// Remove the room to the player's data
@@ -125,7 +125,7 @@ io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player disconnects
 	 */
-	socket.on( 'disconnect', function() {
+	socket.on('disconnect', function() {
 		// If the socket points to a player object
 		if( typeof players[socket.id] !== 'undefined' ) {
 			// If the player was sitting on a table
@@ -145,7 +145,7 @@ io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player leaves the table
 	 */
-	socket.on( 'leave_table', function( callback ) {
+	socket.on('leave_table', function( callback ) {
 		// If the player was sitting on a table
 		if( players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
 			// The seat on which the player was sitting
@@ -263,12 +263,11 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) ) {
+			if( tables[table_id] && typeof tables[table_id].player_to_act.public !== 'undefined' && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
 					if( tables[table_id].public.phase === 'small_blind' ) {
 						tables[table_id].init_big_blind();
-						tables[table_id].action_to_next_player();
 					} else {
 						// The player posted the big blind
 						tables[table_id].init_preflop();
@@ -281,6 +280,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * When a player checks
+	 */
 	socket.on('check', function( callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
@@ -296,6 +298,9 @@ io.sockets.on('connection', function( socket ) {
 		}
 	});
 
+	/**
+	 * When a message is sent
+	 */
 	socket.on('send_message', function( message ) {
 		message = message.trim();
 		if( message && players[socket.id].room ) {

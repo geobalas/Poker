@@ -13,6 +13,10 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.my_seat = null;
 	$rootScope.sitting_on_table = null;
 
+	// Existing listeners should be removed
+	socket.removeAllListeners();
+
+	// Getting the table data
 	$http({
 		url: '/table_data/' + $routeParams.table_id,
 		method: 'GET'
@@ -20,12 +24,15 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		$scope.table = data.table;
 	});
 
+	// Joining the socket room
 	socket.emit( 'enter_room', { 'table_id': $routeParams.table_id } );
 
+	// Leaving the socket room
 	$scope.leave_room = function() {
 		socket.emit( 'leave_room' );
 	};
 
+	// A request to sit on a specific seat on the table
 	$scope.sit_on_the_table = function( seat ) {
 		socket.emit( 'sit_on_the_table', { 'seat': seat, 'table_id': $routeParams.table_id, 'chips': $scope.buy_in_amount }, function( response ){
 			if( response.success ){
@@ -34,6 +41,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 				$rootScope.sitting_in = true;
 				$scope.buy_in_error = null;
 				$scope.my_seat = seat;
+				$scope.action_state = 'waiting';
 				$scope.$digest();
 			} else {
 				if( response.error ) {
@@ -44,6 +52,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// Sit in the game
 	$scope.sit_in = function() {
 		socket.emit( 'sit_in', function( response ){
 			if( response.success ){
@@ -53,6 +62,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// Leave the table (not the room)
 	$scope.leave_table = function() {
 		socket.emit( 'leave_table', function( response ) {
 			if( response.success ) {
@@ -66,6 +76,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// Post a blind (or not)
 	$scope.post_blind = function( posted ) {
 		socket.emit( 'post_blind', posted, function( response ) {
 			if( response.success && !posted ) {
@@ -76,6 +87,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// Checking
 	$scope.check = function() {
 		socket.emit( 'check', function( response ) {
 			if( response.success ) {
@@ -85,45 +97,47 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// When the table data have changed
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
 		$scope.$digest();
 	});
 
+	// When the game has stopped
 	socket.on( 'game_stopped', function( data ) {
 		$scope.table = data;
-		$scope.action_state = '';
+		$scope.action_state = 'waiting';
 		$scope.$digest();
 	});
 
+	// When the player is asked to place the small blind
 	socket.on( 'post_small_blind', function( data ) {
 		$scope.action_state = 'post_small_blind';
 		$scope.$digest();
 	});
 
+	// When the player is asked to place the big blind
 	socket.on( 'post_big_blind', function( data ) {
 		$scope.action_state = 'post_big_blind';
 		$scope.$digest();
 	});
 
+	// When the player is dealt cards
 	socket.on( 'dealing_cards', function( cards ) {
 		$scope.my_cards[0] = 'card-'+cards[0];
 		$scope.my_cards[1] = 'card-'+cards[1];
 		$scope.$digest();
 	});
 
+	// When the user is asked to act and the pot was betted
 	socket.on( 'act_betted_pot', function() {
 		$scope.action_state = 'act_betted_pot';
 		$scope.$digest();
 	});
 
+	// When the user is asked to act and the pot was not betted
 	socket.on( 'act_not_betted_pot', function() {
 		$scope.action_state = 'act_not_betted_pot';
-		$scope.$digest();
-	});
-
-	socket.on( 'sat_out', function() {
-		$scope.action_state = 'post_small_blind';
 		$scope.$digest();
 	});
 

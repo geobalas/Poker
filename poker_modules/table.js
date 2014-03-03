@@ -1,13 +1,15 @@
 /**
  * The table "class"
- * @param string id (the table id, never changes)
- * @param string name (the name of the table)
- * @param int no_of_seats (the total number of players that can play on the table)
- * @param int big_blind (the current big blind)
- * @param int small_blind (the current small_blind)
- * @param int max_buy_in (the maximum amount of chips that one can bring to the table)
- * @param int min_buy_in (the minimum amount of chips that one can bring to the table)
- * @param bool private_table (flag that shows whether the table will be shown in the lobby)
+ * @param string	id (the table id)
+ * @param string	name (the name of the table)
+ * @param object 	deck (the deck object that the table will use)
+ * @param function 	event_emitter (function that emits the events to the players of the room)
+ * @param int 		no_of_seats (the total number of players that can play on the table)
+ * @param int 		big_blind (the current big blind)
+ * @param int 		small_blind (the current small_blind)
+ * @param int 		max_buy_in (the maximum amount of chips that one can bring to the table)
+ * @param int 		min_buy_in (the minimum amount of chips that one can bring to the table)
+ * @param bool 		private_table (flag that shows whether the table will be shown in the lobby)
  */
 var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
 	// All the public table data
@@ -80,11 +82,13 @@ Table.prototype.link_players = function() {
 	if( this.public.no_of_players_sitting_in < 2 ) {
 		 return false;	
 	}
+
 	this.no_of_players_in_hand = 0;
 	// The seat number of the first player of the link
 	var first_player_seat = false;
 	// An object that points to the current player that is being added to the list
 	var current_player = {};
+
 	// For each seat
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
 		// If a player is sitting on the current seat
@@ -105,6 +109,7 @@ Table.prototype.link_players = function() {
 			current_player.public.has_cards = false;
 		}
 	}
+
 	// Linking the last player with the first player in order to form the "circle"
 	current_player.next_player = this.seats[first_player_seat];
 	this.seats[first_player_seat].previous_player = current_player;
@@ -124,6 +129,7 @@ Table.prototype.initialize_game = function() {
 		this.heads_up = this.public.no_of_players_sitting_in === 2;
 		// Creating the linked list of players
 		this.link_players();
+
 		// Giving the dealer button to a random player
 		if( typeof this.dealer.public == 'undefined' ) {
 			var random_dealer_seat = Math.floor( Math.random() * this.public.no_of_players_sitting_in );	
@@ -140,6 +146,8 @@ Table.prototype.initialize_game = function() {
 				}
 			}
 		}
+
+		// The last player to act in every phase
 		this.last_position = this.dealer;
 		this.public.dealer_seat = this.dealer.seat;
 		this.init_small_blind();
@@ -157,10 +165,12 @@ Table.prototype.new_round = function() {
 		// Creating the linked list of players
 		this.link_players();
 
+		// If there is no dealer or if the dealer sat out
 		if( typeof this.dealer.public == 'undefined' || !this.dealer.public.sitting_in ) {
 			// Assinging the dealer button to the player sitting on the seat
 			// right after the dealer who left or sat out
 			var found_new_dealer = false;
+			// Starting from the previous dealer seat, and checking each seat until the last seat
 			for( var i=this.public.dealer_seat ; i<=this.public.no_of_seats-1 ; i++ ) {
 				if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 					this.dealer = this.seats[i];
@@ -168,6 +178,7 @@ Table.prototype.new_round = function() {
 					break;
 				}
 			}
+			// Checking the seats from the beginning of the table (the seats before the seat of the last dealer)
 			if( !found_new_dealer ) {
 				for( var i=0 ; i<this.public.dealer_seat ; i++ ) {
 					if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
@@ -176,12 +187,14 @@ Table.prototype.new_round = function() {
 					}
 				}
 			}
+		// If there is a dealer, just assign the dealer button to the next player
 		} else {
 			this.dealer = this.dealer.next_player;
 		}
-		this.public.dealer_seat = this.dealer.seat;
-		this.last_position = this.dealer;
 
+		// The last player to act in every phase
+		this.last_position = this.dealer;
+		this.public.dealer_seat = this.dealer.seat;
 		this.init_small_blind();
 	}
 }
@@ -192,6 +205,7 @@ Table.prototype.new_round = function() {
 Table.prototype.init_small_blind = function() {
 	// Set the table phase to 'small_blind'
 	this.public.phase = 'small_blind';
+
 	// If it's a heads up match, the dealer posts the small blind
 	if( this.heads_up ) {
 		this.player_to_act = this.dealer;
@@ -200,6 +214,7 @@ Table.prototype.init_small_blind = function() {
 		this.player_to_act = this.dealer.next_player;
 		this.last_player_to_act = this.dealer;
 	}
+
 	this.public.active_seat = this.player_to_act.seat;
 	// Start asking players to post the small blind
 	this.player_to_act.socket.emit('post_small_blind');
@@ -212,6 +227,7 @@ Table.prototype.init_small_blind = function() {
 Table.prototype.init_big_blind = function() {
 	// Set the table phase to 'big_blind'
 	this.public.phase = 'big_blind';
+	this.action_to_next_player();
 }
 
 /**
@@ -223,32 +239,36 @@ Table.prototype.init_preflop = function() {
 	var current_player = this.player_to_act;
 	// The player that placed the big blind is the last player to act for the round
 	this.last_player_to_act = this.player_to_act;
+
 	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
 		current_player.cards = this.deck.deal( 2 );
 		current_player.public.has_cards = true;
 		current_player.socket.emit( 'dealing_cards', current_player.cards );
 		current_player = current_player.next_player;
 	}
+
 	this.action_to_next_player();
 }
 
 /**
  * Method that starts the next phase of the round
  */
-Table.prototype.init_next_phase = function( phase ) {
-	switch( phase ) {
-		case 'flop':
+Table.prototype.init_next_phase = function() {
+	switch( this.public.phase ) {
+		case 'preflop':
+			this.public.phase = 'flop';
 			this.public.board = this.deck.deal( 3 ).concat(  ['', ''] );
 			break;
-		case 'turn':
+		case 'flop':
+			this.public.phase = 'turn';
 			this.public.board[3] = this.deck.deal( 1 )[0];
 			break;
-		case 'river':
+		case 'turn':
+			this.public.phase = 'river';
 			this.public.board[4] = this.deck.deal( 1 )[0];
 			break;
 	}
-	// Set the table phase to 'preflop'
-	this.public.phase = phase;
+
 	this.betted_pot = false;
 	this.player_to_act = this.last_position.next_player;
 	this.public.active_seat = this.player_to_act.seat;
@@ -263,6 +283,7 @@ Table.prototype.init_next_phase = function( phase ) {
 Table.prototype.action_to_next_player = function() {
 	this.player_to_act = this.player_to_act.next_player;
 	this.public.active_seat = this.player_to_act.seat;
+
 	switch( this.public.phase ) {
 		case 'small_blind':
 			this.player_to_act.socket.emit( 'post_small_blind' );
@@ -295,19 +316,19 @@ Table.prototype.action_to_next_player = function() {
 			}
 			break;
 	}
+
 	this.event_emitter( 'table_data', this.public );
 }
 
+/**
+ * Ends the current phase of the round
+ */
 Table.prototype.end_phase = function() {
 	switch( this.public.phase ) {
 		case 'preflop':
-			this.init_next_phase( 'flop' );
-			break;
 		case 'flop':
-			this.init_next_phase( 'turn' );
-			break;
 		case 'turn':
-			this.init_next_phase( 'river' );
+			this.init_next_phase();
 			break;
 		case 'river':
 			this.new_round();
@@ -316,7 +337,9 @@ Table.prototype.end_phase = function() {
 }
 
 /**
- * Sets the public data of the player that will be sent along with the table data
+ * Adds the player to the table
+ * @param object 	player
+ * @param int 		seat
  */
 Table.prototype.player_sat_on_the_table = function( player, seat ) {
 	this.seats[seat] = player;
@@ -329,14 +352,14 @@ Table.prototype.player_sat_on_the_table = function( player, seat ) {
 }
 
 /**
- * Sets the public data of the player that will be sent along with the table data
+ * Adds a player who is sitting on the table, to the game
+ * @param int seat
  */
 Table.prototype.player_sat_in = function( seat ) {
 	// The player is sitting in
 	this.seats[seat].public.sitting_in = true;
 	this.public.no_of_players_sitting_in++;
 	
-	console.log('TO THE EMITTER!');
 	this.event_emitter( 'table_data', this.public );
 
 	// If there are no players playing right now, try to initialize a game with the new player
@@ -348,6 +371,7 @@ Table.prototype.player_sat_in = function( seat ) {
 
 /**
  * Changes the data of the table when a player leaves
+ * @param int seat
  */
 Table.prototype.player_left = function( seat ) {
 	// If someone is really sitting on that seat
@@ -357,20 +381,27 @@ Table.prototype.player_left = function( seat ) {
 		if( this.seats[seat].public.sitting_in ) {
 			next_action = this.player_sat_out( seat, true );
 		}
+
 		this.seats[seat].leave_table();
 		// Empty the seat
 		this.public.seats[seat] = {};
 		this.public.no_of_players_seated--;
+
+		// If there are not enough players to continue the game
 		if( this.public.no_of_players_seated < 2 ) {
 			this.dealer = {};
 			this.public.dealer_seat = null;
 			this.last_position = {};
 		}
+
 		this.seats[seat] = {};
 		this.event_emitter( 'table_data', this.public );
+
+		// If a player left a heads-up match and there are people waiting to play, start a new round
 		if( next_action == 'new_round' ) {
 			this.new_round();
 		}
+		// Else if the player was the last to act in this phase, end the phase
 		else if( next_action == 'end_phase' ) {
 			this.end_phase();
 		}
@@ -414,26 +445,29 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 			if( this.last_position.seat === seat ) {
 				this.last_position = this.last_position.previous_player;
 			}
-			if( this.last_player_to_act.seat === seat ) {
-				this.last_player_to_act = this.last_player_to_act.previous_player;
-			}
-			if( this.player_to_act.seat === seat && ( this.public.dealer_seat !== seat || ( this.public.dealer_seat === seat && this.public.phase == 'preflop' ) ) ) {
+			// If the player was not the last player to act but they were the player who should act in this round
+			if( this.player_to_act.seat === seat && ( this.last_player_to_act.seat !== seat ) ) {
 				this.action_to_next_player();
 			}
+			// If the player was the dealer
 			if( this.public.dealer_seat === seat ) {
 				this.dealer = this.dealer.previous_player;
 				this.public.dealer_seat = this.dealer.seat;
+			}
+			// If the player was the last player to act in this phase and the game will continue,
+			// the last player to act will be the previous player
+			if( this.last_player_to_act.seat === seat ) {
+				this.last_player_to_act = this.last_player_to_act.previous_player;
 
-				if( this.player_to_act.seat === seat && this.public.phase != 'preflop' ) {
+				// If the player was the last player to act and they left when they had to act
+				if( this.player_to_act.seat === seat ) {
 					this.seats[seat].sit_out();
 					if( !player_left ) {
 						this.end_phase();
 					} else {
 						next_action = 'end_phase';
 					}
-				} else {
-					this.seats[seat].sit_out();
-				}
+				} 
 			} else {
 				this.seats[seat].sit_out();
 			}
