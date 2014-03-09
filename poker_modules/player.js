@@ -75,4 +75,15 @@ Player.prototype.sit_out = function() {
 	}
 }
 
+/**
+ * Updates the player data when they sit out
+ */
+Player.prototype.fold = function() {
+	// Remove the player from the doubly linked list
+	this.unlink();
+	// The player has no cards now
+	this.cards = [];
+	this.public.has_cards = false;
+}
+
 module.exports = Player;

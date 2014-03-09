@@ -97,6 +97,16 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
+	// Folding
+	$scope.fold = function() {
+		socket.emit( 'fold', function( response ) {
+			if( response.success ) {
+				$scope.action_state = '';
+				$scope.$digest();
+			}
+		});
+	}
+
 	// When the table data have changed
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
@@ -150,7 +160,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 			var message_box = document.querySelector('#messages');
 			socket.emit( 'send_message', message );
 
-			var message_element = angular.element( '<p><b>You</b>: ' + html_entities( message ) + '</p>' );
+			var message_element = angular.element( '<p class="message"><b>You</b>: ' + html_entities( message ) + '</p>' );
 			angular.element( message_box ).append( message_element );
 			message_box.scrollTop = message_box.scrollHeight;
 			$scope.message_text = '';
@@ -159,10 +169,9 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 
 	socket.on( 'receive_message', function( data ) {
 		var message_box = document.querySelector('#messages');
-		var message_element = angular.element( '<p><b>' + data.sender + '</b>: ' + data.message + '</p>' );
+		var message_element = angular.element( '<p class="message"><b>' + data.sender + '</b>: ' + data.message + '</p>' );
 		angular.element( message_box ).append( message_element );
 		message_box.scrollTop = message_box.scrollHeight;
-		$scope.message_text = '';
 	});
 
 	function html_entities(str) {

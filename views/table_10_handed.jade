@@ -149,7 +149,7 @@
 					input(type="text", ng-model="message_text")
 					input(type="submit", value="Send")
 		.cell
-			button(ng-click="check()", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"') Fold
+			button(ng-click="fold()", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"') Fold
 			button(ng-click="post_blind(false)", ng-show='action_state === "post_small_blind" || action_state === "post_big_blind"') Sit Out
 			button(ng-click="leave_table()", ng-show='$root.sitting_on_table !== null && (!$root.sitting_in || action_state === "waiting")') Leave Table
 		.cell

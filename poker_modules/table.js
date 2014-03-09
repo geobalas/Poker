@@ -337,6 +337,25 @@ Table.prototype.end_phase = function() {
 }
 
 /**
+ * Checks if the round should continue after a player has folded
+ */
+Table.prototype.player_folded = function( seat ) {
+	this.no_of_players_in_hand--;
+	if( this.no_of_players_in_hand <= 1 ) {
+		this.new_round();
+	} else {
+		if( this.last_position.seat == seat ) {
+			this.last_position = this.last_position.previous_player;
+		}
+		if( this.last_player_to_act.seat == seat ) {
+			this.end_phase();
+		} else {
+			this.action_to_next_player();
+		}
+	}
+}
+
+/**
  * Adds the player to the table
  * @param object 	player
  * @param int 		seat

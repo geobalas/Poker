@@ -14,6 +14,10 @@ input[type="number"] {
   color: #9880e9;
   font-size: 1.4em;
 }
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
 button,
 input[type="submit"],
 .button {

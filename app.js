@@ -29,7 +29,8 @@ var players = [];
 var tables = [];
 var event_emitter = {};
 
-server.listen(3000);
+var port = process.env.PORT || 3000;
+server.listen(port);
 console.log('Listening on port 3000');
 
 // The lobby
@@ -294,6 +295,21 @@ io.sockets.on('connection', function( socket ) {
 				} else {
 					tables[table_id].action_to_next_player();
 				}
+			}
+		}
+	});
+
+	/**
+	 * When a player folds
+	 */
+	socket.on('fold', function( callback ){
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+				callback( { 'success': true } );
+				players[socket.id].fold();
+				tables[table_id].player_folded( players[socket.id].seat );
 			}
 		}
 	});
