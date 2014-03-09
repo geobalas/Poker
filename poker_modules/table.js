@@ -15,35 +15,41 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 	// All the public table data
 	this.public = {
 		// The table id
-		id: id,
+		'id': id,
 		// The table name
-		name: name,
+		'name': name,
 		// The number of the seats of the table
-		no_of_seats: no_of_seats,
+		'no_of_seats': no_of_seats,
 		// The big blind amount
-		big_blind: big_blind,
+		'big_blind': big_blind,
 		// The small blind amount
-		small_blind: small_blind,
+		'small_blind': small_blind,
 		// The minimum allowed buy in
-		min_buy_in: min_buy_in,
+		'min_buy_in': min_buy_in,
 		// The maximum allowed buy in
-		max_buy_in: max_buy_in,
+		'max_buy_in': max_buy_in,
 		// The number of players that are currently seated
-		no_of_players_seated: 0,
+		'no_of_players_seated': 0,
 		// The number of players who receive cards at the begining of each round
-		no_of_players_sitting_in: 0,
+		'no_of_players_sitting_in': 0,
 		// The amount of chips that are in the pot
-		pot: null,
+		'pot': null,
 		// The seat of the dealer
-		dealer_seat: null,
+		'dealer_seat': null,
 		// The seat of the active player
-		active_seat: null,
+		'active_seat': null,
 		// The public data of the players, indexed by their seats
-		seats: [],
+		'seats': [],
 		// The phase of the game ('small_blind', 'big_blind', 'preflop'... etc)
-		phase: null,
+		'phase': null,
 		// The cards on the board
-		board: ['', '', '', '', '']
+		'board': ['', '', '', '', ''],
+		// Log of an action, displayed in the chat
+		'log': {
+			'message': '',
+			'seat': '',
+			'action': ''
+		},
 	};
 	// Reference to the dealer player object
 	this.dealer = {};
@@ -73,6 +79,16 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
 		this.seats[i] = {};
 	}
+}
+
+// The function that emits the events of the table
+Table.prototype.emit_event = function( event_name, event_data ){
+	this.event_emitter( event_name, event_data );
+	this.public.log = {
+		'message': '',
+		'seat': '',
+		'action': ''
+	};
 }
 
 /**
@@ -218,7 +234,7 @@ Table.prototype.init_small_blind = function() {
 	this.public.active_seat = this.player_to_act.seat;
 	// Start asking players to post the small blind
 	this.player_to_act.socket.emit('post_small_blind');
-	this.event_emitter( 'table_data', this.public );
+	this.emit_event( 'table_data', this.public );
 }
 
 /**
@@ -273,7 +289,7 @@ Table.prototype.init_next_phase = function() {
 	this.player_to_act = this.last_position.next_player;
 	this.public.active_seat = this.player_to_act.seat;
 	this.last_player_to_act = this.last_position;
-	this.event_emitter( 'table_data', this.public );
+	this.emit_event( 'table_data', this.public );
 	this.player_to_act.socket.emit('act_not_betted_pot');
 }
 
@@ -317,7 +333,7 @@ Table.prototype.action_to_next_player = function() {
 			break;
 	}
 
-	this.event_emitter( 'table_data', this.public );
+	this.emit_event( 'table_data', this.public );
 }
 
 /**
@@ -337,9 +353,33 @@ Table.prototype.end_phase = function() {
 }
 
 /**
+ * When a player posts the small blind
+ * @param int seat
+ */
+Table.prototype.player_posted_small_blind = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' posted the small blind';
+	this.emit_event( 'table_data', this.public );
+	this.init_big_blind();
+}
+
+/**
+ * When a player posts the big blind
+ * @param int seat
+ */
+Table.prototype.player_posted_big_blind = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' posted the big blind';
+	this.emit_event( 'table_data', this.public );
+	this.init_preflop();
+}
+
+/**
  * Checks if the round should continue after a player has folded
+ * @param int seat
  */
 Table.prototype.player_folded = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' folded';
+	this.emit_event( 'table_data', this.public );
+
 	this.no_of_players_in_hand--;
 	if( this.no_of_players_in_hand <= 1 ) {
 		this.new_round();
@@ -352,6 +392,21 @@ Table.prototype.player_folded = function( seat ) {
 		} else {
 			this.action_to_next_player();
 		}
+	}
+}
+
+/**
+ * When a player checks
+ * @param int seat
+ */
+Table.prototype.player_checked = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' checked';
+	this.emit_event( 'table_data', this.public );
+
+	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+		this.end_phase();
+	} else {
+		this.action_to_next_player();
 	}
 }
 
@@ -375,11 +430,14 @@ Table.prototype.player_sat_on_the_table = function( player, seat ) {
  * @param int seat
  */
 Table.prototype.player_sat_in = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' sat in';
+	this.emit_event( 'table_data', this.public );
+
 	// The player is sitting in
 	this.seats[seat].public.sitting_in = true;
 	this.public.no_of_players_sitting_in++;
 	
-	this.event_emitter( 'table_data', this.public );
+	this.emit_event( 'table_data', this.public );
 
 	// If there are no players playing right now, try to initialize a game with the new player
 	if( !this.game_is_on && this.public.no_of_players_sitting_in > 1 ) {
@@ -393,6 +451,9 @@ Table.prototype.player_sat_in = function( seat ) {
  * @param int seat
  */
 Table.prototype.player_left = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' left';
+	this.emit_event( 'table_data', this.public );
+
 	// If someone is really sitting on that seat
 	if( this.seats[seat].id ) {
 		var next_action = '';
@@ -414,7 +475,7 @@ Table.prototype.player_left = function( seat ) {
 		}
 
 		this.seats[seat] = {};
-		this.event_emitter( 'table_data', this.public );
+		this.emit_event( 'table_data', this.public );
 
 		// If a player left a heads-up match and there are people waiting to play, start a new round
 		if( next_action == 'new_round' ) {
@@ -438,6 +499,13 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 	if( typeof player_left == 'undefined' ) {
 		player_left = false;
 	}
+
+	// If the player didn't leave, log the action as "player sat out"
+	if( !player_left ) {
+		this.public.log.message = this.seats[seat].public.name + ' sat out';
+		this.emit_event( 'table_data', this.public );
+	}
+
 	// start_new_round will be set to true, if the player has left and
 	// a new round should be started after removing the player data completely
 	var next_action = '';
@@ -494,7 +562,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 	} else {
 		this.seats[seat].sit_out();
 	}
-	this.event_emitter( 'table_data', this.public );
+	this.emit_event( 'table_data', this.public );
 	return next_action;
 }
 
@@ -524,7 +592,7 @@ Table.prototype.stop_game = function() {
 	this.last_player_to_act = {};
 	this.remove_all_cards_from_play();
 	this.game_is_on = false;
-	this.event_emitter( 'game_stopped', this.public );
+	this.emit_event( 'game_stopped', this.public );
 }
 
 module.exports = Table;

@@ -114,6 +114,9 @@ div#chat div#messages p {
   margin: 0;
   word-wrap: break-word;
 }
+div#chat div#messages p.log_message {
+  color: #A69029;
+}
 div#chat input[type="submit"] {
   font-size: 1.3em;
   padding: 5px;

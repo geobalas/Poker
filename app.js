@@ -10,7 +10,6 @@ var express = require('express'),
 	Player = require('./poker_modules/player'),
 	Deck = require('./poker_modules/deck');
 
-app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -268,10 +267,10 @@ io.sockets.on('connection', function( socket ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
 					if( tables[table_id].public.phase === 'small_blind' ) {
-						tables[table_id].init_big_blind();
+						tables[table_id].player_posted_small_blind( players[socket.id].seat );
 					} else {
 						// The player posted the big blind
-						tables[table_id].init_preflop();
+						tables[table_id].player_posted_big_blind( players[socket.id].seat );
 					}
 				} else {
 					tables[table_id].player_sat_out( players[socket.id].seat );
@@ -290,11 +289,7 @@ io.sockets.on('connection', function( socket ) {
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].raised_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
-				if( tables[table_id].last_player_to_act.socket.id === socket.id ) {
-					tables[table_id].end_phase();
-				} else {
-					tables[table_id].action_to_next_player();
-				}
+				tables[table_id].player_checked( players[socket.id].seat );
 			}
 		}
 	});

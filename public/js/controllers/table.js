@@ -110,6 +110,12 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	// When the table data have changed
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
+		if( data.log.message ) {
+			var message_box = document.querySelector('#messages');
+			var message_element = angular.element( '<p class="log_message">' + data.log.message + '</p>' );
+			angular.element( message_box ).append( message_element );
+			message_box.scrollTop = message_box.scrollHeight;
+		}
 		$scope.$digest();
 	});
 
