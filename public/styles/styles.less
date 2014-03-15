@@ -35,6 +35,17 @@ button, input[type="submit"], .button {
 	&.small {
 		font-size: 1em;
 	}
+	&.control_button {
+		padding: 0;
+		height: 120px;
+		width: 160px;
+		background-color: @transparent_purple;
+		border: 3px solid @light_purple;
+		cursor: pointer;
+		&.small {
+			font-size: 1em;
+		}
+	}
 }
 
 h1, h2, h3, h4, h5 {
@@ -112,6 +123,11 @@ div.controls {
 	}
 }
 
+.sit_in {
+	padding: 20px 38px;
+	cursor: pointer;
+}
+
 div#chat {
 	div#messages {
 		border: 1px solid;
@@ -150,7 +166,7 @@ div#chat {
 div.player_wrap {
 	padding: 16px;
 	background-color: @transparent_purple;
-	border: 1px solid @light_purple;
+	border: 3px solid @light_purple;
 	border-radius: 5px;
 	color: @light_purple;
 	font-size: 1.4em;

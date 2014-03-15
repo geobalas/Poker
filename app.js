@@ -286,7 +286,7 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('check', function( callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].raised_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
 				tables[table_id].player_checked( players[socket.id].seat );
@@ -305,6 +305,48 @@ io.sockets.on('connection', function( socket ) {
 				callback( { 'success': true } );
 				players[socket.id].fold();
 				tables[table_id].player_folded( players[socket.id].seat );
+			}
+		}
+	});
+
+	/**
+	 * When a player checks
+	 */
+	socket.on('call', function( callback ){
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+				callback( { 'success': true } );
+				tables[table_id].player_called( players[socket.id].seat );
+			}
+		}
+	});
+
+	/**
+	 * When a player checks
+	 */
+	socket.on('bet', function( callback ){
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+				callback( { 'success': true } );
+				tables[table_id].player_betted( players[socket.id].seat );
+			}
+		}
+	});
+
+	/**
+	 * When a player checks
+	 */
+	socket.on('raise', function( callback ){
+		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+			var table_id = players[socket.id].sitting_on_table;
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+				callback( { 'success': true } );
+				tables[table_id].player_raised( players[socket.id].seat );
 			}
 		}
 	});

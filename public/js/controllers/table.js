@@ -87,7 +87,6 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
-	// Checking
 	$scope.check = function() {
 		socket.emit( 'check', function( response ) {
 			if( response.success ) {
@@ -97,9 +96,35 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		});
 	}
 
-	// Folding
 	$scope.fold = function() {
 		socket.emit( 'fold', function( response ) {
+			if( response.success ) {
+				$scope.action_state = '';
+				$scope.$digest();
+			}
+		});
+	}
+
+	$scope.call = function() {
+		socket.emit( 'call', function( response ) {
+			if( response.success ) {
+				$scope.action_state = '';
+				$scope.$digest();
+			}
+		});
+	}
+
+	$scope.bet = function() {
+		socket.emit( 'bet', function( response ) {
+			if( response.success ) {
+				$scope.action_state = '';
+				$scope.$digest();
+			}
+		});
+	}
+
+	$scope.raise = function() {
+		socket.emit( 'raise', function( response ) {
 			if( response.success ) {
 				$scope.action_state = '';
 				$scope.$digest();

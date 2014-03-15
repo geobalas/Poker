@@ -34,6 +34,20 @@ input[type="submit"].small,
 .button.small {
   font-size: 1em;
 }
+button.control_button,
+input[type="submit"].control_button,
+.button.control_button {
+  padding: 0;
+  height: 120px;
+  width: 160px;
+  background-color: rgba(46, 31, 62, 0.9);
+  border: 3px solid #9880e9;
+}
+button.control_button.small,
+input[type="submit"].control_button.small,
+.button.control_button.small {
+  font-size: 1em;
+}
 h1,
 h2,
 h3,
@@ -101,6 +115,10 @@ div.controls div.cell {
 div.controls div.double_cell {
   width: 40%;
 }
+.sit_in {
+  padding: 20px 38px;
+  cursor: pointer;
+}
 div#chat div#messages {
   border: 1px solid;
   border-radius: 8px;
@@ -134,7 +152,7 @@ div#chat input[type="text"] {
 div.player_wrap {
   padding: 16px;
   background-color: rgba(46, 31, 62, 0.9);
-  border: 1px solid #9880e9;
+  border: 3px solid #9880e9;
   border-radius: 5px;
   color: #9880e9;
   font-size: 1.4em;

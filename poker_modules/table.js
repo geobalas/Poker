@@ -411,6 +411,54 @@ Table.prototype.player_checked = function( seat ) {
 }
 
 /**
+ * *NOT IMPLEMENTED YET*
+ * When a player calls
+ * @param int seat
+ */
+Table.prototype.player_called = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' called';
+	this.emit_event( 'table_data', this.public );
+
+	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+		this.end_phase();
+	} else {
+		this.action_to_next_player();
+	}
+}
+
+/**
+ * *NOT IMPLEMENTED YET*
+ * When a player bets
+ * @param int seat
+ */
+Table.prototype.player_betted = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' betted';
+	this.emit_event( 'table_data', this.public );
+
+	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+		this.end_phase();
+	} else {
+		this.action_to_next_player();
+	}
+}
+
+/**
+ * *NOT IMPLEMENTED YET*
+ * When a player raises
+ * @param int seat
+ */
+Table.prototype.player_raised = function( seat ) {
+	this.public.log.message = this.seats[seat].public.name + ' raised';
+	this.emit_event( 'table_data', this.public );
+
+	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+		this.end_phase();
+	} else {
+		this.action_to_next_player();
+	}
+}
+
+/**
  * Adds the player to the table
  * @param object 	player
  * @param int 		seat
