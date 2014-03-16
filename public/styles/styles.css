@@ -42,6 +42,8 @@ input[type="submit"].control_button,
   width: 160px;
   background-color: rgba(46, 31, 62, 0.9);
   border: 3px solid #9880e9;
+  border-radius: 10px;
+  cursor: pointer;
 }
 button.control_button.small,
 input[type="submit"].control_button.small,
@@ -85,14 +87,23 @@ table {
   width: 100%;
 }
 #table_wrap {
-  background-image: url('/images/bg.png');
+  position: relative;
+}
+.table {
+  background-color: #387c41;
+  border-radius: 200px;
+  height: 400px;
+  left: 11%;
+  position: absolute;
+  top: 11%;
+  width: 800px;
 }
 div.row {
   height: 25%;
   width: 100%;
 }
 div.row.controls {
-  background-color: #387C41;
+  background-color: #387c41;
   border-radius: 8px;
 }
 div.cell {

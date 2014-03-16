@@ -1,6 +1,7 @@
 @light_purple: #9880e9;
 @transparent_purple: rgba(46,31,62,0.9);
 @lavender: #BE78E8;
+@felt_green: #387C41;
 
 body {
 	margin: 0;
@@ -41,6 +42,7 @@ button, input[type="submit"], .button {
 		width: 160px;
 		background-color: @transparent_purple;
 		border: 3px solid @light_purple;
+		border-radius: 10px;
 		cursor: pointer;
 		&.small {
 			font-size: 1em;
@@ -85,14 +87,24 @@ table {
 }
 
 #table_wrap {
-	background-image: url('/images/bg.png');
+	position: relative;
+}
+
+.table {
+	background-color: @felt_green;
+    border-radius: 200px;
+    height: 400px;
+    left: 11%;
+    position: absolute;
+    top: 11%;
+    width: 800px;
 }
 
 div.row {
 	height: 25%;
 	width: 100%;
 	&.controls {
-		background-color: #387C41;
+		background-color: @felt_green;
 		border-radius: 8px;
 	}
 }
