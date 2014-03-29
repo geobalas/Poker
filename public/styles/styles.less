@@ -98,11 +98,14 @@ table {
     position: absolute;
     top: 11%;
     width: 800px;
+    z-index: 0;
 }
 
 div.row {
 	height: 25%;
 	width: 100%;
+	position: relative;
+	z-index: 1;
 	&.controls {
 		background-color: @felt_green;
 		border-radius: 8px;
@@ -472,7 +475,7 @@ div.dealer_wrap {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1;
+	z-index: 2;
 	#modal {
 		padding: 32px;
 		background-color: #fff;
@@ -481,7 +484,7 @@ div.dealer_wrap {
 		margin: 0 auto;
 		top: 200px;
 		width: 424px;
-		z-index: 2;
+		z-index: 3;
 		label {
 			font-size: large;
 		}
@@ -496,6 +499,6 @@ div.dealer_wrap {
 		width: 100%;
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.4);
-		z-index: 1;
+		z-index: 2;
 	}
 }

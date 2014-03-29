@@ -46,6 +46,7 @@ app.get('/lobby.html', function( req, res ) {
 app.get('/lobby_data', function( req, res ) {
 	var lobby_tables = [];
 	for ( var table_id in tables ) {
+		// Sending the public data of the public tables to the lobby screen
 		if( !tables[table_id].private_table ) {
 			lobby_tables[table_id] = {};
 			lobby_tables[table_id].id = tables[table_id].public.id;
@@ -176,10 +177,8 @@ io.sockets.on('connection', function( socket ) {
 					}
 				}
 				if( !name_exists ) {
-					// Create the player object
-					var player_id = socket.id + Math.ceil(Math.random() * 999999);
 					// Creating the player object
-					players[socket.id] = new Player( player_id, socket, new_screen_name, 1000 );
+					players[socket.id] = new Player( socket, new_screen_name, 1000 );
 					callback( { 'success': true, screen_name: new_screen_name, total_chips: players[socket.id].chips } );
 				} else {
 					callback( { 'success': false, 'message': 'This name is taken' } );

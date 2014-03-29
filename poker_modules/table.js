@@ -121,8 +121,7 @@ Table.prototype.link_players = function() {
 			}
 			current_player.public.in_hand = true;
 			this.no_of_players_in_hand++;
-			current_player.cards = [];
-			current_player.public.has_cards = false;
+			current_player.prepare_for_new_round();
 		}
 	}
 
@@ -336,6 +335,48 @@ Table.prototype.action_to_next_player = function() {
 	this.emit_event( 'table_data', this.public );
 }
 
+Table.prototype.showdown = function() {
+	var current_player = this.last_position.next_player;
+	var winners = [{ 'evaluated_hand': { 'rating': 0 } }];
+
+	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
+		current_player.evaluate_hand( this.public.board );
+		if( current_player.evaluated_hand.rating > winners[0].evaluated_hand.rating ) {
+			winners = [current_player];
+			current_player.public.cards = current_player.cards;
+		}
+		else if( current_player.evaluated_hand.rating == winners[0].evaluated_hand.rating ) {
+			winners.push(current_player);
+			current_player.public.cards = current_player.cards;
+		}
+
+		current_player = current_player.next_player;
+	}
+
+	if( winners.length == 1 ) {
+		var html_hand = '[' + winners[0].evaluated_hand.cards.join(', ') + ']';
+		html_hand = html_hand.replace(/s/g, '&#9824;').replace(/c/g, '&#9827;').replace(/h/g, '&#9829;').replace(/d/g, '&#9830;');
+		this.public.log.message = winners[0].public.name + ' wins the pot with ' + winners[0].evaluated_hand.name + ' ' + html_hand;
+	} 
+	else if( winners.length == 2 ){
+		this.public.log.message = winners[0].public.name + ' and ' + winners[0].public.name + ' split the pot with ' + winners[0].evaluated_hand.name;
+	}
+	else {
+		var winners_length = winners.length;
+		this.public.log.message = '';
+		for( var i=0 ; i<winners_length-2 ; i++ ) {
+			this.public.log.message = this.public.log.message + winners[i].public.name + ', ';
+		}
+		this.public.log.message = this.public.log.message + winners[winners_length-2].public.name + ' and ' + winners[winners_length-1].public.name + 'split the pot with ' + winners[0].evaluated_hand.name;
+	}
+	this.emit_event( 'table_data', this.public );
+
+	var that = this;
+	setTimeout( function(){
+		that.new_round();
+	}, 2000 );
+}
+
 /**
  * Ends the current phase of the round
  */
@@ -347,7 +388,7 @@ Table.prototype.end_phase = function() {
 			this.init_next_phase();
 			break;
 		case 'river':
-			this.new_round();
+			this.showdown();
 			break;
 	}
 }
@@ -503,7 +544,7 @@ Table.prototype.player_left = function( seat ) {
 	this.emit_event( 'table_data', this.public );
 
 	// If someone is really sitting on that seat
-	if( this.seats[seat].id ) {
+	if( this.seats[seat].public.name ) {
 		var next_action = '';
 		// If the player is sitting in, make them sit out first
 		if( this.seats[seat].public.sitting_in ) {
@@ -567,7 +608,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 	else if( this.seats[seat].public.in_hand ) {
 		this.no_of_players_in_hand--;
 		// If there were only two players but there are more players sitting in, waiting to play, start a new round
-		if ( this.seats[seat].previous_player.id == this.seats[seat].next_player.id ) {
+		if ( this.seats[seat].previous_player.socket.id == this.seats[seat].next_player.socket.id ) {
 			this.seats[seat].sit_out();
 			if( !player_left ) {
 				this.new_round();
