@@ -10,6 +10,7 @@
 				input.input_left(type="number", ng-model="buy_in_amount", ng-trim="true")
 				input(type="submit", ng-click="sit_on_the_table(seat)", value="Sit in")
 		#curtain(ng-show="show_buy_in_modal" ng-click="show_buy_in_modal=false;")
+	.table
 	.row
 		.cell
 			a#to_lobby.button(href="/", ng-show="!$root.sitting_on_table", ng-click="leave_room()") < Lobby

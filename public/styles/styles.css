@@ -130,7 +130,7 @@ div.controls div.double_cell {
   width: 40%;
 }
 .sit_in {
-  padding: 20px 38px;
+  padding: 20px 55px;
   cursor: pointer;
 }
 div#chat div#messages {
@@ -164,7 +164,7 @@ div#chat input[type="text"] {
   border-radius: 8px;
 }
 div.player_wrap {
-  padding: 16px;
+  padding: 16px 0;
   background-color: rgba(46, 31, 62, 0.9);
   border: 3px solid #9880e9;
   border-radius: 5px;
@@ -172,7 +172,7 @@ div.player_wrap {
   font-size: 1.4em;
   font-weight: lighter;
   text-align: center;
-  width: 128px;
+  width: 160px;
   margin: 60px auto;
   position: relative;
 }

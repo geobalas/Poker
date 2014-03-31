@@ -8,7 +8,6 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	$scope.showing_chips_modal = false;
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
-	$scope.buy_in_amount = 200;
 	$scope.my_cards = ['', ''];
 	$scope.my_seat = null;
 	$rootScope.sitting_on_table = null;
@@ -22,10 +21,23 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		method: 'GET'
 	}).success(function( data, status, headers, config ) {
 		$scope.table = data.table;
+		$scope.buy_in_amount = data.table.max_buy_in;
 	});
 
 	// Joining the socket room
 	socket.emit( 'enter_room', { 'table_id': $routeParams.table_id } );
+
+	$scope.get_card_class = function( seat, card ) {
+		if( $scope.my_seat === seat ) {
+			return $scope.my_cards[card];
+		}
+		else if ( typeof $scope.table.seats[seat].cards[card] !== 'undefined' ) {
+			return 'card-' + $scope.table.seats[seat].cards[card];
+		}
+		else {
+			return 'card-back';
+		}
+	}
 
 	// Leaving the socket room
 	$scope.leave_room = function() {
