@@ -17,8 +17,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
 				.player_cards
-					div.card(ng-show="table.seats[0].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 0]")
-					div.card(ng-show="table.seats[0].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 0]")
+					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 0 )")
+					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 1 )")
 				a.sit_in(ng-show="!table.seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
 				.player_content(ng-show="table.seats[0].name")
 					p {{table.seats[0].name}}
@@ -29,8 +29,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
 				.player_cards
-					div.card(ng-show="table.seats[1].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 1]")
-					div.card(ng-show="table.seats[1].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 1]")
+					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 0 )")
+					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 1 )")
 				a.sit_in(ng-show="!table.seats[1].name", ng-click="show_buy_in_modal=true; seat=1;") Sit In
 				.player_content(ng-show="table.seats[1].name")
 					p {{table.seats[1].name}}
@@ -43,8 +43,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[5].name", ng-class="{active: table.active_seat===5}")
 				.player_cards
-					div.card(ng-show="table.seats[5].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 5]")
-					div.card(ng-show="table.seats[5].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 5]")
+					div.card(ng-show="table.seats[5].has_cards" ng-class="get_card_class( 5, 0 )")
+					div.card(ng-show="table.seats[5].has_cards" ng-class="get_card_class( 5, 1 )")
 				a.sit_in(ng-show="!table.seats[5].name", ng-click="show_buy_in_modal=true; seat=5;") Sit In
 				.player_content(ng-show="table.seats[5].name")
 					p {{table.seats[5].name}}
@@ -62,8 +62,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat===2}")
 				.player_cards
-					div.card(ng-show="table.seats[2].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 2]")
-					div.card(ng-show="table.seats[2].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 2]")
+					div.card(ng-show="table.seats[2].has_cards" ng-class="get_card_class( 2, 0 )")
+					div.card(ng-show="table.seats[2].has_cards" ng-class="get_card_class( 2, 1 )")
 				a.sit_in(ng-show="!table.seats[2].name", ng-click="show_buy_in_modal=true; seat=2;") Sit In
 				.player_content(ng-show="table.seats[2].name")
 					p {{table.seats[2].name}}
@@ -76,8 +76,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat===4}")
 				.player_cards
-					div.card(ng-show="table.seats[4].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 4]")
-					div.card(ng-show="table.seats[4].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 4]")
+					div.card(ng-show="table.seats[4].has_cards" ng-class="get_card_class( 4, 0 )")
+					div.card(ng-show="table.seats[4].has_cards" ng-class="get_card_class( 4, 1 )")
 				a.sit_in(ng-show="!table.seats[4].name", ng-click="show_buy_in_modal=true; seat=4;") Sit In
 				.player_content(ng-show="table.seats[4].name")
 					p {{table.seats[4].name}}
@@ -88,8 +88,8 @@
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat===3}")
 				.player_cards
-					div.card(ng-show="table.seats[3].has_cards" ng-class="{ false: 'card-back', true: my_cards[0] } [my_seat === 3]")
-					div.card(ng-show="table.seats[3].has_cards" ng-class="{ false: 'card-back', true: my_cards[1] } [my_seat === 3]")
+					div.card(ng-show="table.seats[3].has_cards" ng-class="get_card_class( 3, 0 )")
+					div.card(ng-show="table.seats[3].has_cards" ng-class="get_card_class( 3, 1 )")
 				a.sit_in(ng-show="!table.seats[3].name", ng-click="show_buy_in_modal=true; seat=3;") Sit In
 				.player_content(ng-show="table.seats[3].name")
 					p {{table.seats[3].name}}
