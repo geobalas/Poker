@@ -19,6 +19,18 @@ app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// When using the sockets on a server that doesn't allow web sockets
+/*
+io.configure( function() {
+    io.set( "transports", ["xhr-polling"] );
+    io.set( "polling duration", 2 );
+	io.set( 'heartbeat interval', 2 );
+	io.set( 'close timeout', 5 );
+	io.set( 'heartbeat timeout', 5 );
+} );
+*/
+
 // Development Only
 if ( 'development' == app.get('env') ) {
 	app.use( express.errorHandler() );
