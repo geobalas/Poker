@@ -90,7 +90,7 @@ table {
   position: relative;
 }
 .table {
-  background-color: #387c41;
+  background-color: #724f39;
   border-radius: 200px;
   height: 400px;
   left: 11%;
@@ -98,6 +98,17 @@ table {
   top: 11%;
   width: 800px;
   z-index: 0;
+  box-shadow: 0 0 25px 0 #160726;
+}
+.table .felt {
+  background-color: #387c41;
+  border-radius: 175px;
+  width: 750px;
+  height: 350px;
+  position: relative;
+  top: 25px;
+  left: 25px;
+  box-shadow: 0 0 20px 0 #17541D inset;
 }
 div.row {
   height: 25%;
@@ -130,7 +141,7 @@ div.controls div.double_cell {
   width: 40%;
 }
 .sit_in {
-  padding: 20px 55px;
+  padding: 20px 54px;
   cursor: pointer;
 }
 div#chat div#messages {
@@ -175,6 +186,7 @@ div.player_wrap {
   width: 160px;
   margin: 60px auto;
   position: relative;
+  box-shadow: 0 0 5px 0 #160726;
 }
 div.player_wrap.top {
   margin-top: 100px;
@@ -191,6 +203,7 @@ div.player_wrap.right {
 div.player_wrap.active {
   color: #be78e8;
   border: 5px solid #be78e8;
+  box-shadow: 0 0 5px 0 #be78e8;
 }
 div.player_wrap p {
   text-overflow: ellipsis;
@@ -224,9 +237,10 @@ div.board_wrap .card {
   background-size: 1040px auto;
   border-radius: 8px 8px 0 0;
   height: 100%;
+  box-shadow: 0 0 3px 0 #808080;
   overflow: hidden;
-  width: 73px;
-  height: 109px;
+  width: 72px;
+  height: 107px;
   /**
 	 * CSS Sprites
 	 */

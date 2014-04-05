@@ -1,7 +1,10 @@
 @light_purple: #9880e9;
+@dark_purple: #160726;
 @transparent_purple: rgba(46,31,62,0.9);
 @lavender: #BE78E8;
 @felt_green: #387C41;
+@dark_greek: #17541D;
+@brown: #724F39;
 
 body {
 	margin: 0;
@@ -91,7 +94,7 @@ table {
 }
 
 .table {
-	background-color: @felt_green;
+	background-color: @brown;
     border-radius: 200px;
     height: 400px;
     left: 11%;
@@ -99,6 +102,17 @@ table {
     top: 11%;
     width: 800px;
     z-index: 0;
+    box-shadow: 0 0 25px 0 @dark_purple;
+    .felt {
+    	background-color: @felt_green;
+    	border-radius: 175px;
+    	width: 750px;
+    	height: 350px;
+    	position: relative;
+    	top: 25px;
+    	left: 25px;
+    	box-shadow: 0 0 20px 0 #17541D inset;
+    }
 }
 
 div.row {
@@ -139,7 +153,7 @@ div.controls {
 }
 
 .sit_in {
-	padding: 20px 55px;
+	padding: 20px 54px;
 	cursor: pointer;
 }
 
@@ -190,6 +204,7 @@ div.player_wrap {
 	width: 160px;
 	margin: 60px auto;
 	position: relative;
+	box-shadow: 0 0 5px 0 @dark_purple;
 	&.top {
 		margin-top: 100px;
 	}
@@ -205,6 +220,7 @@ div.player_wrap {
 	&.active {
 		color: @lavender;
 		border: 5px solid @lavender;
+		box-shadow: 0 0 5px 0 @lavender;
 	}
 	p {
 		text-overflow: ellipsis;
@@ -241,9 +257,10 @@ div.board_wrap {
     background-size: 1040px auto;
     border-radius: 8px 8px 0 0;
     height: 100%;
+    box-shadow: 0 0 3px 0 #808080;
     overflow: hidden;
-    width: 73px;
-    height: 109px;
+    width: 72px;
+    height: 107px;
     /**
 	 * CSS Sprites
 	 */
