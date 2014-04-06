@@ -625,11 +625,6 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 			if( this.player_to_act.seat === seat && ( this.last_player_to_act.seat !== seat ) ) {
 				this.action_to_next_player();
 			}
-			// If the player was the dealer
-			if( this.public.dealer_seat === seat ) {
-				this.dealer = this.dealer.previous_player;
-				this.public.dealer_seat = this.dealer.seat;
-			}
 			// If the player was the last player to act in this phase and the game will continue,
 			// the last player to act will be the previous player
 			if( this.last_player_to_act.seat === seat ) {

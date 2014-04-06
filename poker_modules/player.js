@@ -132,7 +132,7 @@ Player.prototype.evaluate_hand = function( board ) {
     
     // Sorting the 7 cards
     cards.sort( function( a, b ) {
-        return card_values.indexOf( a[0] ) - card_values.indexOf( b[0] );
+        return card_values.indexOf( b[0] ) - card_values.indexOf( a[0] );
     });
 
     var straight = [],
