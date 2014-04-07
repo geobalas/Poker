@@ -5,7 +5,6 @@
  */
 app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', function( $scope, $rootScope, $http, $routeParams ) {
 	$scope.table = {};
-
 	$scope.showing_chips_modal = false;
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
