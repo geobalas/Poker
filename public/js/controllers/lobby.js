@@ -1,4 +1,4 @@
-app.controller('LobbyController', function( $scope, $rootScope, $http ) {
+app.controller('LobbyController', ['$scope', '$rootScope', '$http', function( $scope, $rootScope, $http ) {
 	$scope.lobby_tables = [];
 	$scope.new_screen_name = '';
 
@@ -28,4 +28,4 @@ app.controller('LobbyController', function( $scope, $rootScope, $http ) {
 			});
 		}
 	}
-});
+}]);

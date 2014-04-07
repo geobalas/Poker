@@ -41,8 +41,8 @@ button, input[type="submit"], .button {
 	}
 	&.control_button {
 		padding: 0;
-		height: 120px;
-		width: 160px;
+		height: 65%;
+		width: 85%;
 		background-color: @transparent_purple;
 		border: 3px solid @light_purple;
 		border-radius: 10px;
@@ -133,7 +133,7 @@ div.cell {
 	position: relative;
 
 	button {
-		margin: 17%;
+		margin: 22.5% 15%;
 	}
 }
 
@@ -145,10 +145,14 @@ div.double_cell {
 
 div.controls {
 	div.cell {
-		width: 20%;
+		width: 15%;
 	}
 	div.double_cell {
-		width: 40%;
+		width: 30%;
+	}
+	div.chat_cell {
+		float: left;
+		width: 25%;
 	}
 }
 
@@ -178,16 +182,17 @@ div#chat {
 	}
 	input[type="submit"] {
 		font-size: 1.3em;
-		padding: 5px;
-		margin-top: 1px;
+		padding: 5px 8px;
+		margin: 1px 0 0 2px;
 	    background-color: rgba(46, 31, 62, 0.9);
 	    border-radius: 8px;
 	}
 	input[type="text"] {
-		width: 330px;
-		font-size: 1.3em;
+		width: 197px;
+		font-size: 1em;
 		margin-left: 8px;
-		padding: 5px;
+		padding: 9px;
+		transform: translate(0px, -2px);
 		border-radius: 8px;
 	}
 }

@@ -3,8 +3,9 @@
  * The table controller. It keeps track of the data on the interface,
  * depending on the replies from the server.
  */
-app.controller( 'TableController', function( $scope, $rootScope, $http, $routeParams ) {
+app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', function( $scope, $rootScope, $http, $routeParams ) {
 	$scope.table = {};
+
 	$scope.showing_chips_modal = false;
 	$scope.action_state = '';
 	$scope.table.dealer_seat = null;
@@ -31,7 +32,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 		if( $scope.my_seat === seat ) {
 			return $scope.my_cards[card];
 		}
-		else if ( typeof $scope.table.seats[seat].cards[card] !== 'undefined' ) {
+		else if ( typeof $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && typeof $scope.table.seats[seat].cards !== 'undefined' && typeof $scope.table.seats[seat].cards[card] !== 'undefined' ) {
 			return 'card-' + $scope.table.seats[seat].cards[card];
 		}
 		else {
@@ -54,6 +55,7 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 				$scope.buy_in_error = null;
 				$scope.my_seat = seat;
 				$scope.action_state = 'waiting';
+				$scope.chips_in_play = $scope.buy_in_amount;
 				$scope.$digest();
 			} else {
 				if( response.error ) {
@@ -220,4 +222,4 @@ app.controller( 'TableController', function( $scope, $rootScope, $http, $routePa
 	function html_entities(str) {
 	    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
-});
+}]);

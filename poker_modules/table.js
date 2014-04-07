@@ -359,7 +359,7 @@ Table.prototype.showdown = function() {
 		this.public.log.message = winners[0].public.name + ' wins the pot with ' + winners[0].evaluated_hand.name + ' ' + html_hand;
 	} 
 	else if( winners.length == 2 ){
-		this.public.log.message = winners[0].public.name + ' and ' + winners[0].public.name + ' split the pot with ' + winners[0].evaluated_hand.name;
+		this.public.log.message = winners[0].public.name + ' and ' + winners[1].public.name + ' split the pot with ' + winners[0].evaluated_hand.name;
 	}
 	else {
 		var winners_length = winners.length;
