@@ -18,7 +18,9 @@ var Player = function( socket, name, chips ) {
 		// Flag that shows if the player is holding cards
 		has_cards: false,
         // The cards the player is holding, made public at the showdown
-        cards: []
+        cards: [],
+        // The amount the player has betted in the current round
+        bet: 0
 	};
 	// The socket object of the user
 	this.socket = socket;
@@ -78,14 +80,26 @@ Player.prototype.sit_out = function() {
 }
 
 /**
- * Updates the player data when they sit out
+ * The action of folding the hand
  */
 Player.prototype.fold = function() {
-	// Remove the player from the doubly linked list
-	this.unlink();
+    this.unlink();
 	// The player has no cards now
 	this.cards = [];
 	this.public.has_cards = false;
+    this.public.in_hand = false;
+}
+
+/**
+ * The action of betting
+ * @param number amount
+ */
+Player.prototype.bet = function( amount ) {
+    if( amount > this.public.chips_in_play ) {
+        amount = this.public.chips_in_play;
+    }
+    this.public.chips_in_play -= amount;
+    this.public.bet += +amount;
 }
 
 /**
@@ -95,6 +109,8 @@ Player.prototype.prepare_for_new_round = function() {
     this.cards = [];
     this.public.cards = [];
     this.public.has_cards = false;
+    this.public.bet = 0;
+    this.public.in_hand = true;
     this.evaluated_hand = {};
 }
 

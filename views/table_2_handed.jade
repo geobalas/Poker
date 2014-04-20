@@ -29,8 +29,9 @@
 					p {{table.seats[0].name}}
 					p(ng-show="table.seats[0].sitting_in") {{table.seats[0].chips_in_play}}
 					p(ng-show="!table.seats[0].sitting_in") Sitting Out
-			#dealer_wrap_9.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==0") D
+			#dealer_wrap_9.dealer_button(ng-show="table.dealer_seat===0") D
+			#bets_9.bets
+				span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.double_cell
 			.board_wrap
 				.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
@@ -48,8 +49,9 @@
 					p {{table.seats[1].name}}
 					p(ng-show="table.seats[1].sitting_in") {{table.seats[1].chips_in_play}}
 					p(ng-show="!table.seats[1].sitting_in") Sitting Out
-			#dealer_wrap_4.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==1") D
+			#dealer_wrap_4.dealer_button(ng-show="table.dealer_seat==1") D
+			#bets_4.bets
+				span(ng-show="table.seats[1].bet") {{table.seats[1].bet}}
 	.row
 		.cell
 		.cell

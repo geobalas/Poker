@@ -14,6 +14,6 @@
 			th Players
 		tr(ng-repeat="table in lobby_tables")
 			td 
-				a(href="/table_{{table.no_of_seats}}/{{table.id}}") {{table.name}}
+				a(href="/table_{{table.seats_count}}/{{table.id}}") {{table.name}}
 			td {{table.big_blind}}/{{table.small_blind}}
-			td {{table.players_sitting}}/{{table.no_of_seats}}
+			td {{table.players_sitting}}/{{table.seats_count}}

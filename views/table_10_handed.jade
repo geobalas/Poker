@@ -24,8 +24,9 @@
 					p {{table.seats[0].name}}
 					p(ng-show="table.seats[0].sitting_in") {{table.seats[0].chips_in_play}}
 					p(ng-show="!table.seats[0].sitting_in") Sitting Out
-			#dealer_wrap_0.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat===0") D
+			#dealer_wrap_0.dealer_button(ng-show="table.dealer_seat===0") D
+			#bets_0.bets
+				span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
 				.player_cards
@@ -36,8 +37,9 @@
 					p {{table.seats[1].name}}
 					p(ng-show="table.seats[1].sitting_in") {{table.seats[1].chips_in_play}}
 					p(ng-show="!table.seats[1].sitting_in") Sitting Out
-			#dealer_wrap_1.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==1") D
+			#dealer_wrap_1.dealer_button(ng-show="table.dealer_seat==1") D
+			#bets_1.bets
+				span(ng-show="table.seats[1].bet") {{table.seats[1].bet}}
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat===2}")
 				.player_cards
@@ -48,8 +50,9 @@
 					p {{table.seats[2].name}}
 					p(ng-show="table.seats[2].sitting_in") {{table.seats[2].chips_in_play}}
 					p(ng-show="!table.seats[2].sitting_in") Sitting Out
-			#dealer_wrap_2.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==2") D
+			#dealer_wrap_2.dealer_button(ng-show="table.dealer_seat==2") D
+			#bets_2.bets
+				span(ng-show="table.seats[2].bet") {{table.seats[2].bet}}
 		.cell
 			.player_wrap.top.right(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat===3}")
 				.player_cards
@@ -60,8 +63,9 @@
 					p {{table.seats[3].name}}
 					p(ng-show="table.seats[3].sitting_in") {{table.seats[3].chips_in_play}}
 					p(ng-show="!table.seats[3].sitting_in") Sitting Out
-			#dealer_wrap_3.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==3") D
+			#dealer_wrap_3.dealer_button(ng-show="table.dealer_seat==3") D
+			#bets_3.bets
+				span(ng-show="table.seats[3].bet") {{table.seats[3].bet}}
 	.row
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[9].name", ng-class="{active: table.active_seat===9}")
@@ -73,9 +77,11 @@
 					p {{table.seats[9].name}}
 					p(ng-show="table.seats[9].sitting_in") {{table.seats[9].chips_in_play}}
 					p(ng-show="!table.seats[9].sitting_in") Sitting Out
-			#dealer_wrap_9.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==9") D
+			#dealer_wrap_9.dealer_button(ng-show="table.dealer_seat==9") D
+			#bets_9.bets
+				span(ng-show="table.seats[9].bet") {{table.seats[9].bet}}
 		.double_cell
+			span#pot(ng-show="table.pot") Pot: {{table.pot}}
 			.board_wrap
 				.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
 				.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
@@ -92,8 +98,9 @@
 					p {{table.seats[4].name}}
 					p(ng-show="table.seats[4].sitting_in") {{table.seats[4].chips_in_play}}
 					p(ng-show="!table.seats[4].sitting_in") Sitting Out
-			#dealer_wrap_4.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==4") D
+			#dealer_wrap_4.dealer_button(ng-show="table.dealer_seat==4") D
+			#bets_4.bets
+				span(ng-show="table.seats[4].bet") {{table.seats[4].bet}}
 	.row
 		.cell
 			.player_wrap.bottom.left(ng-show="!$root.sitting_on_table || table.seats[8].name", ng-class="{active: table.active_seat===8}")
@@ -105,8 +112,9 @@
 					p {{table.seats[8].name}}
 					p(ng-show="table.seats[8].sitting_in") {{table.seats[8].chips_in_play}}
 					p(ng-show="!table.seats[8].sitting_in") Sitting Out
-			#dealer_wrap_8.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==8") D
+			#dealer_wrap_8.dealer_button(ng-show="table.dealer_seat==8") D
+			#bets_8.bets
+				span(ng-show="table.seats[8].bet") {{table.seats[8].bet}}
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[7].name", ng-class="{active: table.active_seat===7}")
 				.player_cards
@@ -117,8 +125,9 @@
 					p {{table.seats[7].name}}
 					p(ng-show="table.seats[7].sitting_in") {{table.seats[7].chips_in_play}}
 					p(ng-show="!table.seats[7].sitting_in") Sitting Out
-			#dealer_wrap_7.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==7") D
+			#dealer_wrap_7.dealer_button(ng-show="table.dealer_seat==7") D
+			#bets_7.bets
+				span(ng-show="table.seats[7].bet") {{table.seats[7].bet}}
 		.cell
 			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[6].name", ng-class="{active: table.active_seat===6}")
 				.player_cards
@@ -129,8 +138,9 @@
 					p {{table.seats[6].name}}
 					p(ng-show="table.seats[6].sitting_in") {{table.seats[6].chips_in_play}}
 					p(ng-show="!table.seats[6].sitting_in") Sitting Out
-			#dealer_wrap_6.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==6") D
+			#dealer_wrap_6.dealer_button(ng-show="table.dealer_seat==6") D
+			#bets_6.bets
+				span(ng-show="table.seats[6].bet") {{table.seats[6].bet}}
 		.cell
 			.player_wrap.bottom.right(ng-show="!$root.sitting_on_table || table.seats[5].name", ng-class="{active: table.active_seat==5}")
 				.player_cards
@@ -141,8 +151,9 @@
 					p {{table.seats[5].name}}
 					p(ng-show="table.seats[5].sitting_in") {{table.seats[5].chips_in_play}}
 					p(ng-show="!table.seats[5].sitting_in") Sitting Out
-			#dealer_wrap_5.dealer_wrap
-				.dealer_button(ng-show="table.dealer_seat==5") D
+			#dealer_wrap_5.dealer_button(ng-show="table.dealer_seat==5") D
+			#bets_5.bets
+				span(ng-show="table.seats[5].bet") {{table.seats[5].bet}}
 	.row.controls
 		.chat_cell
 			#chat
@@ -158,8 +169,8 @@
 			button(class="control_button", ng-click="sit_in()", ng-show='$root.sitting_on_table !== null && !$root.sitting_in') Sit In
 			button(class="control_button", ng-click="post_blind(true)", ng-show='action_state === "post_small_blind"') Small Blind ({{table.small_blind}})
 			button(class="control_button", ng-click="post_blind(true)", ng-show='action_state === "post_big_blind"') Big Blind ({{table.big_blind}})
-			button(class="control_button", ng-click="check()", ng-show='action_state === "act_not_betted_pot"') Check
-			button(class="control_button", ng-click="call()", ng-show='action_state === "act_betted_pot"') Call
+			button(class="control_button", ng-click="check()", ng-show='action_state === "act_not_betted_pot" || (action_state === "act_betted_pot" && table.biggest_bet == table.seats[my_seat].bet)') Check
+			button(class="control_button", ng-click="call()", ng-show='action_state === "act_betted_pot"  && !(action_state === "act_betted_pot" && table.biggest_bet == table.seats[my_seat].bet)') Call {{table.biggest_bet - table.seats[my_seat].bet}}
 		.cell
 			button(class="control_button", ng-click="bet()", ng-show='action_state === "act_not_betted_pot"') Bet {{bet_amount}}
 			button(class="control_button", ng-click="raise()", ng-show='action_state === "act_betted_pot"') Raise {{bet_amount}}

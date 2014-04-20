@@ -10,6 +10,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.table.dealer_seat = null;
 	$scope.my_cards = ['', ''];
 	$scope.my_seat = null;
+	$scope.bet_amount = 0;
 	$rootScope.sitting_on_table = null;
 
 	// Existing listeners should be removed
@@ -22,6 +23,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}).success(function( data, status, headers, config ) {
 		$scope.table = data.table;
 		$scope.buy_in_amount = data.table.max_buy_in;
+		$scope.bet_amount = data.table.big_blind;
 	});
 
 	// Joining the socket room
@@ -119,6 +121,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.call = function() {
+		console.log( 'emitting' );
 		socket.emit( 'call', function( response ) {
 			if( response.success ) {
 				$scope.action_state = '';
@@ -128,7 +131,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.bet = function() {
-		socket.emit( 'bet', function( response ) {
+		socket.emit( 'bet', $scope.bet_amount, function( response ) {
 			if( response.success ) {
 				$scope.action_state = '';
 				$scope.$digest();

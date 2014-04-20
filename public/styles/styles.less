@@ -257,6 +257,12 @@ div.board_wrap {
 	}
 }
 
+#pot {
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
 .card {
 	background-image: url("/images/deck.png");
     background-size: 1040px auto;
@@ -430,58 +436,102 @@ div.board_wrap {
 	}
 }
 
+#dealer_wrap_0 {
+	top: 190px;
+	left: 210px;
+}
+#dealer_wrap_1 {
+	top: 150px;
+	left: 50px;
+}
+#dealer_wrap_2 {
+	top: 150px;
+	left: 180px;
+}
+#dealer_wrap_3 {
+	top: 190px;
+	left: 20px;
+}
+#dealer_wrap_4 {
+	top: 130px;
+	left: 10px;
+}
+#dealer_wrap_5 {
+	top: 20px;
+	left: -10px;
+}
+#dealer_wrap_6 {
+	top: 30px;
+	left: 50px;
+}
+#dealer_wrap_7 {
+	top: 30px;
+	left: 180px;
+}
+#dealer_wrap_8 {
+	top: 20px;
+	left: 250px;
+}
+#dealer_wrap_9 {
+	top: 110px;
+	left: 230px;
+}
 
-div.dealer_wrap {
+.dealer_button {
 	position: absolute;
-	&#dealer_wrap_0 {
-		top: 190px;
-		left: 210px;
-	}
-	&#dealer_wrap_1 {
-		top: 150px;
-		left: 50px;
-	}
-	&#dealer_wrap_2 {
-		top: 150px;
-		left: 180px;
-	}
-	&#dealer_wrap_3 {
-		top: 190px;
-		left: 20px;
-	}
-	&#dealer_wrap_4 {
-		top: 150px;
-		left: 50px;
-	}
-	&#dealer_wrap_5 {
-		top: 20px;
-		left: -10px;
-	}
-	&#dealer_wrap_6 {
-		top: 30px;
-		left: 50px;
-	}
-	&#dealer_wrap_7 {
-		top: 30px;
-		left: 180px;
-	}
-	&#dealer_wrap_8 {
-		top: 20px;
-		left: 250px;
-	}
-	&#dealer_wrap_9 {
-		top: 150px;
-		left: 180px;
-	}
+	border: 1px solid @light_purple;
+	border-radius: 20px;
+    height: 20px;
+    text-align: center;
+    width: 20px;
+    background-color: @transparent_purple;
+}
 
-	.dealer_button {
-		border: 1px solid @light_purple;
-		border-radius: 20px;
-	    height: 20px;
-	    text-align: center;
-	    width: 20px;
-	    background-color: @transparent_purple;
-	}
+#bets_0 {
+	top: 190px;
+	left: 200px;
+}
+#bets_1 {
+	top: 150px;
+	left: 50px;
+}
+#bets_2 {
+	top: 150px;
+	left: 50px;
+}
+#bets_3 {
+	top: 190px;
+	left: -110px;
+}
+#bets_4 {
+	top: 80px;
+	left: -100px;
+}
+#bets_5 {
+	top: -10px;
+	left: -110px;
+}
+#bets_6 {
+	top: 20px;
+	left: 50px;
+}
+#bets_7 {
+	top: 20px;
+	left: 50px;
+}
+#bets_8 {
+	top: -10px;
+	left: 220px;
+}
+#bets_9 {
+	top: 80px;
+	left: 190px;
+}
+
+.bets {
+	position: absolute;
+	text-align: center;
+	width: 160px;
 }
 
 #to_lobby {

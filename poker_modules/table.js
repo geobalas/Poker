@@ -4,14 +4,14 @@
  * @param string	name (the name of the table)
  * @param object 	deck (the deck object that the table will use)
  * @param function 	event_emitter (function that emits the events to the players of the room)
- * @param int 		no_of_seats (the total number of players that can play on the table)
+ * @param int 		seats_count (the total number of players that can play on the table)
  * @param int 		big_blind (the current big blind)
  * @param int 		small_blind (the current small_blind)
  * @param int 		max_buy_in (the maximum amount of chips that one can bring to the table)
  * @param int 		min_buy_in (the minimum amount of chips that one can bring to the table)
  * @param bool 		private_table (flag that shows whether the table will be shown in the lobby)
  */
-var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
+var Table = function( id, name, deck, event_emitter, seats_count, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
 	// All the public table data
 	this.public = {
 		// The table id
@@ -19,7 +19,7 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 		// The table name
 		'name': name,
 		// The number of the seats of the table
-		'no_of_seats': no_of_seats,
+		'seats_count': seats_count,
 		// The big blind amount
 		'big_blind': big_blind,
 		// The small blind amount
@@ -29,11 +29,13 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 		// The maximum allowed buy in
 		'max_buy_in': max_buy_in,
 		// The number of players that are currently seated
-		'no_of_players_seated': 0,
+		'players_seated_count': 0,
 		// The number of players who receive cards at the begining of each round
-		'no_of_players_sitting_in': 0,
+		'players_sitting_in_count': 0,
 		// The amount of chips that are in the pot
-		'pot': null,
+		'pot': 0,
+		// The biggest bet of the table in the current phase
+		'biggest_bet': 0,
 		// The seat of the dealer
 		'dealer_seat': null,
 		// The seat of the active player
@@ -66,7 +68,7 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 	// The table is not displayed in the lobby
 	this.private_table = private_table;
 	// The number of players that currently hold cards in their hands
-	this.no_of_players_in_hand = 0;
+	this.players_in_hand_count = 0;
 	// References to all the player objects in the table, indexed by seat number
 	this.seats = [];
 	// The deck of the table
@@ -76,7 +78,7 @@ var Table = function( id, name, deck, event_emitter, no_of_seats, big_blind, sma
 	// The function that emits the events of the table
 	this.event_emitter = event_emitter;
 	// Initializing the empty seats
-	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
+	for( var i=0 ; i<this.public.seats_count ; i++ ) {
 		this.seats[i] = {};
 	}
 }
@@ -95,18 +97,18 @@ Table.prototype.emit_event = function( event_name, event_data ){
  * Method that makes the doubly linked list of players
  */
 Table.prototype.link_players = function() {
-	if( this.public.no_of_players_sitting_in < 2 ) {
+	if( this.public.players_sitting_in_count < 2 ) {
 		 return false;	
 	}
 
-	this.no_of_players_in_hand = 0;
+	this.players_in_hand_count = 0;
 	// The seat number of the first player of the link
 	var first_player_seat = false;
 	// An object that points to the current player that is being added to the list
 	var current_player = {};
 
 	// For each seat
-	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
+	for( var i=0 ; i<this.public.seats_count ; i++ ) {
 		// If a player is sitting on the current seat
 		if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 			// Keep the seat on which the first player is sitting, so that
@@ -119,8 +121,7 @@ Table.prototype.link_players = function() {
 				this.seats[i].previous_player = current_player;
 				current_player = this.seats[i];
 			}
-			current_player.public.in_hand = true;
-			this.no_of_players_in_hand++;
+			this.players_in_hand_count++;
 			current_player.prepare_for_new_round();
 		}
 	}
@@ -136,21 +137,21 @@ Table.prototype.link_players = function() {
  * Method that starts a new game
  */
 Table.prototype.initialize_game = function() {
-	if( this.public.no_of_players_sitting_in > 1 ) {
+	if( this.public.players_sitting_in_count > 1 ) {
 		// The game is on now
 		this.game_is_on = true;
 		this.public.board = ['', '', '', '', ''];
 		this.deck.shuffle();
-		this.heads_up = this.public.no_of_players_sitting_in === 2;
+		this.heads_up = this.public.players_sitting_in_count === 2;
 		// Creating the linked list of players
 		this.link_players();
 
 		// Giving the dealer button to a random player
 		if( typeof this.dealer.public == 'undefined' ) {
-			var random_dealer_seat = Math.floor( Math.random() * this.public.no_of_players_sitting_in );	
+			var random_dealer_seat = Math.floor( Math.random() * this.public.players_sitting_in_count );	
 			var current_player = {};
 			// Assinging the dealer button to the random player
-			for( var i=0 ; i<=this.public.no_of_seats-1 ; i++ ) {
+			for( var i=0 ; i<=this.public.seats_count-1 ; i++ ) {
 				if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 					current_player = this.seats[i];
 					for( var j=0 ; j<=random_dealer_seat ; j++ ) {
@@ -173,10 +174,11 @@ Table.prototype.initialize_game = function() {
  * Method that starts a new round
  */
 Table.prototype.new_round = function() {
-	if( this.game_is_on && this.public.no_of_players_sitting_in > 1 ) {
+	if( this.game_is_on && this.public.players_sitting_in_count > 1 ) {
 		this.public.board = ['', '', '', '', ''];
+		this.public.pot = 0;
 		this.deck.shuffle();
-		this.heads_up = this.public.no_of_players_sitting_in === 2;
+		this.heads_up = this.public.players_sitting_in_count === 2;
 		// Creating the linked list of players
 		this.link_players();
 
@@ -186,7 +188,7 @@ Table.prototype.new_round = function() {
 			// right after the dealer who left or sat out
 			var found_new_dealer = false;
 			// Starting from the previous dealer seat, and checking each seat until the last seat
-			for( var i=this.public.dealer_seat ; i<=this.public.no_of_seats-1 ; i++ ) {
+			for( var i=this.public.dealer_seat ; i<=this.public.seats_count-1 ; i++ ) {
 				if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.sitting_in ) {
 					this.dealer = this.seats[i];
 					found_new_dealer = true;
@@ -254,8 +256,9 @@ Table.prototype.init_preflop = function() {
 	var current_player = this.player_to_act;
 	// The player that placed the big blind is the last player to act for the round
 	this.last_player_to_act = this.player_to_act;
+	this.betted_pot = true;
 
-	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
+	for( var i=0 ; i<this.players_in_hand_count ; i++ ) {
 		current_player.cards = this.deck.deal( 2 );
 		current_player.public.has_cards = true;
 		current_player.socket.emit( 'dealing_cards', current_player.cards );
@@ -284,6 +287,7 @@ Table.prototype.init_next_phase = function() {
 			break;
 	}
 
+	this.add_bets_to_the_pot();
 	this.betted_pot = false;
 	this.player_to_act = this.last_position.next_player;
 	this.public.active_seat = this.player_to_act.seat;
@@ -339,7 +343,7 @@ Table.prototype.showdown = function() {
 	var current_player = this.last_position.next_player;
 	var winners = [{ 'evaluated_hand': { 'rating': 0 } }];
 
-	for( var i=0 ; i<this.no_of_players_in_hand ; i++ ) {
+	for( var i=0 ; i<this.players_in_hand_count ; i++ ) {
 		current_player.evaluate_hand( this.public.board );
 		if( current_player.evaluated_hand.rating > winners[0].evaluated_hand.rating ) {
 			winners = [current_player];
@@ -357,6 +361,7 @@ Table.prototype.showdown = function() {
 		var html_hand = '[' + winners[0].evaluated_hand.cards.join(', ') + ']';
 		html_hand = html_hand.replace(/s/g, '&#9824;').replace(/c/g, '&#9827;').replace(/h/g, '&#9829;').replace(/d/g, '&#9830;');
 		this.public.log.message = winners[0].public.name + ' wins the pot with ' + winners[0].evaluated_hand.name + ' ' + html_hand;
+		this.give_pot_to_winner( winners[0].seat );
 	} 
 	else if( winners.length == 2 ){
 		this.public.log.message = winners[0].public.name + ' and ' + winners[1].public.name + ' split the pot with ' + winners[0].evaluated_hand.name;
@@ -397,8 +402,9 @@ Table.prototype.end_phase = function() {
  * When a player posts the small blind
  * @param int seat
  */
-Table.prototype.player_posted_small_blind = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' posted the small blind';
+Table.prototype.player_posted_small_blind = function() {
+	this.public.log.message = this.player_to_act.public.name + ' posted the small blind';
+	this.public.biggest_bet = this.public.small_blind;
 	this.emit_event( 'table_data', this.public );
 	this.init_big_blind();
 }
@@ -407,25 +413,48 @@ Table.prototype.player_posted_small_blind = function( seat ) {
  * When a player posts the big blind
  * @param int seat
  */
-Table.prototype.player_posted_big_blind = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' posted the big blind';
+Table.prototype.player_posted_big_blind = function() {
+	this.public.log.message = this.player_to_act.public.name + ' posted the big blind';
+	this.public.biggest_bet = this.public.big_blind;
 	this.emit_event( 'table_data', this.public );
 	this.init_preflop();
 }
 
 /**
- * Checks if the round should continue after a player has folded
- * @param int seat
+ * Adds all the bets to the pot
  */
-Table.prototype.player_folded = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' folded';
+Table.prototype.add_bets_to_the_pot = function() {
+	// For each seat
+	for( var i=0 ; i<this.public.seats_count ; i++ ) {
+		// If a player has betted
+		if( typeof this.seats[i].public !== 'undefined' && this.seats[i].public.bet ) {
+			// Add the bet to the pot
+			this.public.pot += this.seats[i].public.bet;
+			this.seats[i].public.bet = 0;
+		}
+	}
+}
+
+Table.prototype.give_pot_to_winner = function( winners_seat ) {
+	this.seats[winners_seat].public.chips_in_play += this.public.pot;
+	this.public.pot = 0;
+}
+
+/**
+ * Checks if the round should continue after a player has folded
+ */
+Table.prototype.player_folded = function() {
+	this.public.log.message = this.player_to_act.public.name + ' folded';
 	this.emit_event( 'table_data', this.public );
 
-	this.no_of_players_in_hand--;
-	if( this.no_of_players_in_hand <= 1 ) {
+	this.players_in_hand_count--;
+	if( this.players_in_hand_count <= 1 ) {
+		this.add_bets_to_the_pot();
+		var winners_seat = this.player_to_act.next_player.seat;
+		this.give_pot_to_winner( winners_seat );
 		this.new_round();
 	} else {
-		if( this.last_position.seat == seat ) {
+		if( this.last_position.seat == this.player_to_act.seat ) {
 			this.last_position = this.last_position.previous_player;
 		}
 		if( this.last_player_to_act.seat == seat ) {
@@ -438,13 +467,12 @@ Table.prototype.player_folded = function( seat ) {
 
 /**
  * When a player checks
- * @param int seat
  */
-Table.prototype.player_checked = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' checked';
+Table.prototype.player_checked = function() {
+	this.public.log.message = this.player_to_act.public.name + ' checked';
 	this.emit_event( 'table_data', this.public );
 
-	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+	if( this.last_player_to_act.socket.id === this.player_to_act.socket.id ) {
 		this.end_phase();
 	} else {
 		this.action_to_next_player();
@@ -452,15 +480,13 @@ Table.prototype.player_checked = function( seat ) {
 }
 
 /**
- * *NOT IMPLEMENTED YET*
  * When a player calls
- * @param int seat
  */
-Table.prototype.player_called = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' called';
+Table.prototype.player_called = function() {
+	this.public.log.message = this.player_to_act.public.name + ' called';
 	this.emit_event( 'table_data', this.public );
 
-	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+	if( this.last_player_to_act.socket.id === this.player_to_act.socket.id ) {
 		this.end_phase();
 	} else {
 		this.action_to_next_player();
@@ -468,15 +494,15 @@ Table.prototype.player_called = function( seat ) {
 }
 
 /**
- * *NOT IMPLEMENTED YET*
  * When a player bets
- * @param int seat
  */
-Table.prototype.player_betted = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' betted';
+Table.prototype.player_betted = function() {
+	this.public.biggest_bet = this.player_to_act.public.bet;
+	this.public.log.message = this.player_to_act.public.name + ' betted';
 	this.emit_event( 'table_data', this.public );
+	this.betted_pot = true;
 
-	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+	if( this.last_player_to_act.socket.id === this.player_to_act.socket.id ) {
 		this.end_phase();
 	} else {
 		this.action_to_next_player();
@@ -484,15 +510,13 @@ Table.prototype.player_betted = function( seat ) {
 }
 
 /**
- * *NOT IMPLEMENTED YET*
  * When a player raises
- * @param int seat
  */
-Table.prototype.player_raised = function( seat ) {
-	this.public.log.message = this.seats[seat].public.name + ' raised';
+Table.prototype.player_raised = function() {
+	this.public.log.message = this.player_to_act.public.name + ' raised';
 	this.emit_event( 'table_data', this.public );
 
-	if( this.last_player_to_act.socket.id === this.seats[seat].socket.id ) {
+	if( this.last_player_to_act.socket.id === this.player_to_act.socket.id ) {
 		this.end_phase();
 	} else {
 		this.action_to_next_player();
@@ -509,7 +533,7 @@ Table.prototype.player_sat_on_the_table = function( player, seat ) {
 	this.public.seats[seat] = player.public;
 
 	// Increase the counters of the table
-	this.public.no_of_players_seated++;
+	this.public.players_seated_count++;
 	
 	this.player_sat_in( seat );
 }
@@ -524,12 +548,12 @@ Table.prototype.player_sat_in = function( seat ) {
 
 	// The player is sitting in
 	this.seats[seat].public.sitting_in = true;
-	this.public.no_of_players_sitting_in++;
+	this.public.players_sitting_in_count++;
 	
 	this.emit_event( 'table_data', this.public );
 
 	// If there are no players playing right now, try to initialize a game with the new player
-	if( !this.game_is_on && this.public.no_of_players_sitting_in > 1 ) {
+	if( !this.game_is_on && this.public.players_sitting_in_count > 1 ) {
 		// Initialize the game
 		this.initialize_game();
 	}
@@ -554,10 +578,10 @@ Table.prototype.player_left = function( seat ) {
 		this.seats[seat].leave_table();
 		// Empty the seat
 		this.public.seats[seat] = {};
-		this.public.no_of_players_seated--;
+		this.public.players_seated_count--;
 
 		// If there are not enough players to continue the game
-		if( this.public.no_of_players_seated < 2 ) {
+		if( this.public.players_seated_count < 2 ) {
 			this.dealer = {};
 			this.public.dealer_seat = null;
 			this.last_position = {};
@@ -598,15 +622,15 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 	// start_new_round will be set to true, if the player has left and
 	// a new round should be started after removing the player data completely
 	var next_action = '';
-	this.public.no_of_players_sitting_in--;
+	this.public.players_sitting_in_count--;
 	// If there are not enough players sitting in, stop the game
-	if( this.public.no_of_players_sitting_in < 2 ) {
+	if( this.public.players_sitting_in_count < 2 ) {
 		this.seats[seat].sit_out();
 		this.stop_game();
 	}
 	// If the player was playing in the current round
 	else if( this.seats[seat].public.in_hand ) {
-		this.no_of_players_in_hand--;
+		this.players_in_hand_count--;
 		// If there were only two players but there are more players sitting in, waiting to play, start a new round
 		if ( this.seats[seat].previous_player.socket.id == this.seats[seat].next_player.socket.id ) {
 			this.seats[seat].sit_out();
@@ -655,7 +679,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
  */
 Table.prototype.remove_all_cards_from_play = function() {
 	// For each seat
-	for( var i=0 ; i<this.public.no_of_seats ; i++ ) {
+	for( var i=0 ; i<this.public.seats_count ; i++ ) {
 		// If a player is sitting on the current seat
 		if( typeof this.seats[i].public !== 'undefined' ) {
 			this.seats[i].cards = [];

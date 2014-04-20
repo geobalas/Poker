@@ -63,8 +63,8 @@ app.get('/lobby_data', function( req, res ) {
 			lobby_tables[table_id] = {};
 			lobby_tables[table_id].id = tables[table_id].public.id;
 			lobby_tables[table_id].name = tables[table_id].public.name;
-			lobby_tables[table_id].no_of_seats = tables[table_id].public.no_of_seats;
-			lobby_tables[table_id].players_sitting = tables[table_id].public.no_of_players_seated;
+			lobby_tables[table_id].seats_count = tables[table_id].public.seats_count;
+			lobby_tables[table_id].players_sitting = tables[table_id].public.players_seated_count;
 			lobby_tables[table_id].big_blind = tables[table_id].public.big_blind;
 			lobby_tables[table_id].small_blind = tables[table_id].public.small_blind;
 		}
@@ -217,7 +217,7 @@ io.sockets.on('connection', function( socket ) {
 			// The seat number is an integer and less than the total number of seats
 			&& typeof data.seat === 'number'
 			&& data.seat >= 0 
-			&& data.seat < tables[data.table_id].public.no_of_seats
+			&& data.seat < tables[data.table_id].public.seats_count
 			// The seat is empty
 			&& typeof tables[data.table_id].seats[data.seat].public === 'undefined'
 			// The player isn't sitting on any other tables
@@ -274,14 +274,20 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && typeof tables[table_id].player_to_act.public !== 'undefined' && tables[table_id].player_to_act.socket.id === socket.id && ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) ) {
+			if( tables[table_id] 
+				&& typeof tables[table_id].player_to_act.public !== 'undefined' 
+				&& tables[table_id].player_to_act.socket.id === socket.id 
+				&& ( tables[table_id].public.phase === 'small_blind' || tables[table_id].public.phase === 'big_blind' ) 
+			) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
 					if( tables[table_id].public.phase === 'small_blind' ) {
-						tables[table_id].player_posted_small_blind( players[socket.id].seat );
+						players[socket.id].bet( tables[table_id].public.small_blind );
+						tables[table_id].player_posted_small_blind();
 					} else {
 						// The player posted the big blind
-						tables[table_id].player_posted_big_blind( players[socket.id].seat );
+						players[socket.id].bet( tables[table_id].public.big_blind );
+						tables[table_id].player_posted_big_blind();
 					}
 				} else {
 					tables[table_id].player_sat_out( players[socket.id].seat );
@@ -297,10 +303,13 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('check', function( callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+			if( tables[table_id] 
+				&& tables[table_id].player_to_act.socket.id === socket.id 
+				&& !tables[table_id].betted_pot || ( tables[table_id].public.phase === 'preflop' && tables[table_id].public.biggest_bet === players[socket.id].public.bet )
+				&& ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
-				tables[table_id].player_checked( players[socket.id].seat );
+				tables[table_id].player_checked();
 			}
 		}
 	});
@@ -314,8 +323,8 @@ io.sockets.on('connection', function( socket ) {
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
+				tables[table_id].player_to_act = tables[table_id].player_to_act.next_player;
 				players[socket.id].fold();
-				tables[table_id].player_folded( players[socket.id].seat );
 			}
 		}
 	});
@@ -326,10 +335,13 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('call', function( callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+				var called_amount = tables[table_id].public.biggest_bet - players[socket.id].public.bet;
+				players[socket.id].bet( called_amount );
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
-				tables[table_id].player_called( players[socket.id].seat );
+				tables[table_id].player_called();
 			}
 		}
 	});
@@ -337,13 +349,14 @@ io.sockets.on('connection', function( socket ) {
 	/**
 	 * When a player checks
 	 */
-	socket.on('bet', function( callback ){
+	socket.on('bet', function( amount, callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
 			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
-				tables[table_id].player_betted( players[socket.id].seat );
+				players[socket.id].bet( amount );
+				tables[table_id].player_betted();
 			}
 		}
 	});
@@ -354,7 +367,7 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('raise', function( callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
-			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && !tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+			if( tables[table_id] && tables[table_id].player_to_act.socket.id === socket.id && tables[table_id].betted_pot && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
 				tables[table_id].player_raised( players[socket.id].seat );
