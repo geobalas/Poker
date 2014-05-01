@@ -33,6 +33,7 @@
 			#bets_9.bets
 				span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.double_cell
+			span#pot(ng-show="table.pot") Pot: {{table.pot}}
 			.board_wrap
 				.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
 				.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
