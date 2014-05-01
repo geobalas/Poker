@@ -120,11 +120,12 @@
 			button(class="control_button", ng-click="sit_in()", ng-show='$root.sitting_on_table !== null && !$root.sitting_in') Sit In
 			button(class="control_button", ng-click="post_blind(true)", ng-show='action_state === "post_small_blind"') Small Blind ({{table.small_blind}})
 			button(class="control_button", ng-click="post_blind(true)", ng-show='action_state === "post_big_blind"') Big Blind ({{table.big_blind}})
-			button(class="control_button", ng-click="check()", ng-show='action_state === "act_not_betted_pot"') Check
-			button(class="control_button", ng-click="call()", ng-show='action_state === "act_betted_pot"') Call
+			button(class="control_button", ng-click="check()", ng-show='action_state === "act_not_betted_pot" || (action_state === "act_betted_pot" && table.biggest_bet == table.seats[my_seat].bet)') Check
+			button(class="control_button", ng-click="call()", ng-show='action_state === "act_betted_pot"  && !(action_state === "act_betted_pot" && table.biggest_bet == table.seats[my_seat].bet)') Call {{table.biggest_bet - table.seats[my_seat].bet}}
 		.cell
-			button(class="control_button", ng-click="bet()", ng-show='action_state === "act_not_betted_pot"') Bet {{bet_amount}}
-			button(class="control_button", ng-click="raise()", ng-show='action_state === "act_betted_pot"') Raise {{bet_amount}}
+			button(class="control_button", ng-click="bet()", ng-show='action_state === "act_not_betted_pot" && table.seats[my_seat].chips_in_play') Bet {{bet_amount}}
+			button(class="control_button", ng-click="raise()", ng-show='action_state === "act_betted_pot" && table.seats[my_seat].chips_in_play') Raise {{bet_amount}}
 		.double_cell
-			input(type="range", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{table.big_blind}}", max="{{chips_in_play}}", ng-model="bet_amount")
-			input(type="number", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{table.big_blind}}", max="{{chips_in_play}}", ng-model="bet_amount")
+			.cell_content
+				input(type="range", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{min_bet_amount()}}", max="{{table.seats[my_seat].chips_in_play}}", ng-model="bet_amount")
+				input(type="number", id="bet_input", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{min_bet_amount()}}", max="{{table.seats[my_seat].chips_in_play}}", ng-model="bet_amount", value="{{bet_amount}}")

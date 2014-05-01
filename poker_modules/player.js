@@ -8,19 +8,19 @@
 var Player = function( socket, name, chips ) {
 	this.public = {
 		// The name of the user
-		name: name,
+		'name': name,
 		// The chips that the player plays on the table
-		chips_in_play: 0,
+		'chips_in_play': 0,
 		// Flag that shows whether a player who is sitting on the table, wants to be dealt cards
-		sitting_in: false,
+		'sitting_in': false,
 		// Flag that shows if the player is playing in the current round
-		in_hand: false,
+		'in_hand': false,
 		// Flag that shows if the player is holding cards
-		has_cards: false,
+		'has_cards': false,
         // The cards the player is holding, made public at the showdown
-        cards: [],
+        'cards': [],
         // The amount the player has betted in the current round
-        bet: 0
+        'bet': 0
 	};
 	// The socket object of the user
 	this.socket = socket;
@@ -32,24 +32,10 @@ var Player = function( socket, name, chips ) {
 	this.sitting_on_table = false;
 	// The number of the seat of the table that the player is sitting
 	this.seat = null;
-	// Reference to the player who is sitting after the current player
-	this.next_player = {};
-	// Reference to the player who is sitting before the current player
-	this.previous_player = {};
 	// The cards that the player is holding
 	this.cards = [];
 	// The hand that the player has in the current poker round and its rating
 	this.evaluated_hand = {};
-}
-
-/**
- * Disconnects the player from the doubly linked list
- */
-Player.prototype.unlink = function() {
-	if( this.next_player ) {
-		this.next_player.previous_player = this.previous_player;
-		this.previous_player.next_player = this.next_player;
-	}
 }
 
 /**
@@ -74,8 +60,6 @@ Player.prototype.sit_out = function() {
 	if( this.sitting_on_table ) {
 		this.public.sitting_in = false;
 		this.public.in_hand = false;
-		// Remove the player from the doubly linked list
-		this.unlink();
 	}
 }
 
@@ -83,7 +67,6 @@ Player.prototype.sit_out = function() {
  * The action of folding the hand
  */
 Player.prototype.fold = function() {
-    this.unlink();
 	// The player has no cards now
 	this.cards = [];
 	this.public.has_cards = false;

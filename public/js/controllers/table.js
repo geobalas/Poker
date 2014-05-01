@@ -27,7 +27,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	});
 
 	// Joining the socket room
-	socket.emit( 'enter_room', { 'table_id': $routeParams.table_id } );
+	socket.emit( 'enter_room', $routeParams.table_id );
 
 	$scope.get_card_class = function( seat, card ) {
 		if( $scope.my_seat === seat ) {
@@ -38,6 +38,16 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		}
 		else {
 			return 'card-back';
+		}
+	}
+
+	$scope.min_bet_amount = function() {
+		// If the pot was raised
+		if( $scope.action_state === "act_betted_pot" ) {
+			var proposed_bet = +$scope.table.biggest_bet + $scope.table.big_blind;
+			return $scope.chips_in_play < proposed_bet ? $scope.chips_in_play : proposed_bet;
+		} else {
+			return $scope.chips_in_play < $scope.table.big_blind ? $scope.chips_in_play : $scope.table.big_blind;
 		}
 	}
 
@@ -189,12 +199,17 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	// When the user is asked to act and the pot was betted
 	socket.on( 'act_betted_pot', function() {
 		$scope.action_state = 'act_betted_pot';
+
+		var proposed_bet = +$scope.table.biggest_bet + $scope.table.big_blind;
+		$scope.bet_amount = $scope.chips_in_play < proposed_bet ? $scope.chips_in_play : proposed_bet;
 		$scope.$digest();
 	});
 
 	// When the user is asked to act and the pot was not betted
 	socket.on( 'act_not_betted_pot', function() {
 		$scope.action_state = 'act_not_betted_pot';
+
+		$scope.bet_amount = $scope.chips_in_play < $scope.table.big_blind ? $scope.chips_in_play : $scope.table.big_blind;
 		$scope.$digest();
 	});
 

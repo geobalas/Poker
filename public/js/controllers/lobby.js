@@ -1,20 +1,20 @@
 app.controller('LobbyController', ['$scope', '$rootScope', '$http', function( $scope, $rootScope, $http ) {
 	$scope.lobby_tables = [];
-	$scope.new_screen_name = '';
+	$scope.new_screen_name = 'Bot_' + Math.ceil( Math.random() * 999 );
 
 	$http({
 		url: '/lobby_data',
 		method: 'GET'
 	}).success(function ( data, status, headers, config ) {
 		for( table_id in data ) {
-			$scope.lobby_tables[table_id] = data[table_id]
+			$scope.lobby_tables[table_id] = data[table_id];
 		}
 	});
 
 	$scope.register = function() {
 		// If there is some trimmed value for a new screen name
 		if( $scope.new_screen_name ) {
-			socket.emit( 'register', { 'new_screen_name': $scope.new_screen_name }, function( response ){
+			socket.emit( 'register', $scope.new_screen_name, function( response ){
 				if( response.success ){
 					$rootScope.screen_name = response.screen_name;
 					$rootScope.total_chips = response.total_chips;

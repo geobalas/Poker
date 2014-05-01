@@ -14,6 +14,15 @@ input[type="number"] {
   color: #9880e9;
   font-size: 1.4em;
 }
+input[type="range"] {
+  border: 1px solid #9880e9;
+  width: 100%;
+  margin-top: 30px;
+}
+#bet_input {
+  width: 100%;
+  margin-top: 20px;
+}
 input {
   -webkit-appearance: none;
   border-radius: 0;
@@ -140,12 +149,18 @@ div.controls div.cell {
 div.controls div.double_cell {
   width: 30%;
 }
+div.controls div.double_cell .cell_content {
+  padding: 20px;
+}
 div.controls div.chat_cell {
   float: left;
   width: 25%;
 }
+input[type="range"] {
+  width: 90%;
+}
 .sit_in {
-  padding: 20px 54px;
+  padding: 20px 52px;
   cursor: pointer;
 }
 div#chat div#messages {
@@ -236,11 +251,8 @@ div.board_wrap {
 div.board_wrap .card {
   float: left;
   margin-right: 10px;
-}
-#pot {
-  display: block;
-  width: 100%;
-  text-align: center;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
 }
 .card {
   background-image: url("/images/deck.png");
@@ -415,19 +427,19 @@ div.board_wrap .card {
   background-position: -967px -113px;
 }
 #dealer_wrap_0 {
-  top: 190px;
+  top: 200px;
   left: 210px;
 }
 #dealer_wrap_1 {
-  top: 150px;
+  top: 160px;
   left: 50px;
 }
 #dealer_wrap_2 {
-  top: 150px;
+  top: 160px;
   left: 180px;
 }
 #dealer_wrap_3 {
-  top: 190px;
+  top: 200px;
   left: 20px;
 }
 #dealer_wrap_4 {
@@ -448,7 +460,7 @@ div.board_wrap .card {
 }
 #dealer_wrap_8 {
   top: 20px;
-  left: 250px;
+  left: 260px;
 }
 #dealer_wrap_9 {
   top: 110px;
@@ -456,23 +468,25 @@ div.board_wrap .card {
 }
 .dealer_button {
   position: absolute;
-  border: 1px solid #9880e9;
+  border: 2px solid #9880e9;
   border-radius: 20px;
   height: 20px;
   text-align: center;
   width: 20px;
   background-color: rgba(46, 31, 62, 0.9);
+  line-height: 1.25;
+  box-shadow: 0 3px 0 0 #604FAD;
 }
 #bets_0 {
   top: 190px;
   left: 200px;
 }
 #bets_1 {
-  top: 150px;
+  top: 160px;
   left: 50px;
 }
 #bets_2 {
-  top: 150px;
+  top: 160px;
   left: 50px;
 }
 #bets_3 {
@@ -488,11 +502,11 @@ div.board_wrap .card {
   left: -110px;
 }
 #bets_6 {
-  top: 20px;
+  top: -30px;
   left: 50px;
 }
 #bets_7 {
-  top: 20px;
+  top: -30px;
   left: 50px;
 }
 #bets_8 {
@@ -507,6 +521,15 @@ div.board_wrap .card {
   position: absolute;
   text-align: center;
   width: 160px;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+#pot {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 #to_lobby {
   font-size: 1em;
