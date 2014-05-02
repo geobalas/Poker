@@ -6,7 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "latest",
+    "express": "3.4.7",
     "jade": "*",
     "less": "*",
     "less-middleware": "*",
