@@ -297,6 +297,7 @@ Table.prototype.showdown = function() {
 	var current_player = this.find_next_player( this.public.dealer_seat );
 	var winners = [];
 
+	// Starting from the player sitting to the left of the dealer, players evaluate their hands and show it if it's currently the best
 	for( var i=0 ; i<this.players_in_hand_count ; i++ ) {
 		this.seats[current_player].evaluate_hand( this.public.board );
 
@@ -312,15 +313,18 @@ Table.prototype.showdown = function() {
 		current_player = this.find_next_player( current_player );
 	}
 
+	// If there is only one winner, give the pot to them
 	if( winners.length == 1 ) {
 		var html_hand = '[' + this.seats[winners[0]].evaluated_hand.cards.join(', ') + ']';
 		html_hand = html_hand.replace(/s/g, '&#9824;').replace(/c/g, '&#9827;').replace(/h/g, '&#9829;').replace(/d/g, '&#9830;');
 		this.public.log.message = this.seats[winners[0]].public.name + ' wins the pot with ' + this.seats[winners[0]].evaluated_hand.name + ' ' + html_hand;
 		this.give_pot_to_winner( winners[0] );
-	} 
+	}
+	// If the pot will be split in two, change the log message and split the pot
 	else if( winners.length == 2 ){
 		this.public.log.message = this.seats[winners[0]].public.name + ' and ' + this.seats[winners[1]].public.name + ' split the pot with ' + this.seats[winners[0]].evaluated_hand.name;
 	}
+	// If there are many winners, change the log message
 	else {
 		var winners_length = winners.length;
 		this.public.log.message = '';
@@ -464,14 +468,12 @@ Table.prototype.player_betted = function() {
  * When a player raises
  */
 Table.prototype.player_raised = function() {
+	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' raised';
 	this.emit_event( 'table_data', this.public );
 
-	if( this.last_player_to_act === this.public.active_seat ) {
-		this.end_phase();
-	} else {
-		this.action_to_next_player();
-	}
+	this.last_player_to_act = this.find_previous_player();
+	this.action_to_next_player();
 }
 
 /**

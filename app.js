@@ -346,7 +346,7 @@ io.sockets.on('connection', function( socket ) {
 	});
 
 	/**
-	 * When a player checks
+	 * When a player calls
 	 * @param function callback
 	 */
 	socket.on('call', function( callback ){
@@ -365,7 +365,7 @@ io.sockets.on('connection', function( socket ) {
 	});
 
 	/**
-	 * When a player checks
+	 * When a player bets
 	 * @param number amount
 	 * @param function callback
 	 */
@@ -388,18 +388,27 @@ io.sockets.on('connection', function( socket ) {
 	});
 
 	/**
-	 * When a player checks
+	 * When a player raises
 	 * @param function callback
 	 */
-	socket.on('raise', function( callback ){
+	socket.on('raise', function( amount, callback ){
 		if( players[socket.id].sitting_on_table !== 'undefined' ) {
 			var table_id = players[socket.id].sitting_on_table;
 			var active_seat = tables[table_id].public.active_seat;
 			
 			if( tables[table_id] && tables[table_id].seats[active_seat].socket.id === socket.id && tables[table_id].public.biggest_bet && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
-				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
-				callback( { 'success': true } );
-				tables[table_id].player_raised( players[socket.id].seat );
+				amount = parseInt( amount );
+				if ( amount && isFinite( amount ) ) {
+					amount -= tables[table_id].seats[active_seat].public.bet;
+					console.log( 'THE AMOUNT IS: ' + amount );
+					if( amount <= tables[table_id].seats[active_seat].public.chips_in_play ) {
+						console.log('passed');
+						// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
+						callback( { 'success': true } );
+						players[socket.id].raise( amount );
+						tables[table_id].player_raised( players[socket.id].seat );
+					}
+				}
 			}
 		}
 	});

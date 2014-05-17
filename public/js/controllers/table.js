@@ -150,7 +150,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.raise = function() {
-		socket.emit( 'raise', function( response ) {
+		socket.emit( 'raise', $scope.bet_amount, function( response ) {
 			if( response.success ) {
 				$scope.action_state = '';
 				$scope.$digest();

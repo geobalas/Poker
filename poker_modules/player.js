@@ -86,6 +86,18 @@ Player.prototype.bet = function( amount ) {
 }
 
 /**
+ * The action of raising
+ * @param number amount
+ */
+Player.prototype.raise = function( amount ) {
+    if( amount > this.public.chips_in_play ) {
+        amount = this.public.chips_in_play;
+    }
+    this.public.chips_in_play -= amount;
+    this.public.bet += +amount;
+}
+
+/**
  * Resets the player's round data
  */
 Player.prototype.prepare_for_new_round = function() {

@@ -15,7 +15,6 @@ input[type="number"] {
   font-size: 1.4em;
 }
 input[type="range"] {
-  border: 1px solid #9880e9;
   width: 100%;
   margin-top: 30px;
 }
