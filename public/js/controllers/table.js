@@ -42,7 +42,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.min_bet_amount = function() {
-		if( !$scope.my_seat || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
 		// If the pot was raised
 		if( $scope.action_state === "act_betted_pot" ) {
 			var proposed_bet = +$scope.table.biggest_bet + $scope.table.big_blind;
@@ -53,12 +53,12 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.max_bet_amount = function() {
-		if( !$scope.my_seat || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
 		return $scope.action_state === "act_betted_pot" ? $scope.table.seats[$scope.my_seat].chips_in_play + $scope.table.seats[$scope.my_seat].bet : $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
 	$scope.call_amount = function() {
-		if( !$scope.my_seat || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
 		var call_amount = +$scope.table.biggest_bet - $scope.table.seats[$scope.my_seat].bet;
 		return call_amount > $scope.table.seats[$scope.my_seat].chips_in_play ? $scope.table.seats[$scope.my_seat].chips_in_play : call_amount;
 	}

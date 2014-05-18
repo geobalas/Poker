@@ -31,7 +31,7 @@ var Table = function( id, name, deck, event_emitter, seats_count, big_blind, sma
 		// The maximum allowed buy in
 		'max_buy_in': max_buy_in,
 		// The amount of chips that are in the pot
-		'pot': 0,
+		'pot': [{ 'amount': 0, 'players': [] }],
 		// The biggest bet of the table in the current phase
 		'biggest_bet': 0,
 		// The seat of the dealer
@@ -407,7 +407,7 @@ Table.prototype.add_bets_to_the_pot = function() {
 		// If a player has betted
 		if( this.seats[i] !== null && this.seats[i].public.bet ) {
 			// Add the bet to the pot
-			this.public.pot += this.seats[i].public.bet;
+			this.public.pot[0].amount += this.seats[i].public.bet;
 			this.seats[i].public.bet = 0;
 		}
 	}
@@ -417,8 +417,8 @@ Table.prototype.add_bets_to_the_pot = function() {
  * Method that adds the chips that exists in the pot, to the winner's chips
  */
 Table.prototype.give_pot_to_winner = function( winners_seat ) {
-	this.seats[winners_seat].public.chips_in_play += this.public.pot;
-	this.public.pot = 0;
+	this.seats[winners_seat].public.chips_in_play += this.public.pot[0].amount;
+	this.public.pot[0].amount = 0;
 }
 
 /**
@@ -591,7 +591,7 @@ Table.prototype.player_sat_out = function( seat, player_left ) {
 
 	// If the player had betted, add the bets to the pot
 	if( this.seats[seat].public.bet ) {
-		this.public.pot += +this.seats[seat].public.bet;
+		this.public.pot[0].amount += +this.seats[seat].public.bet;
 		this.seats[seat].public.bet = 0;
 	}
 
@@ -648,7 +648,7 @@ Table.prototype.remove_all_cards_from_play = function() {
 Table.prototype.end_round = function() {
 	// If there were any bets, they are added to the pot
 	this.add_bets_to_the_pot();
-	if( this.public.pot ) {
+	if( this.public.pot[0].amount ) {
 		var winners_seat = this.find_next_player( 0 );
 		this.give_pot_to_winner( winners_seat );
 	}
@@ -672,7 +672,7 @@ Table.prototype.end_round = function() {
  */
 Table.prototype.stop_game = function() {
 	this.public.phase = null;
-	this.public.pot = null;
+	this.public.pot[0].amount = 0;
 	this.public.active_seat = null;
 	this.public.board = ['', '', '', '', ''];
 	this.public.active_seat = null;

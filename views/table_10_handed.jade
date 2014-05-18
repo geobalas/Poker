@@ -81,7 +81,7 @@
 			#bets_9.bets
 				span(ng-show="table.seats[9].bet") {{table.seats[9].bet}}
 		.double_cell
-			span#pot(ng-show="table.pot") Pot: {{table.pot}}
+			span#pot(ng-show="table.pot[0].amount" ng-repeat="pot in table.pot") Pot: {{pot.amount}}
 			.board_wrap
 				.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
 				.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
@@ -173,7 +173,7 @@
 			button(class="control_button", ng-click="call()", ng-show='action_state === "act_betted_pot"  && !(action_state === "act_betted_pot" && table.biggest_bet == table.seats[my_seat].bet)') Call {{call_amount()}}
 		.cell
 			button(class="control_button", ng-click="bet()", ng-show='action_state === "act_not_betted_pot" && table.seats[my_seat].chips_in_play') Bet {{bet_amount}}
-			button(class="control_button", ng-click="raise()", ng-show='action_state === "act_betted_pot" && table.seats[my_seat].chips_in_play') Raise {{bet_amount}}
+			button(class="control_button", ng-click="raise()", ng-show='action_state === "act_betted_pot" && table.seats[my_seat].chips_in_play') Raise to {{bet_amount}}
 		.double_cell
 			.cell_content
 				input(type="range", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{min_bet_amount()}}", max="{{max_bet_amount()}}", ng-model="bet_amount")
