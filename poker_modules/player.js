@@ -34,6 +34,8 @@ var Player = function( socket, name, chips ) {
 	this.seat = null;
 	// The cards that the player is holding
 	this.cards = [];
+    // The total bets by this player in this round
+    this.total_bets = 0;
 	// The hand that the player has in the current poker round and its rating
 	this.evaluated_hand = {};
 }
@@ -83,6 +85,7 @@ Player.prototype.bet = function( amount ) {
     }
     this.public.chips_in_play -= amount;
     this.public.bet += +amount;
+    this.total_bets += +amount;
 }
 
 /**
@@ -95,6 +98,7 @@ Player.prototype.raise = function( amount ) {
     }
     this.public.chips_in_play -= amount;
     this.public.bet += +amount;
+    this.total_bets += +amount;
 }
 
 /**
@@ -105,6 +109,7 @@ Player.prototype.prepare_for_new_round = function() {
     this.public.cards = [];
     this.public.has_cards = false;
     this.public.bet = 0;
+    this.total_bets = 0;
     this.public.in_hand = true;
     this.evaluated_hand = {};
 }

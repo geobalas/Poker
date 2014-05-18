@@ -242,14 +242,33 @@ Table.prototype.initialize_next_phase = function() {
 	this.public.active_seat = this.find_next_player( this.public.dealer_seat );
 	this.last_player_to_act = this.find_previous_player( this.public.active_seat );
 	this.emit_event( 'table_data', this.public );
-	this.seats[this.public.active_seat].socket.emit('act_not_betted_pot');
+
+	// Check if the players are all in
+	var current_player = this.public.active_seat;
+	var players_all_in = 0;
+	for( var i=0 ; i<this.players_in_hand_count ; i++ ) {
+		if( this.seats[current_player].public.chips_in_play === 0 ) {
+			players_all_in++;
+		}
+		current_player = this.find_next_player( current_player );
+	}
+	// In this case, all the players are all in. There should be no actions. Move to the next round.
+	if( players_all_in >= this.players_in_hand_count-1 ) {
+		
+		var that = this;
+		setTimeout( function(){
+			that.end_phase();
+		}, 1000 );
+	} else {
+		this.seats[this.public.active_seat].socket.emit('act_not_betted_pot');
+	}
 }
 
 /**
  * Making the next player the active one
  */
 Table.prototype.action_to_next_player = function() {
-	this.public.active_seat = this.find_next_player();
+	this.public.active_seat = this.find_next_player( this.public.active_seat, 'chips_in_play' );
 
 	switch( this.public.phase ) {
 		case 'small_blind':
