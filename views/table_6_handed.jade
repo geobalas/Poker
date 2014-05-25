@@ -16,7 +16,7 @@
 		.cell
 			a#to_lobby.button(href="/", ng-show="!$root.sitting_on_table", ng-click="leave_room()") < Lobby
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
 				.player_cards
 					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 0 )")
 					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 1 )")
@@ -29,7 +29,7 @@
 			#bets_1.bets
 				span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
 				.player_cards
 					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 0 )")
 					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 1 )")
@@ -44,7 +44,7 @@
 		.cell
 	.row
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[5].name", ng-class="{active: table.active_seat===5}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[5].name", ng-class="{active: table.active_seat===5}")
 				.player_cards
 					div.card(ng-show="table.seats[5].has_cards" ng-class="get_card_class( 5, 0 )")
 					div.card(ng-show="table.seats[5].has_cards" ng-class="get_card_class( 5, 1 )")
@@ -65,7 +65,7 @@
 				.card(class="card-{{table.board[3]}}" ng-show="table.board[3]")
 				.card(class="card-{{table.board[4]}}" ng-show="table.board[4]")
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat===2}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[2].name", ng-class="{active: table.active_seat===2}")
 				.player_cards
 					div.card(ng-show="table.seats[2].has_cards" ng-class="get_card_class( 2, 0 )")
 					div.card(ng-show="table.seats[2].has_cards" ng-class="get_card_class( 2, 1 )")
@@ -80,7 +80,7 @@
 	.row
 		.cell
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat===4}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[4].name", ng-class="{active: table.active_seat===4}")
 				.player_cards
 					div.card(ng-show="table.seats[4].has_cards" ng-class="get_card_class( 4, 0 )")
 					div.card(ng-show="table.seats[4].has_cards" ng-class="get_card_class( 4, 1 )")
@@ -93,7 +93,7 @@
 			#bets_7.bets
 				span(ng-show="table.seats[4].bet") {{table.seats[4].bet}}
 		.cell
-			.player_wrap(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat===3}")
+			.seat(ng-show="!$root.sitting_on_table || table.seats[3].name", ng-class="{active: table.active_seat===3}")
 				.player_cards
 					div.card(ng-show="table.seats[3].has_cards" ng-class="get_card_class( 3, 0 )")
 					div.card(ng-show="table.seats[3].has_cards" ng-class="get_card_class( 3, 1 )")
@@ -130,3 +130,9 @@
 			.cell_content
 				input(type="range", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{min_bet_amount()}}", max="{{max_bet_amount()}}", ng-model="bet_amount")
 				input(type="number", id="bet_input", ng-show='action_state === "act_not_betted_pot" || action_state === "act_betted_pot"', min="{{min_bet_amount()}}", max="{{max_bet_amount()}}", ng-model="bet_amount", value="{{bet_amount}}")
+	#audio
+		audio(id="fold_sound" src="/audio/fold.wav" preload="auto")
+		audio(id="check_sound" src="/audio/check.wav" preload="auto")
+		audio(id="call_sound" src="/audio/call.wav" preload="auto")
+		audio(id="bet_sound" src="/audio/bet.wav" preload="auto")
+		audio(id="raise_sound" src="/audio/raise.wav" preload="auto")

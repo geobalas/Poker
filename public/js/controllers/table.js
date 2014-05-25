@@ -12,6 +12,11 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.my_seat = null;
 	$scope.bet_amount = 0;
 	$rootScope.sitting_on_table = null;
+	var fold_sound = document.getElementById("fold_sound");
+	var check_sound = document.getElementById("check_sound");
+	var call_sound = document.getElementById("call_sound");
+	var bet_sound = document.getElementById("bet_sound");
+	var raise_sound = document.getElementById("raise_sound");
 
 	// Existing listeners should be removed
 	socket.removeAllListeners();
@@ -61,6 +66,10 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
 		var call_amount = +$scope.table.biggest_bet - $scope.table.seats[$scope.my_seat].bet;
 		return call_amount > $scope.table.seats[$scope.my_seat].chips_in_play ? $scope.table.seats[$scope.my_seat].chips_in_play : call_amount;
+	}
+
+	$scope.seat_occupied = function( seat ) {
+		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat].name );
 	}
 
 	// Leaving the socket room
@@ -117,6 +126,8 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		socket.emit( 'post_blind', posted, function( response ) {
 			if( response.success && !posted ) {
 				$rootScope.sitting_in = false;
+			} else {
+				bet_sound.play();
 			}
 			$scope.action_state = '';
 			$scope.$digest();
@@ -126,6 +137,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.check = function() {
 		socket.emit( 'check', function( response ) {
 			if( response.success ) {
+				check_sound.play();
 				$scope.action_state = '';
 				$scope.$digest();
 			}
@@ -135,6 +147,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.fold = function() {
 		socket.emit( 'fold', function( response ) {
 			if( response.success ) {
+				fold_sound.play();
 				$scope.action_state = '';
 				$scope.$digest();
 			}
@@ -145,6 +158,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		console.log( 'emitting' );
 		socket.emit( 'call', function( response ) {
 			if( response.success ) {
+				call_sound.play();
 				$scope.action_state = '';
 				$scope.$digest();
 			}
@@ -154,6 +168,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.bet = function() {
 		socket.emit( 'bet', $scope.bet_amount, function( response ) {
 			if( response.success ) {
+				bet_sound.play();
 				$scope.action_state = '';
 				$scope.$digest();
 			}
@@ -163,6 +178,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	$scope.raise = function() {
 		socket.emit( 'raise', $scope.bet_amount, function( response ) {
 			if( response.success ) {
+				raise_sound.play();
 				$scope.action_state = '';
 				$scope.$digest();
 			}
@@ -172,6 +188,24 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	// When the table data have changed
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
+
+		switch ( data.log.action ) {
+			case 'fold':
+				fold_sound.play();
+				break;
+			case 'check':
+				check_sound.play();
+				break;
+			case 'call':
+				call_sound.play();
+				break;
+			case 'bet':
+				bet_sound.play();
+				break;
+			case 'raise':
+				raise_sound.play();
+				break;
+		}
 		if( data.log.message ) {
 			var message_box = document.querySelector('#messages');
 			var message_element = angular.element( '<p class="log_message">' + data.log.message + '</p>' );

@@ -1,5 +1,6 @@
 @light_purple: #9880e9;
 @dark_purple: #160726;
+@purple: #2E1F3E;
 @transparent_purple: rgba(46,31,62,0.9);
 @lavender: #BE78E8;
 @felt_green: #387C41;
@@ -215,18 +216,9 @@ div#chat {
 }
 
 div.player_wrap {
-	padding: 16px 0;
-	background-color: @transparent_purple;
-	border: 3px solid @light_purple;
-	border-radius: 5px;
-	color: @light_purple;
-	font-size: 1.4em;
-	font-weight: lighter;
-	text-align: center;
 	width: 160px;
 	margin: 60px auto;
 	position: relative;
-	box-shadow: 0 0 5px 0 @dark_purple;
 	&.top {
 		margin-top: 100px;
 	}
@@ -239,6 +231,42 @@ div.player_wrap {
 	&.right {
 		margin-left: 20px;
 	}
+
+	.player_cards {
+		overflow: hidden;
+	    height: 60px;
+	    left: 30px;
+	    position: absolute;
+	    top: 0px;
+	    width: 100px;
+	    -webkit-transition: top 0.4s ease;
+    	transition: top 0.4s ease;
+	    &.dealt {
+	    	top: -60px;
+	    }
+	    .card:first-child {
+	    	left: 0;
+	    }
+	    .card {
+		    left: 28px;
+		    position: absolute;
+	    }
+	}
+}
+div.seat {
+	padding: 16px 0;
+	background-color: @purple;
+	border: 3px solid @light_purple;
+	border-radius: 5px;
+	color: @light_purple;
+	font-size: 1.4em;
+	font-weight: lighter;
+	text-align: center;
+	width: 154px;
+	position: relative;
+	box-shadow: 0 0 5px 0 @dark_purple;
+	-webkit-transition: box-shadow 0.2s ease, border 0.2s ease;
+    transition: box-shadow 0.2s ease, border 0.2s ease;
 	&.active {
 		color: @lavender;
 		border: 5px solid @lavender;
@@ -248,21 +276,6 @@ div.player_wrap {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		margin: 0;
-	}
-	.player_cards {
-		overflow: hidden;
-	    height: 60px;
-	    left: 30px;
-	    position: absolute;
-	    top: -61px;
-	    width: 100px;
-	    .card:first-child {
-	    	left: 0;
-	    }
-	    .card {
-		    left: 28px;
-		    position: absolute;
-	    }
 	}
 }
 
@@ -450,44 +463,44 @@ div.board_wrap {
 }
 
 #dealer_wrap_0 {
-	top: 200px;
-	left: 210px;
+	top: 100px;
+	left: 140px;
 }
 #dealer_wrap_1 {
-	top: 160px;
-	left: 50px;
-}
-#dealer_wrap_2 {
-	top: 160px;
-	left: 180px;
-}
-#dealer_wrap_3 {
-	top: 200px;
-	left: 20px;
-}
-#dealer_wrap_4 {
-	top: 130px;
+	top: 100px;
 	left: 10px;
 }
+#dealer_wrap_2 {
+	top: 100px;
+	left: 130px;
+}
+#dealer_wrap_3 {
+	top: 100px;
+	left: 0px;
+}
+#dealer_wrap_4 {
+	top: 70px;
+	left: -30px;
+}
 #dealer_wrap_5 {
-	top: 20px;
-	left: -10px;
+	top: -30px;
+	left: 0px;
 }
 #dealer_wrap_6 {
-	top: 30px;
-	left: 50px;
+	top: -30px;
+	left: 0px;
 }
 #dealer_wrap_7 {
-	top: 30px;
-	left: 180px;
+	top: -30px;
+	left: 140px;
 }
 #dealer_wrap_8 {
-	top: 20px;
-	left: 260px;
+	top: -30px;
+	left: 140px;
 }
 #dealer_wrap_9 {
-	top: 110px;
-	left: 230px;
+	top: 60px;
+	left: 170px;
 }
 
 .dealer_button {
@@ -503,44 +516,44 @@ div.board_wrap {
 }
 
 #bets_0 {
-	top: 190px;
-	left: 200px;
+	top: 80px;
+	left: 120px;
 }
 #bets_1 {
-	top: 160px;
-	left: 50px;
+	top: 100px;
+	left: 0px;
 }
 #bets_2 {
-	top: 160px;
-	left: 50px;
+	top: 100px;
+	left: 0px;
 }
 #bets_3 {
-	top: 190px;
-	left: -110px;
+	top: 80px;
+	left: -120px;
 }
 #bets_4 {
-	top: 80px;
-	left: -100px;
+	top: 25px;
+	left: -120px;
 }
 #bets_5 {
-	top: -10px;
-	left: -110px;
+	top: -30px;
+	left: -120px;
 }
 #bets_6 {
-	top: -30px;
-	left: 50px;
+	top: -60px;
+	left: -80px;
 }
 #bets_7 {
-	top: -30px;
-	left: 50px;
+	top: -60px;
+	left: 80px;
 }
 #bets_8 {
-	top: -10px;
-	left: 220px;
+	top: -30px;
+	left: 120px;
 }
 #bets_9 {
-	top: 80px;
-	left: 190px;
+	top: 25px;
+	left: 120px;
 }
 
 .bets {
