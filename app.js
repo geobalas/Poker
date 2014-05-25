@@ -223,6 +223,7 @@ io.sockets.on('connection', function( socket ) {
 			&& typeof data.seat === 'number'
 			&& data.seat >= 0 
 			&& data.seat < tables[data.table_id].public.seats_count
+			&& typeof players[socket.id] !== 'undefined'
 			// The seat is empty
 			&& tables[data.table_id].seats[data.seat] == null
 			// The player isn't sitting on any other tables
