@@ -85,40 +85,108 @@ Table.prototype.emit_event = function( event_name, event_data ){
 	};
 }
 
+/**
+ * Finds the next player of a certain status on the table
+ * @param  number offset (the seat where search begins)
+ * @param  string|array status (the status of the player who should be found)
+ * @return number|null
+ */
 Table.prototype.find_next_player = function( offset, status ) {
 	offset = typeof offset !== 'undefined' ? offset : this.public.active_seat;
 	status = typeof status !== 'undefined' ? status : 'in_hand';
 
-	if( offset !== this.public.seats_count ) {
-		for( var i=offset+1 ; i<this.public.seats_count ; i++ ) {
+	if( status instanceof Array ) {
+		var status_length = status.length;
+		if( offset !== this.public.seats_count ) {
+			for( var i=offset+1 ; i<this.public.seats_count ; i++ ) {
+				if( this.seats[i] !== null ) {
+					var valid_status = true;
+					for( var j=0 ; j<status_length ; j++ ) {
+						valid_status &= !!this.seats[i].public[status[j]];
+					}
+					if( valid_status ) {
+						return i;
+					}
+				}
+			}
+		}
+		for( var i=0 ; i<=offset ; i++ ) {
+			if( this.seats[i] !== null ) {
+				var valid_status = true;
+				for( var j=0 ; j<status_length ; j++ ) {
+					valid_status &= !!this.seats[i].public[status[j]];
+				}
+				if( valid_status ) {
+					return i;
+				}
+			}
+		}
+	} else {
+		if( offset !== this.public.seats_count ) {
+			for( var i=offset+1 ; i<this.public.seats_count ; i++ ) {
+				if( this.seats[i] !== null && this.seats[i].public[status] ) {
+					return i;
+				}
+			}
+		}
+		for( var i=0 ; i<=offset ; i++ ) {
 			if( this.seats[i] !== null && this.seats[i].public[status] ) {
 				return i;
 			}
-		}
-	}
-	for( var i=0 ; i<=offset ; i++ ) {
-		if( this.seats[i] !== null && this.seats[i].public[status] ) {
-			return i;
 		}
 	}
 
 	return null;
 }
 
+/**
+ * Finds the previous player of a certain status on the table
+ * @param  number offset (the seat where search begins)
+ * @param  string|array status (the status of the player who should be found)
+ * @return number|null
+ */
 Table.prototype.find_previous_player = function( offset, status ) {
 	offset = typeof offset !== 'undefined' ? offset : this.public.active_seat;
 	status = typeof status !== 'undefined' ? status : 'in_hand';
 
-	if( offset !== 0 ) {
-		for( var i=offset-1 ; i>=0 ; i-- ) {
+	if( status instanceof Array ) {
+		var status_length = status.length;
+		if( offset !== 0 ) {
+			for( var i=offset-1 ; i>=0 ; i-- ) {
+				if( this.seats[i] !== null ) {
+					var valid_status = true;
+					for( var j=0 ; j<status_length ; j++ ) {
+						valid_status &= !!this.seats[i].public[status[j]];
+					}
+					if( valid_status ) {
+						return i;
+					}
+				}
+			}
+		}
+		for( var i=this.public.seats_count-1 ; i>=offset ; i-- ) {
+			if( this.seats[i] !== null ) {
+				var valid_status = true;
+				for( var j=0 ; j<status_length ; j++ ) {
+					valid_status &= !!this.seats[i].public[status[j]];
+				}
+				if( valid_status ) {
+					return i;
+				}
+			}
+		}
+	} else {
+		if( offset !== 0 ) {
+			for( var i=offset-1 ; i>=0 ; i-- ) {
+				if( this.seats[i] !== null && this.seats[i].public[status] ) {
+					return i;
+				}
+			}
+		}
+		for( var i=this.public.seats_count-1 ; i>=offset ; i-- ) {
 			if( this.seats[i] !== null && this.seats[i].public[status] ) {
 				return i;
 			}
-		}
-	}
-	for( var i=this.public.seats_count-1 ; i>=offset ; i-- ) {
-		if( this.seats[i] !== null && this.seats[i].public[status] ) {
-			return i;
 		}
 	}
 
@@ -268,7 +336,7 @@ Table.prototype.initialize_next_phase = function() {
  * Making the next player the active one
  */
 Table.prototype.action_to_next_player = function() {
-	this.public.active_seat = this.find_next_player( this.public.active_seat, 'chips_in_play' );
+	this.public.active_seat = this.find_next_player( this.public.active_seat, ['chips_in_play', 'in_hand'] );
 
 	switch( this.public.phase ) {
 		case 'small_blind':
