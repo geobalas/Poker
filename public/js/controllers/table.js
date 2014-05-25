@@ -69,7 +69,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.seat_occupied = function( seat ) {
-		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat].name );
+		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
 	}
 
 	// Leaving the socket room
@@ -155,7 +155,6 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.call = function() {
-		console.log( 'emitting' );
 		socket.emit( 'call', function( response ) {
 			if( response.success ) {
 				call_sound.play();
@@ -188,7 +187,6 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	// When the table data have changed
 	socket.on( 'table_data', function( data ) {
 		$scope.table = data;
-
 		switch ( data.log.action ) {
 			case 'fold':
 				fold_sound.play();

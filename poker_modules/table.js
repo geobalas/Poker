@@ -450,6 +450,7 @@ Table.prototype.end_phase = function() {
  */
 Table.prototype.player_posted_small_blind = function() {
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' posted the small blind';
+	this.public.log.action = 'bet';
 	this.public.biggest_bet = this.public.small_blind;
 	this.emit_event( 'table_data', this.public );
 	this.initialize_big_blind();
@@ -461,6 +462,7 @@ Table.prototype.player_posted_small_blind = function() {
  */
 Table.prototype.player_posted_big_blind = function() {
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' posted the big blind';
+	this.public.log.action = 'bet';
 	this.public.biggest_bet = this.public.big_blind;
 	this.emit_event( 'table_data', this.public );
 	this.initialize_preflop();
@@ -494,6 +496,7 @@ Table.prototype.give_pot_to_winner = function( winners_seat ) {
  */
 Table.prototype.player_folded = function() {
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' folded';
+	this.public.log.action = 'fold';
 	this.emit_event( 'table_data', this.public );
 
 	this.players_in_hand_count--;
@@ -516,6 +519,7 @@ Table.prototype.player_folded = function() {
  */
 Table.prototype.player_checked = function() {
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' checked';
+	this.public.log.action = 'check';
 	this.emit_event( 'table_data', this.public );
 
 	if( this.last_player_to_act === this.public.active_seat ) {
@@ -530,6 +534,7 @@ Table.prototype.player_checked = function() {
  */
 Table.prototype.player_called = function() {
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' called';
+	this.public.log.action = 'call';
 	this.emit_event( 'table_data', this.public );
 
 	if( this.last_player_to_act === this.public.active_seat ) {
@@ -545,6 +550,7 @@ Table.prototype.player_called = function() {
 Table.prototype.player_betted = function() {
 	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' betted';
+	this.public.log.action = 'bet';
 	this.emit_event( 'table_data', this.public );
 
 	this.last_player_to_act = this.find_previous_player();
@@ -557,6 +563,7 @@ Table.prototype.player_betted = function() {
 Table.prototype.player_raised = function() {
 	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' raised';
+	this.public.log.action = 'raise';
 	this.emit_event( 'table_data', this.public );
 
 	this.last_player_to_act = this.find_previous_player();
