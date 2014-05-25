@@ -21,10 +21,10 @@
 	.row
 		.cell
 			.player_wrap
-				.player_cards
-					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 0 )")
-					div.card(ng-show="table.seats[0].has_cards" ng-class="get_card_class( 0, 1 )")
-				.seat(ng-show="!$root.sitting_on_table || table.seats[0].name", ng-class="{active: table.active_seat===0}")
+				.player_cards(ng-class="{dealt: table.seats[0].has_cards}")
+					div.card(ng-show="seat_occupied(0)" ng-class="get_card_class( 0, 0 )")
+					div.card(ng-show="seat_occupied(0)" ng-class="get_card_class( 0, 1 )")
+				.seat(ng-show="seat_occupied(0)", ng-class="{active: table.active_seat===0}")
 					a.sit_in(ng-show="!table.seats[0].name", ng-click="show_buy_in_modal=true; seat=0;") Sit In
 					.player_content(ng-show="table.seats[0].name")
 						p {{table.seats[0].name}}
@@ -43,10 +43,10 @@
 				.card(class="card-{{table.board[4]}}" ng-show="table.board[4]")
 		.cell
 			.player_wrap
-				.player_cards
-					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 0 )")
-					div.card(ng-show="table.seats[1].has_cards" ng-class="get_card_class( 1, 1 )")
-				.seat(ng-show="!$root.sitting_on_table || table.seats[1].name", ng-class="{active: table.active_seat===1}")
+				.player_cards(ng-class="{dealt: table.seats[1].has_cards}")
+					div.card(ng-show="seat_occupied(1)" ng-class="get_card_class( 1, 0 )")
+					div.card(ng-show="seat_occupied(1)" ng-class="get_card_class( 1, 1 )")
+				.seat(ng-show="seat_occupied(1)", ng-class="{active: table.active_seat===1}")
 					a.sit_in(ng-show="!table.seats[1].name", ng-click="show_buy_in_modal=true; seat=1;") Sit In
 					.player_content(ng-show="table.seats[1].name")
 						p {{table.seats[1].name}}

@@ -580,3 +580,10 @@ div.board_wrap .card {
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
+#developer_info {
+  margin-top: 8px;
+  font-size: 0.8em;
+}
+#developer_info a {
+  text-decoration: underline;
+}
