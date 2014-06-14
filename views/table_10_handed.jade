@@ -166,7 +166,7 @@
 					span(ng-show="table.seats[5].bet") {{table.seats[5].bet}}
 	.row.controls
 		.chat_cell
-			#chat
+			#chat(ng-controller="ChatController")
 				#messages
 				form(ng-submit="send_message()")
 					input(type="text", ng-model="message_text")
