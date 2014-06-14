@@ -68,8 +68,48 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		return call_amount > $scope.table.seats[$scope.my_seat].chips_in_play ? $scope.table.seats[$scope.my_seat].chips_in_play : call_amount;
 	}
 
+	$scope.show_leave_table_button = function() {
+		return $rootScope.sitting_on_table !== null && ( !$rootScope.sitting_in || $scope.action_state === "waiting" );
+	}
+
+	$scope.show_post_small_blind_button = function() {
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+	}
+
+	$scope.show_post_big_blind_button = function() {
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+	}
+
+	$scope.show_fold_button = function() {
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+	}
+
+	$scope.show_check_button = function() {
+		return $scope.action_state === "act_not_betted_pot" || ( $scope.action_state === "act_betted_pot" && $scope.table.biggest_bet == $scope.table.seats[$scope.my_seat].bet );
+	}
+
+	$scope.show_call_button = function() {
+		return $scope.action_state === "act_betted_pot"  && !( $scope.action_state === "act_betted_pot" && $scope.table.biggest_bet == $scope.table.seats[$scope.my_seat].bet );
+	}
+
+	$scope.show_bet_button = function() {
+		return $scope.action_state === "act_not_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play;
+	}
+
+	$scope.show_raise_button = function() {
+		return $scope.action_state === "act_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play;
+	}
+
+	$scope.show_bet_range = function() {
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+	}
+
+	$scope.show_bet_input = function() {
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+	}
+
 	$scope.seat_occupied = function( seat ) {
-		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
+		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[$scope.seat] !== 'undefined' && $scope.table.seats[$scope.seat] && $scope.table.seats[$scope.seat].name );
 	}
 
 	// Leaving the socket room
