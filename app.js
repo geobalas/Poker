@@ -8,7 +8,8 @@ var express = require('express'),
 	connect = require('connect'),
 	Table = require('./poker_modules/table'),
 	Player = require('./poker_modules/player'),
-	Deck = require('./poker_modules/deck');
+	Deck = require('./poker_modules/deck'),
+	Pot = require('./poker_modules/pot');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -446,7 +447,7 @@ function html_entities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-tables[0] = new Table( 0, 'Sample 10-handed Table', new Deck(), event_emitter(0), 10, 2, 1, 200, 40, false );
-tables[1] = new Table( 1, 'Sample 6-handed Table', new Deck(), event_emitter(1), 6, 4, 2, 400, 80, false );
-tables[2] = new Table( 2, 'Sample 2-handed Table', new Deck(), event_emitter(2), 2, 8, 4, 800, 160, false );
-tables[3] = new Table( 3, 'Sample 6-handed Private Table', new Deck(), event_emitter(3), 6, 20, 10, 2000, 400, true );
+tables[0] = new Table( 0, 'Sample 10-handed Table', event_emitter(0), 10, 2, 1, 200, 40, false );
+tables[1] = new Table( 1, 'Sample 6-handed Table', event_emitter(1), 6, 4, 2, 400, 80, false );
+tables[2] = new Table( 2, 'Sample 2-handed Table', event_emitter(2), 2, 8, 4, 800, 160, false );
+tables[3] = new Table( 3, 'Sample 6-handed Private Table', event_emitter(3), 6, 20, 10, 2000, 400, true );

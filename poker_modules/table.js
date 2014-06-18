@@ -1,3 +1,6 @@
+var Deck = require('./deck'),
+	Pot = require('./pot');
+
 /**
  * The table "class"
  * @param string	id (the table id)
@@ -11,7 +14,7 @@
  * @param int 		min_buy_in (the minimum amount of chips that one can bring to the table)
  * @param bool 		private_table (flag that shows whether the table will be shown in the lobby)
  */
-var Table = function( id, name, deck, event_emitter, seats_count, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
+var Table = function( id, name, event_emitter, seats_count, big_blind, small_blind, max_buy_in, min_buy_in, private_table ) {
 	// All the public table data
 	this.public = {
 		// The table id
@@ -66,7 +69,7 @@ var Table = function( id, name, deck, event_emitter, seats_count, big_blind, sma
 	// References to all the player objects in the table, indexed by seat number
 	this.seats = [];
 	// The deck of the table
-	this.deck = deck;
+	this.deck = new Deck;
 	// The function that emits the events of the table
 	this.event_emitter = event_emitter;
 	// Initializing the empty seats
