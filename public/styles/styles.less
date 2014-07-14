@@ -131,10 +131,11 @@ div.row {
 	height: 25%;
 	width: 100%;
 	position: relative;
-	z-index: 1;
+	z-index: 2;
 	&.controls {
 		background-color: @felt_green;
 		border-radius: 8px;
+		z-index: 1;
 	}
 }
 
@@ -594,7 +595,7 @@ div#board_wrap {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 2;
+	z-index: 100;
 	#modal {
 		padding: 32px;
 		background-color: #fff;
@@ -603,7 +604,7 @@ div#board_wrap {
 		margin: 0 auto;
 		top: 18%;
 		width: 424px;
-		z-index: 3;
+		z-index: 101;
 		label {
 			display: block;
 		    font-size: large;
