@@ -14,10 +14,6 @@ input[type="number"] {
   color: #9880e9;
   font-size: 1.4em;
 }
-input[type="range"] {
-  width: 100%;
-  margin-top: 10%;
-}
 #bet_input {
   width: 100%;
   margin-top: 20px;
@@ -159,6 +155,8 @@ div.controls div.chat_cell {
 }
 input[type="range"] {
   width: 90%;
+  margin-top: 8%;
+  padding: 0;
 }
 .sit_in {
   padding: 12% 34%;
