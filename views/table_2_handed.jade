@@ -3,10 +3,10 @@
 		#modal
 			form(ng-submit="sit_on_the_table(seat)")
 				h1 {{table.name}}
-				p Max buy-in {{table.max_buy_in}}
-				p Min buy-in {{table.min_buy_in}}
-				p You have a total of {{$root.total_chips}} chips
-				p.error(ng-show="buy_in_error") {{buy_in_error}}
+				p.table_requirements Max buy-in {{table.max_buy_in}}
+				p.table_requirements Min buy-in {{table.min_buy_in}}
+				p.table_requirements You have a total of {{$root.total_chips}} chips
+				p.table_requirements.error(ng-show="buy_in_error") {{buy_in_error}}
 				input.input_left(type="number", ng-model="buy_in_amount", ng-trim="true" required)
 				input(type="submit", value="Sit in")
 		#curtain(ng-show="show_buy_in_modal" ng-click="show_buy_in_modal=false;")
@@ -20,7 +20,7 @@
 		.cell
 	.row
 		.cell
-			.player_wrap
+			.player_wrap.side
 				.player_cards(ng-class="{dealt: table.seats[0].has_cards}")
 					div.card(ng-show="seat_occupied(0)" ng-class="get_card_class( 0, 0 )")
 					div.card(ng-show="seat_occupied(0)" ng-class="get_card_class( 0, 1 )")
@@ -34,15 +34,21 @@
 				#bets_9.bets
 					span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.double_cell
-			span#pot(ng-show="table.pot[0].amount" ng-repeat="pot in table.pot") Pot: {{pot.amount}}
-			.board_wrap
-				.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
-				.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
-				.card(class="card-{{table.board[2]}}" ng-show="table.board[2]")
-				.card(class="card-{{table.board[3]}}" ng-show="table.board[3]")
-				.card(class="card-{{table.board[4]}}" ng-show="table.board[4]")
+			#pot_wrap
+				span#pot(ng-show="table.pot[0].amount" ng-repeat="pot in table.pot") Pot: {{pot.amount}}
+			#board_wrap
+				.card_container
+					.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
+				.card_container
+					.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
+				.card_container
+					.card(class="card-{{table.board[2]}}" ng-show="table.board[2]")
+				.card_container
+					.card(class="card-{{table.board[3]}}" ng-show="table.board[3]")
+				.card_container
+					.card(class="card-{{table.board[4]}}" ng-show="table.board[4]")
 		.cell
-			.player_wrap
+			.player_wrap.side
 				.player_cards(ng-class="{dealt: table.seats[1].has_cards}")
 					div.card(ng-show="seat_occupied(1)" ng-class="get_card_class( 1, 0 )")
 					div.card(ng-show="seat_occupied(1)" ng-class="get_card_class( 1, 1 )")

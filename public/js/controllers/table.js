@@ -58,7 +58,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.call_amount = function() {
-		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' || $scope.table.seats[$scope.my_seat] == null ) return 0;
 		var call_amount = +$scope.table.biggest_bet - $scope.table.seats[$scope.my_seat].bet;
 		return call_amount > $scope.table.seats[$scope.my_seat].chips_in_play ? $scope.table.seats[$scope.my_seat].chips_in_play : call_amount;
 	}
@@ -104,7 +104,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.seat_occupied = function( seat ) {
-		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[$scope.seat] !== 'undefined' && $scope.table.seats[$scope.seat] && $scope.table.seats[$scope.seat].name );
+		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
 	}
 
 	// Leaving the socket room

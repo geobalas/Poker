@@ -26,7 +26,7 @@ input[type="text"], input[type="number"] {
 
 input[type="range"] {
 	width: 100%;
-	margin-top: 30px;
+	margin-top: 10%;
 }
 
 #bet_input {
@@ -73,6 +73,7 @@ a {
 	font-family: Arial;
 	color: @light_purple;
 	font-size: 1em;
+	white-space: nowrap;
 }
 
 .hidden {
@@ -107,21 +108,21 @@ table {
 .table {
 	background-color: @brown;
     border-radius: 200px;
-    height: 400px;
-    left: 11%;
+    height: 52%;
+    left: 10%;
     position: absolute;
-    top: 11%;
-    width: 800px;
+    top: 15%;
+    width: 80%;
     z-index: 0;
     box-shadow: 0 0 25px 0 @dark_purple;
     .felt {
     	background-color: @felt_green;
     	border-radius: 175px;
-    	width: 750px;
-    	height: 350px;
+    	width: 92%;
+    	height: 86%;
     	position: relative;
-    	top: 25px;
-    	left: 25px;
+    	top: 7%;
+    	left: 4%;
     	box-shadow: 0 0 20px 0 #17541D inset;
     }
 }
@@ -161,7 +162,7 @@ div.controls {
 	div.double_cell {
 		width: 30%;
 		.cell_content {
-			padding: 20px;
+			padding: 8%;
 		}
 	}
 	div.chat_cell {
@@ -175,7 +176,7 @@ input[type="range"] {
 }
 
 .sit_in {
-	padding: 20px 50px;
+	padding: 12% 34%;
 	cursor: pointer;
 }
 
@@ -183,7 +184,7 @@ div#chat {
 	div#messages {
 		border: 1px solid;
 	    border-radius: 8px;
-	    height: 63%;
+	    height: 120px;
 	    margin: 8px 8px 0 8px;
 	    background-color: #fff;
 	    padding: 8px;
@@ -208,7 +209,7 @@ div#chat {
 	input[type="text"] {
 		width: 197px;
 		font-size: 1em;
-		margin-left: 8px;
+		margin: 3px 0 0 8px;
 		padding: 9px;
 		transform: translate(0px, -2px);
 		border-radius: 8px;
@@ -216,26 +217,29 @@ div#chat {
 }
 
 div.player_wrap {
-	width: 160px;
-	margin: 60px auto;
+	width: 64%;
+	margin: 36% auto 0;
 	position: relative;
 	&.top {
-		margin-top: 100px;
+		margin-top: 45%;
 	}
 	&.bottom {
-		margin-top: 20px;
+		margin-top: 22%;
 	}
 	&.left {
-		margin-left: 80px;
+		margin-left: 30%;
 	}
 	&.right {
-		margin-left: 20px;
+		margin-left: 8%;
+	}
+	&.side {
+		margin-top: 32%;
 	}
 
 	.player_cards {
 		overflow: hidden;
 	    height: 60px;
-	    left: 30px;
+	    left: 32px;
 	    position: absolute;
 	    top: 0px;
 	    width: 100px;
@@ -254,7 +258,7 @@ div.player_wrap {
 	}
 }
 div.seat {
-	padding: 16px 0;
+	padding: 10% 0;
 	background-color: @purple;
 	border: 3px solid @light_purple;
 	border-radius: 5px;
@@ -262,7 +266,6 @@ div.seat {
 	font-size: 1.4em;
 	font-weight: lighter;
 	text-align: center;
-	width: 154px;
 	position: relative;
 	box-shadow: 0 0 5px 0 @dark_purple;
 	-webkit-transition: box-shadow 0.2s ease, border 0.2s ease;
@@ -279,13 +282,16 @@ div.seat {
 	}
 }
 
-div.board_wrap {
-	margin: 10px 48px;
+div#board_wrap {
+	margin: 6% 8%;
 	.card {
-		float: left;
-		margin-right: 10px;
 		box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 		border-radius: 8px;
+		margin: 0 auto;
+	}
+	.card_container {
+		width: 20%;
+		display: inline-block;
 	}
 }
 
@@ -302,274 +308,277 @@ div.board_wrap {
 	 * CSS Sprites
 	 */
 	&.card-As {
-		background-position: -2px -2px;
+		background-position: 0.2% 0.5%;
 	}
 	&.card-Ah {
-		background-position: -2px -338px;
+		background-position: 0.2% 99.3%;
 	}
 	&.card-Ad {
-		background-position: -2px -226px;
+		background-position: 0.2% 66.5%;
 	}
 	&.card-Ac {
-		background-position: -2px -113px;
+		background-position: 0.2% 33.3%;
 	}
 	&.card-Ks {
-		background-position: -76px -2px;
+		background-position: 7.9% 0.5%;
 	}
 	&.card-Kh {
-		background-position: -76px -338px;
+		background-position: 7.9% 99.3%;
 	}
 	&.card-Kd {
-		background-position: -76px -226px;
+		background-position: 7.9% 66.5%;
 	}
 	&.card-Kc {
-		background-position: -76px -113px;
+		background-position: 7.9% 33.3%;
 	}
 	&.card-Qs {
-		background-position: -150px -2px;
+		background-position: 15.5% 0.5%;
 	}
 	&.card-Qh {
-		background-position: -150px -338px;
+		background-position: 15.5% 99.3%;
 	}
 	&.card-Qd {
-		background-position: -150px -226px;
+		background-position: 15.5% 66.5%;
 	}
 	&.card-Qc {
-		background-position: -150px -113px;
+		background-position: 15.5% 33.3%;
 	}
 	&.card-Js {
-		background-position: -224px -2px;
+		background-position: 23.2% 0.5%;
 	}
 	&.card-Jh {
-		background-position: -224px -338px;
+		background-position: 23.2% 99.3%;
 	}
 	&.card-Jd {
-		background-position: -224px -226px;
+		background-position: 23.2% 66.5%;
 	}
 	&.card-Jc {
-		background-position: -224px -113px;
+		background-position: 23.2% 33.3%;
 	}
 	&.card-Ts {
-		background-position: -298px -2px;
+		background-position: 30.9% 0.5%;
 	}
 	&.card-Th {
-		background-position: -298px -338px;
+		background-position: 30.9% 99.3%;
 	}
 	&.card-Td {
-		background-position: -298px -226px;
+		background-position: 30.9% 66.5%;
 	}
 	&.card-Tc {
-		background-position: -298px -113px;
+		background-position: 30.9% 33.3%;
 	}
 	&.card-9s {
-		background-position: -372px -2px;
+		background-position: 38.6% 0.5%;
 	}
 	&.card-9h {
-		background-position: -372px -338px;
+		background-position: 38.6% 99.3%;
 	}
 	&.card-9d {
-		background-position: -372px -226px;
+		background-position: 38.6% 66.5%;
 	}
 	&.card-9c {
-		background-position: -372px -113px;
+		background-position: 38.6% 33.3%;
 	}
 	&.card-8s {
-		background-position: -447px -2px;
+		background-position: 46.3% 0.5%;
 	}
 	&.card-8h {
-		background-position: -447px -338px;
+		background-position: 46.3% 99.3%;
 	}
 	&.card-8d {
-		background-position: -447px -226px;
+		background-position: 46.3% 66.5%;
 	}
 	&.card-8c {
-		background-position: -447px -113px;
+		background-position: 46.3% 33.3%;
 	}
 	&.card-7s {
-		background-position: -521px -2px;
+		background-position: 53.8% 0.5%;
 	}
 	&.card-7h {
-		background-position: -521px -338px;
+		background-position: 53.8% 99.3%;
 	}
 	&.card-7d {
-		background-position: -521px -226px;
+		background-position: 53.8% 66.5%;
 	}
 	&.card-7c {
-		background-position: -521px -113px;
+		background-position: 53.8% 33.3%;
 	}
 	&.card-6s {
-		background-position: -595px -2px;
+		background-position: 61.5% 0.5%;
 	}
 	&.card-6h {
-		background-position: -595px -338px;
+		background-position: 61.5% 99.3%;
 	}
 	&.card-6d {
-		background-position: -595px -226px;
+		background-position: 61.5% 66.5%;
 	}
 	&.card-6c {
-		background-position: -595px -113px;
+		background-position: 61.5% 33.3%;
 	}
 	&.card-5s {
-		background-position: -670px -3px;
+		background-position: 69.2% 0.5%;
 	}
 	&.card-5h {
-		background-position: -670px -338px;
+		background-position: 69.2% 99.3%;
 	}
 	&.card-5d {
-		background-position: -670px -226px;
+		background-position: 69.2% 66.5%;
 	}
 	&.card-5c {
-		background-position: -670px -113px;
+		background-position: 69.2% 33.3%;
 	}
 	&.card-4s {
-		background-position: -744px -3px;
+		background-position: 76.8% 0.5%;
 	}
 	&.card-4h {
-		background-position: -744px -338px;
+		background-position: 76.8% 99.3%;
 	}
 	&.card-4d {
-		background-position: -744px -226px;
+		background-position: 76.8% 66.5%;
 	}
 	&.card-4c {
-		background-position: -744px -113px;
+		background-position: 76.8% 33.3%;
 	}
 	&.card-3s {
-		background-position: -818px -2px;
+		background-position: 84.5% 0.5%;
 	}
 	&.card-3h {
-		background-position: -818px -338px;
+		background-position: 84.5% 99.3%;
 	}
 	&.card-3d {
-		background-position: -818px -226px;
+		background-position: 84.5% 66.5%;
 	}
 	&.card-3c {
-		background-position: -819px -113px;
+		background-position: 84.5% 33.3%;
 	}
 	&.card-2s {
-		background-position: -892px -2px;
+		background-position: 92.1% 0.5%;
 	}
 	&.card-2h {
-		background-position: -892px -338px;
+		background-position: 92.1% 99.3%;
 	}
 	&.card-2d {
-		background-position: -892px -226px;
+		background-position: 92.1% 66.5%;
 	}
 	&.card-2c {
-		background-position: -894px -113px;
+		background-position: 92.1% 33.3%;
 	}
 	&.card-back {
-		background-position: -967px -113px;
+		background-position: 99.8% 33.3%;
 	}
 }
 
 #dealer_wrap_0 {
-	top: 100px;
-	left: 140px;
+    top: 105%;
+	left: 82%;
 }
 #dealer_wrap_1 {
-	top: 100px;
-	left: 10px;
+    top: 105%;
+	left: 5%;
 }
 #dealer_wrap_2 {
-	top: 100px;
-	left: 130px;
+    top: 105%;
+	left: 80%;
 }
 #dealer_wrap_3 {
-	top: 100px;
+	top: 105%;
 	left: 0px;
 }
 #dealer_wrap_4 {
-	top: 70px;
-	left: -30px;
+    top: 75%;
+	left: -20%;
 }
 #dealer_wrap_5 {
-	top: -30px;
-	left: 0px;
+    top: -30%;
+	left: 0%;
 }
 #dealer_wrap_6 {
-	top: -30px;
-	left: 0px;
+    top: -35%;
+	left: 0%;
 }
 #dealer_wrap_7 {
-	top: -30px;
-	left: 140px;
+	left: 85%;
+    top: -35%;
 }
 #dealer_wrap_8 {
-	top: -30px;
-	left: 140px;
+    top: -35%;
+	left: 85%;
 }
 #dealer_wrap_9 {
-	top: 60px;
-	left: 170px;
+    top: 70%;
+	left: 110%;
 }
 
 .dealer_button {
 	position: absolute;
 	border: 2px solid @light_purple;
 	border-radius: 20px;
-    height: 20px;
+    width: 12%;
+    height: 20%;
     text-align: center;
-    width: 20px;
     background-color: @transparent_purple;
     line-height: 1.25;
     box-shadow: 0 3px 0 0 #604FAD;
 }
 
 #bets_0 {
-	top: 80px;
-	left: 120px;
+	top: 75%;
+	left: 75%;
 }
 #bets_1 {
-	top: 100px;
-	left: 0px;
+    top: 110%;
+	left: 0;
 }
 #bets_2 {
-	top: 100px;
-	left: 0px;
+	top: 110%;
+	left: 0;
 }
 #bets_3 {
-	top: 80px;
-	left: -120px;
+	left: -75%;
+    top: 75%;
 }
 #bets_4 {
-	top: 25px;
-	left: -120px;
+	top: 40%;
+	left: -75%;
 }
 #bets_5 {
-	top: -30px;
-	left: -120px;
+    top: -30%;
+	left: -75%;
 }
 #bets_6 {
-	top: -60px;
-	left: -80px;
+    top: -66%;
+	left: -50%;
 }
 #bets_7 {
-	top: -60px;
-	left: 80px;
+    top: -66%;
+	left: 50%;
 }
 #bets_8 {
-	top: -30px;
-	left: 120px;
+    top: -30%;
+	left: 75%;
 }
 #bets_9 {
-	top: 25px;
-	left: 120px;
+    top: 33%;
+	left: 75%;
 }
 
 .bets {
 	position: absolute;
 	text-align: center;
-	width: 160px;
+	width: 100%;
 	font-weight: bold;
 	text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
-#pot {
-	display: block;
-	width: 100%;
-	text-align: center;
-	font-weight: bold;
-	text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+#pot_wrap {
+	height: 10%;
+	#pot {
+		display: block;
+		width: 100%;
+		text-align: center;
+		font-weight: bold;
+		text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	}
 }
 
 #to_lobby {
@@ -592,14 +601,17 @@ div.board_wrap {
 		border-radius: 5px;
 		position: relative;
 		margin: 0 auto;
-		top: 200px;
+		top: 18%;
 		width: 424px;
 		z-index: 3;
 		label {
-			font-size: large;
+			display: block;
+		    font-size: large;
+		    margin-bottom: 10px;
 		}
 		.input_left {
 			margin-right: 32px;
+			width: 50%;
 		}
 	}
 	#curtain {
@@ -618,5 +630,152 @@ div.board_wrap {
 	font-size: 0.8em;
 	a {
 		text-decoration: underline;
+	}
+}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+	#content {
+		width: 480px;
+		height: 320px;
+	}
+
+	body {
+		font-size: 0.5em;
+	}
+
+	#to_lobby {
+		padding: 10px;
+		font-size: 1.3em;
+	}
+
+	.table_requirements {
+		font-size: 1.6em;
+	}
+
+	div.player_wrap {
+		margin: 25% auto 0;
+		&.top {
+    		margin-top: 36%;
+		}
+		&.side {
+    		margin-top: 28%;
+		}
+		.player_cards {
+			left: 8px;
+			height: 25px;
+			&.dealt {
+				top: -25px;
+			}
+		}
+	}
+
+	.card {
+		background-size: 460px auto;
+		width: 32px;
+		height: 47px;
+	}
+
+	#pot {
+		font-size: 1.6em;
+	}
+
+	.bets {
+		font-size: 1.6em;
+	}
+
+	div.row.controls {
+		.chat_cell {
+			display: none;
+		}
+		.cell {
+			width: 20%;
+			button {
+				margin: 15%;
+			}
+		}
+		.double_cell {
+			width: 40%;
+			.cell_content {
+			    padding: 4% 8%;
+			    input[type="range"] {
+				    margin-top: 0;
+				}
+				#bet_input {
+				    margin-top: 5px;
+				}
+			}
+		}
+	}
+
+	#modal_wrap #modal {
+		width: 300px;
+		.input_left {
+			font-size: 2em;
+		}
+	}
+
+	#developer_info {
+		font-size: 1.4em;
+	}
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 1024px) { 
+	#content {
+		width: 768px;
+		height: 576px;
+	}
+
+	body {
+		font-size: 0.75em;
+	}
+
+	div.player_wrap {
+		margin: 34% auto 0;
+		.player_cards {
+			left: 17px;
+			height: 50px;
+			&.dealt {
+				top: -50px;
+			}
+		}
+	}
+
+	.card {
+		background-size: 900px auto;
+		width: 61px;
+		height: 93px;
+	}
+
+	.bets {
+		font-size: 1.2em;
+	}
+
+	div#chat div#messages {
+		height: 76px;
+	}
+
+	div#chat input[type="text"] {
+		width: 137px;
+		font-size: 1.3em;
+		padding: 8px;
+	}
+
+	div#chat input[type="submit"] {
+		transform: translate(0px, -2px);
+		padding: 7px 8px;
+	}
+
+	#pot {
+		font-size: 1.3em;
+	}
+
+	#modal_wrap #modal {
+		width: 320px;
+	}
+
+	#developer_info {
+		font-size: 1em;
 	}
 }

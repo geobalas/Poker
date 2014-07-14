@@ -1,6 +1,6 @@
 app.controller('LobbyController', ['$scope', '$rootScope', '$http', function( $scope, $rootScope, $http ) {
 	$scope.lobby_tables = [];
-	$scope.new_screen_name = 'Bot_' + Math.ceil( Math.random() * 999 );
+	$scope.new_screen_name = '';
 
 	$http({
 		url: '/lobby_data',
