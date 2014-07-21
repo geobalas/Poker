@@ -35,7 +35,7 @@
 					span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
 		.double_cell
 			#pot_wrap
-				span#pot(ng-show="table.pot[0].amount" ng-repeat="pot in table.pot") Pot: {{pot.amount}}
+				span#pot(ng-show="table.pot[0].amount") {{pot_text()}}
 			#board_wrap
 				.card_container
 					.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")

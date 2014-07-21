@@ -42,7 +42,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.min_bet_amount = function() {
-		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' || $scope.table.seats[$scope.my_seat] === null ) return 0;
 		// If the pot was raised
 		if( $scope.action_state === "act_betted_pot" ) {
 			var proposed_bet = +$scope.table.biggest_bet + $scope.table.big_blind;
@@ -53,7 +53,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.max_bet_amount = function() {
-		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' ) return 0;
+		if( $scope.my_seat === null || typeof $scope.table.seats[$scope.my_seat] === 'undefined' || $scope.table.seats[$scope.my_seat] === null ) return 0;
 		return $scope.action_state === "act_betted_pot" ? $scope.table.seats[$scope.my_seat].chips_in_play + $scope.table.seats[$scope.my_seat].bet : $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
@@ -76,7 +76,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.show_fold_button = function() {
-		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot" || $scope.action_state === "act_others_all_in";
 	}
 
 	$scope.show_check_button = function() {
@@ -84,7 +84,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.show_call_button = function() {
-		return $scope.action_state === "act_betted_pot"  && !( $scope.action_state === "act_betted_pot" && $scope.table.biggest_bet == $scope.table.seats[$scope.my_seat].bet );
+		return $scope.action_state === "act_others_all_in" || $scope.action_state === "act_betted_pot"  && !( $scope.action_state === "act_betted_pot" && $scope.table.biggest_bet == $scope.table.seats[$scope.my_seat].bet );
 	}
 
 	$scope.show_bet_button = function() {
@@ -105,6 +105,20 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 
 	$scope.seat_occupied = function( seat ) {
 		return !$rootScope.sitting_on_table || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
+	}
+
+	$scope.pot_text = function() {
+		if( typeof $scope.table.pot !== 'undefined' && $scope.table.pot[0].amount ) {
+			var pot_text = 'Pot: ' + $scope.table.pot[0].amount;
+
+			var pot_count = $scope.table.pot.length;
+			if( pot_count > 1 ) {
+				for( var i=1 ; i<pot_count ; i++ ) {
+					pot_text += ' - Sidepot: ' + $scope.table.pot[i].amount;
+				}
+			}
+			return pot_text;
+		}
 	}
 
 	// Leaving the socket room
@@ -288,6 +302,13 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		$scope.action_state = 'act_not_betted_pot';
 
 		$scope.bet_amount = $scope.table.seats[$scope.my_seat].chips_in_play < $scope.table.big_blind ? $scope.table.seats[$scope.my_seat].chips_in_play : $scope.table.big_blind;
+		$scope.$digest();
+	});
+
+	// When the user is asked to call an all in
+	socket.on( 'act_others_all_in', function() {
+		$scope.action_state = 'act_others_all_in';
+
 		$scope.$digest();
 	});
 }]);

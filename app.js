@@ -21,17 +21,6 @@ app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// When using the sockets on a server that doesn't allow web sockets
-/*
-io.configure( function() {
-    io.set( "transports", ["xhr-polling"] );
-    io.set( "polling duration", 2 );
-	io.set( 'heartbeat interval', 2 );
-	io.set( 'close timeout', 5 );
-	io.set( 'heartbeat timeout', 5 );
-} );
-*/
-
 // Development Only
 if ( 'development' == app.get('env') ) {
 	app.use( express.errorHandler() );
@@ -398,7 +387,18 @@ io.sockets.on('connection', function( socket ) {
 			var table_id = players[socket.id].sitting_on_table;
 			var active_seat = tables[table_id].public.active_seat;
 			
-			if( tables[table_id] && tables[table_id].seats[active_seat].socket.id === socket.id && tables[table_id].public.biggest_bet && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
+			if(
+				// The table exists
+				typeof tables[table_id] !== 'undefined' 
+				// The player who should act is the player who raised
+				&& tables[table_id].seats[active_seat].socket.id === socket.id
+				// The pot was betted 
+				&& tables[table_id].public.biggest_bet
+				// It's not a round of blinds
+				&& ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1
+				// Not every other player is all in (in which case the only move is "call")
+				&& !tables[table_id].other_players_are_all_in()
+			) {
 				amount = parseInt( amount );
 				if ( amount && isFinite( amount ) ) {
 					amount -= tables[table_id].seats[active_seat].public.bet;
