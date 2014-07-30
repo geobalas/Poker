@@ -233,17 +233,10 @@ io.sockets.on('connection', function( socket ) {
 			else if( data.chips > tables[data.table_id].public.max_buy_in || data.chips < tables[data.table_id].public.min_buy_in )
 				callback( { 'success': false, 'error': 'The amount of chips should be between the maximum and the minimum amount of allowed buy in' } );
 			else {
-				// Remove the chips that player will have on the table, from the player object
-				players[socket.id].chips -= data.chips;
-				players[socket.id].public.chips_in_play = data.chips;
-				// Add the table info in the player object
-				players[socket.id].seat = data.seat;
-				players[socket.id].sitting_on_table = data.table_id;
-
 				// Give the response to the user
 				callback( { 'success': true } );
 				// Add the player to the table
-				tables[data.table_id].player_sat_on_the_table( players[socket.id], data.seat );
+				tables[data.table_id].player_sat_on_the_table( players[socket.id], data.seat, data.chips );
 			}
 		} else {
 			// If the user is not allowed to sit in, notify the user
@@ -272,6 +265,7 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
+			console.log( table_id );
 			var active_seat = tables[table_id].public.active_seat;
 
 			if( tables[table_id] 
@@ -282,11 +276,10 @@ io.sockets.on('connection', function( socket ) {
 				if( posted_blind ) {
 					callback( { 'success': true } );
 					if( tables[table_id].public.phase === 'small_blind' ) {
-						players[socket.id].bet( tables[table_id].public.small_blind );
+						// The player posted the small blind
 						tables[table_id].player_posted_small_blind();
 					} else {
 						// The player posted the big blind
-						players[socket.id].bet( tables[table_id].public.big_blind );
 						tables[table_id].player_posted_big_blind();
 					}
 				} else {
@@ -330,7 +323,6 @@ io.sockets.on('connection', function( socket ) {
 			if( tables[table_id] && tables[table_id].seats[active_seat].socket.id === socket.id && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
-				players[socket.id].fold();
 				tables[table_id].player_folded();
 			}
 		}
@@ -346,8 +338,6 @@ io.sockets.on('connection', function( socket ) {
 			var active_seat = tables[table_id].public.active_seat;
 
 			if( tables[table_id] && tables[table_id].seats[active_seat].socket.id === socket.id && tables[table_id].public.biggest_bet && ['preflop','flop','turn','river'].indexOf(tables[table_id].public.phase) > -1 ) {
-				var called_amount = tables[table_id].public.biggest_bet - players[socket.id].public.bet;
-				players[socket.id].bet( called_amount );
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
 				tables[table_id].player_called();
@@ -371,8 +361,7 @@ io.sockets.on('connection', function( socket ) {
 				if ( amount && isFinite( amount ) && amount <= tables[table_id].seats[active_seat].public.chips_in_play ) {
 					// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 					callback( { 'success': true } );
-					players[socket.id].bet( amount );
-					tables[table_id].player_betted();
+					tables[table_id].player_betted( amount ); 
 				}
 			}
 		}
@@ -402,13 +391,12 @@ io.sockets.on('connection', function( socket ) {
 				amount = parseInt( amount );
 				if ( amount && isFinite( amount ) ) {
 					amount -= tables[table_id].seats[active_seat].public.bet;
-					console.log( 'THE AMOUNT IS: ' + amount );
 					if( amount <= tables[table_id].seats[active_seat].public.chips_in_play ) {
-						console.log('passed');
 						// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 						callback( { 'success': true } );
-						players[socket.id].raise( amount );
-						tables[table_id].player_raised( players[socket.id].seat );
+						console
+						// The amount should not include amounts previously betted
+						tables[table_id].player_raised( amount );
 					}
 				}
 			}

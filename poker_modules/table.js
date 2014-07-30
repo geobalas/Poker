@@ -409,9 +409,11 @@ Table.prototype.end_phase = function() {
  * @param int seat
  */
 Table.prototype.player_posted_small_blind = function() {
+	var bet = this.seats[this.public.active_seat].public.chips_in_play >= this.public.small_blind ? this.public.small_blind : this.seats[this.public.active_seat].public.chips_in_play;
+	this.seats[this.public.active_seat].bet( bet );
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' posted the small blind';
 	this.public.log.action = 'bet';
-	this.public.biggest_bet = this.public.small_blind;
+	this.public.biggest_bet = bet;
 	this.emit_event( 'table_data', this.public );
 	this.initialize_big_blind();
 }
@@ -421,9 +423,11 @@ Table.prototype.player_posted_small_blind = function() {
  * @param int seat
  */
 Table.prototype.player_posted_big_blind = function() {
+	var bet = this.seats[this.public.active_seat].public.chips_in_play >= this.public.big_blind ? this.public.big_blind : this.seats[this.public.active_seat].public.chips_in_play;
+	this.seats[this.public.active_seat].bet( bet );
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' posted the big blind';
 	this.public.log.action = 'bet';
-	this.public.biggest_bet = this.public.big_blind;
+	this.public.biggest_bet = this.public.biggest_bet < bet ? bet : this.public.biggest_bet;
 	this.emit_event( 'table_data', this.public );
 	this.initialize_preflop();
 }
@@ -432,6 +436,8 @@ Table.prototype.player_posted_big_blind = function() {
  * Checks if the round should continue after a player has folded
  */
 Table.prototype.player_folded = function() {
+	this.seats[this.public.active_seat].fold();
+
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' folded';
 	this.public.log.action = 'fold';
 	this.emit_event( 'table_data', this.public );
@@ -471,6 +477,9 @@ Table.prototype.player_checked = function() {
  * When a player calls
  */
 Table.prototype.player_called = function() {
+	var called_amount = this.public.biggest_bet - this.seats[this.public.active_seat].public.bet;
+	this.seats[this.public.active_seat].bet( called_amount );
+
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' called';
 	this.public.log.action = 'call';
 	this.emit_event( 'table_data', this.public );
@@ -485,7 +494,9 @@ Table.prototype.player_called = function() {
 /**
  * When a player bets
  */
-Table.prototype.player_betted = function() {
+Table.prototype.player_betted = function( amount ) {
+	this.seats[this.public.active_seat].bet( amount );
+
 	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' betted';
 	this.public.log.action = 'bet';
@@ -498,7 +509,8 @@ Table.prototype.player_betted = function() {
 /**
  * When a player raises
  */
-Table.prototype.player_raised = function() {
+Table.prototype.player_raised = function( amount ) {
+	this.seats[this.public.active_seat].raise( amount );
 	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' raised';
 	this.public.log.action = 'raise';
@@ -513,9 +525,11 @@ Table.prototype.player_raised = function() {
  * @param object 	player
  * @param int 		seat
  */
-Table.prototype.player_sat_on_the_table = function( player, seat ) {
+Table.prototype.player_sat_on_the_table = function( player, seat, chips ) {
 	this.seats[seat] = player;
 	this.public.seats[seat] = player.public;
+
+	this.seats[seat].sit_on_table( this.public.id, seat, chips );
 
 	// Increase the counters of the table
 	this.public.players_seated_count++;

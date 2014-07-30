@@ -93,12 +93,17 @@ Pot.prototype.add_table_bets = function( players ) {
   }
 }
 
+/**
+ * Adds the player's bets to the pot
+ * @param {[type]} player [description]
+ */
 Pot.prototype.add_players_bets = function( player ) {
   // Getting the current pot (the one in which new bets should be added)
   var current_pot = this.pots.length-1;
 
   this.pots[current_pot].amount += player.public.bet;
   player.public.bet = 0;
+  // If the player is not in the list of contributors, add them
   if( !this.pots[current_pot].contributors.indexOf( player.seat ) ) {
     this.pots[current_pot].contributors.push( player.seat );
   }
@@ -108,6 +113,7 @@ Pot.prototype.destribute_to_winners = function( players, first_player_to_act ) {
   var pots_count = this.pots.length;
   var messages = [];
 
+  // For each one of the pots, starting from the last one
   for( var i=pots_count-1 ; i>=0 ; i-- ) {
     var winners = [];
     var best_rating = 0;
@@ -132,10 +138,11 @@ Pot.prototype.destribute_to_winners = function( players, first_player_to_act ) {
       var winners_count = winners.length;
 
       var winnings = ~~( this.pots[i].amount / winners_count );
+      var odd_chip = winnings * winners_count !== this.pots[i].amount;
 
       for( var j in winners ) {
         var players_winnings = 0;
-        if( players[winners[j]].seat === first_player_to_act ) {
+        if( odd_chip && players[winners[j]].seat === first_player_to_act ) {
           players_winnings = winnings + 1;
         } else {
           players_winnings = winnings;
