@@ -239,7 +239,9 @@ Table.prototype.initialize_round = function( change_dealer ) {
 				}
 			}
 			this.public.dealer_seat = i;
-		} else if( change_dealer ) {
+		} else if( change_dealer || this.seats[this.public.dealer_seat].public.sitting_in === false ) {
+			// If the dealer should be changed because the game will start with a new player
+			// or if the old dealer is sitting out, give the dealer button to the next player
 			this.public.dealer_seat = this.find_next_player( this.public.dealer_seat );
 		}
 
@@ -500,7 +502,7 @@ Table.prototype.player_called = function() {
 	this.public.log.action = 'call';
 	this.emit_event( 'table_data', this.public );
 
-	if( this.last_player_to_act === this.public.active_seat ) {
+	if( this.last_player_to_act === this.public.active_seat || this.other_players_are_all_in() ) {
 		this.end_phase();
 	} else {
 		this.action_to_next_player();
