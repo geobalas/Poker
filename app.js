@@ -19,7 +19,7 @@ app.use(express.bodyParser());
 app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
-
+io.set('log level', 1);
 
 // Development Only
 if ( 'development' == app.get('env') ) {
@@ -133,7 +133,7 @@ io.sockets.on('connection', function( socket ) {
 		// If the socket points to a player object
 		if( typeof players[socket.id] !== 'undefined' ) {
 			// If the player was sitting on a table
-			if( players[socket.id].sitting_on_table !== false && tables[players[socket.id].sitting_on_table] !== false ) {
+			if( players[socket.id].sitting_on_table !== false && typeof tables[players[socket.id].sitting_on_table] !== 'undefined' ) {
 				// The seat on which the player was sitting
 				var seat = players[socket.id].seat;
 				// The table on which the player was sitting
@@ -265,7 +265,6 @@ io.sockets.on('connection', function( socket ) {
 	socket.on('post_blind', function( posted_blind, callback ) {
 		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
-			console.log( table_id );
 			var active_seat = tables[table_id].public.active_seat;
 
 			if( tables[table_id] 
@@ -316,7 +315,7 @@ io.sockets.on('connection', function( socket ) {
 	 * @param function callback
 	 */
 	socket.on('fold', function( callback ){
-		if( players[socket.id].sitting_on_table !== 'undefined' ) {
+		if( players[socket.id].sitting_on_table !== false ) {
 			var table_id = players[socket.id].sitting_on_table;
 			var active_seat = tables[table_id].public.active_seat;
 
@@ -394,7 +393,6 @@ io.sockets.on('connection', function( socket ) {
 					if( amount <= tables[table_id].seats[active_seat].public.chips_in_play ) {
 						// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 						callback( { 'success': true } );
-						console
 						// The amount should not include amounts previously betted
 						tables[table_id].player_raised( amount );
 					}

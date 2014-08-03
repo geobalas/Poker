@@ -215,9 +215,13 @@ Table.prototype.initialize_round = function( change_dealer ) {
 		for( var i=0 ; i<this.public.seats_count ; i++ ) {
 			// If a player is sitting on the current seat
 			if( this.seats[i] !== null && this.seats[i].public.sitting_in ) {
-				
-				this.players_in_hand_count++;
-				this.seats[i].prepare_for_new_round();
+				if( !this.seats[i].public.chips_in_play ) {
+					this.seats[seat].sit_out();
+					this.players_sitting_in_count--;
+				} else {
+					this.players_in_hand_count++;
+					this.seats[i].prepare_for_new_round();
+				}
 			}
 		}
 
@@ -425,7 +429,7 @@ Table.prototype.player_posted_small_blind = function() {
 	this.seats[this.public.active_seat].bet( bet );
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' posted the small blind';
 	this.public.log.action = 'bet';
-	this.public.biggest_bet = bet;
+	this.public.biggest_bet = this.public.biggest_bet < bet ? bet : this.public.biggest_bet;
 	this.emit_event( 'table_data', this.public );
 	this.initialize_big_blind();
 }
@@ -508,7 +512,7 @@ Table.prototype.player_called = function() {
  */
 Table.prototype.player_betted = function( amount ) {
 	this.seats[this.public.active_seat].bet( amount );
-	this.public.biggest_bet = this.public.biggest_bet < amount ? amount : this.public.biggest_bet;
+	this.public.biggest_bet = this.public.biggest_bet < this.seats[this.public.active_seat].public.bet ? this.seats[this.public.active_seat].public.bet : this.public.biggest_bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' betted';
 	this.public.log.action = 'bet';
 	this.emit_event( 'table_data', this.public );
@@ -527,7 +531,7 @@ Table.prototype.player_betted = function( amount ) {
  */
 Table.prototype.player_raised = function( amount ) {
 	this.seats[this.public.active_seat].raise( amount );
-	this.public.biggest_bet = this.public.biggest_bet < amount ? amount : this.public.biggest_bet;
+	this.public.biggest_bet = this.public.biggest_bet < this.seats[this.public.active_seat].public.bet ? this.seats[this.public.active_seat].public.bet : this.public.biggest_bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' raised';
 	this.public.log.action = 'raise';
 	this.emit_event( 'table_data', this.public );
@@ -584,7 +588,6 @@ Table.prototype.player_sat_in = function( seat ) {
  * @param int seat
  */
 Table.prototype.player_left = function( seat ) {
-	console.log( seat );
 	this.public.log.message = this.seats[seat].public.name + ' left';
 
 	// If someone is really sitting on that seat
@@ -597,6 +600,7 @@ Table.prototype.player_left = function( seat ) {
 		}
 
 		this.seats[seat].leave_table();
+
 		// Empty the seat
 		this.public.seats[seat] = {};
 		this.public.players_seated_count--;

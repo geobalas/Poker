@@ -42,7 +42,7 @@ var Player = function( socket, name, chips ) {
  * Updates the player data when they leave the table
  */
 Player.prototype.leave_table = function() {
-	if( this.sitting_on_table ) {
+	if( this.sitting_on_table !== false ) {
 		this.sit_out();
 		// Remove the chips from play
 		this.chips += this.public.chips_in_play;
@@ -72,7 +72,7 @@ Player.prototype.sit_on_table = function( table_id, seat, chips ) {
  * Updates the player data when they sit out
  */
 Player.prototype.sit_out = function() {
-	if( this.sitting_on_table ) {
+	if( this.sitting_on_table !== false ) {
 		this.public.sitting_in = false;
 		this.public.in_hand = false;
 	}
