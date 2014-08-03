@@ -215,6 +215,7 @@ Table.prototype.initialize_round = function( change_dealer ) {
 		for( var i=0 ; i<this.public.seats_count ; i++ ) {
 			// If a player is sitting on the current seat
 			if( this.seats[i] !== null && this.seats[i].public.sitting_in ) {
+				
 				this.players_in_hand_count++;
 				this.seats[i].prepare_for_new_round();
 			}
@@ -341,7 +342,11 @@ Table.prototype.action_to_next_player = function() {
 			this.seats[this.public.active_seat].socket.emit( 'post_big_blind' );
 			break;
 		case 'preflop':
-			this.seats[this.public.active_seat].socket.emit( 'act_betted_pot' );
+			if( this.other_players_are_all_in() ) {
+				this.seats[this.public.active_seat].socket.emit( 'act_others_all_in' );
+			} else {
+				this.seats[this.public.active_seat].socket.emit( 'act_betted_pot' );
+			}
 			break;
 		case 'flop':
 		case 'turn':
@@ -369,8 +374,15 @@ Table.prototype.showdown = function() {
 	this.pot.add_table_bets( this.seats );
 
 	var current_player = this.find_next_player( this.public.dealer_seat );
+	var best_hand_rating = 0;
+
 	for( var i=0 ; i<this.players_in_hand_count ; i++ ) {
 		this.seats[current_player].evaluate_hand( this.public.board );
+		// If the hand of the current player is the best one yet,
+		// he has to show it to the others in order to prove it
+		if( this.seats[current_player].evaluated_hand.rating > best_hand_rating ) {
+			this.seats[current_player].public.cards = this.seats[current_player].cards;
+		}
 		current_player = this.find_next_player( current_player );
 	}
 	
@@ -496,14 +508,18 @@ Table.prototype.player_called = function() {
  */
 Table.prototype.player_betted = function( amount ) {
 	this.seats[this.public.active_seat].bet( amount );
-
-	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
+	this.public.biggest_bet = this.public.biggest_bet < amount ? amount : this.public.biggest_bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' betted';
 	this.public.log.action = 'bet';
 	this.emit_event( 'table_data', this.public );
 
-	this.last_player_to_act = this.find_previous_player();
-	this.action_to_next_player();
+	var previous_player_seat = this.find_previous_player();
+	if( previous_player_seat === this.public.active_seat ) {
+		this.end_phase();
+	} else {
+		this.last_player_to_act = previous_player_seat;
+		this.action_to_next_player();
+	}
 }
 
 /**
@@ -511,13 +527,18 @@ Table.prototype.player_betted = function( amount ) {
  */
 Table.prototype.player_raised = function( amount ) {
 	this.seats[this.public.active_seat].raise( amount );
-	this.public.biggest_bet = this.seats[this.public.active_seat].public.bet;
+	this.public.biggest_bet = this.public.biggest_bet < amount ? amount : this.public.biggest_bet;
 	this.public.log.message = this.seats[this.public.active_seat].public.name + ' raised';
 	this.public.log.action = 'raise';
 	this.emit_event( 'table_data', this.public );
 
-	this.last_player_to_act = this.find_previous_player();
-	this.action_to_next_player();
+	var previous_player_seat = this.find_previous_player();
+	if( previous_player_seat === this.public.active_seat ) {
+		this.end_phase();
+	} else {
+		this.last_player_to_act = previous_player_seat;
+		this.action_to_next_player();
+	}
 }
 
 /**
@@ -563,6 +584,7 @@ Table.prototype.player_sat_in = function( seat ) {
  * @param int seat
  */
 Table.prototype.player_left = function( seat ) {
+	console.log( seat );
 	this.public.log.message = this.seats[seat].public.name + ' left';
 
 	// If someone is really sitting on that seat

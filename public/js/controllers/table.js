@@ -88,19 +88,19 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 	}
 
 	$scope.show_bet_button = function() {
-		return $scope.action_state === "act_not_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play;
+		return $scope.action_state === "act_not_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play && $scope.table.biggest_bet < $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
 	$scope.show_raise_button = function() {
-		return $scope.action_state === "act_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play;
+		return $scope.action_state === "act_betted_pot" && $scope.table.seats[$scope.my_seat].chips_in_play && $scope.table.biggest_bet < $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
 	$scope.show_bet_range = function() {
-		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+		return ($scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot") && $scope.table.seats[$scope.my_seat].chips_in_play && $scope.table.biggest_bet < $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
 	$scope.show_bet_input = function() {
-		return $scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot";
+		return ($scope.action_state === "act_not_betted_pot" || $scope.action_state === "act_betted_pot")  && $scope.table.seats[$scope.my_seat].chips_in_play && $scope.table.biggest_bet < $scope.table.seats[$scope.my_seat].chips_in_play;
 	}
 
 	$scope.seat_occupied = function( seat ) {
