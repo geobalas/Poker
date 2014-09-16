@@ -7,16 +7,16 @@
 				input.input_left(type="text", ng-model="new_screen_name", ng-trim="true", required)
 				input#submit_name(type="submit", value="Submit")
 		#curtain(ng-show="!$root.screen_name")
-	table
+	table#table_list
 		tr
-			th Name
-			th BB/SB
+			th.dark_border Name
+			th.dark_border BB/SB
 			th Players
 		tr(ng-repeat="table in lobby_tables")
 			td 
 				a(href="/table_{{table.seats_count}}/{{table.id}}") {{table.name}}
-			td {{table.big_blind}}/{{table.small_blind}}
-			td {{table.players_seated_count}}/{{table.seats_count}}
+			td.centered_text {{table.big_blind}}/{{table.small_blind}}
+			td.centered_text {{table.players_seated_count}}/{{table.seats_count}}
 p#developer_info 
 	| Developed by George Balasis. View the code on 
 	a(href="https://github.com/geobalas/Poker", target="_blank") github

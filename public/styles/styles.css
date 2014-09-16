@@ -94,6 +94,19 @@ table {
 #table_wrap {
   position: relative;
 }
+#table_list {
+  margin: 40px 0 0;
+}
+#table_list th {
+  color: #2e1f3e;
+  background-color: #9880e9;
+}
+#table_list th.dark_border {
+  border-right: 1px solid #2e1f3e;
+}
+#table_list .centered_text {
+  text-align: center;
+}
 .table {
   background-color: #724f39;
   border-radius: 200px;
