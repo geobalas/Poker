@@ -2,7 +2,7 @@
  * The deck "class"
  */
 var Deck = function() {
-	this.next_card = 0;
+	this.nextCard = 0;
   this.cards = ['As', 'Ah', 'Ad', 'Ac',
                 'Ks', 'Kh', 'Kd', 'Kc',
                 'Qs', 'Qh', 'Qd', 'Qc',
@@ -21,24 +21,24 @@ var Deck = function() {
 // Method that shuffles the deck
 Deck.prototype.shuffle = function(){
   // Going back to the top of the deck
-  this.next_card = 0;
-  var shuffled_deck = [];
+  this.nextCard = 0;
+  var shuffledDeck = [];
 
   for( var i=0 ; i<52 ; i++ ) {
       var random_card = this.cards.splice( Math.floor( Math.random() * this.cards.length ), 1 );
-      shuffled_deck = shuffled_deck.concat( random_card );
+      shuffledDeck = shuffledDeck.concat( random_card );
   }
-  this.cards = shuffled_deck;
+  this.cards = shuffledDeck;
 };
 
 // Method that returns the next x cards of the deck
-Deck.prototype.deal = function( number_of_cards ) {
-  var dealt_cards = [];
-  for( var i=0 ; i<number_of_cards && this.next_card<52 ; i++ ) {
-    dealt_cards.push( this.cards[this.next_card] );
-    this.next_card++;
+Deck.prototype.deal = function( numberOfCards ) {
+  var dealtCards = [];
+  for( var i=0 ; i<numberOfCards && this.nextCard<52 ; i++ ) {
+    dealtCards.push( this.cards[this.nextCard] );
+    this.nextCard++;
   }
-  return dealt_cards;
+  return dealtCards;
 };
 
 module.exports = Deck;

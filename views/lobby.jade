@@ -1,23 +1,23 @@
 #lobby
-	#modal_wrap(ng-show="!$root.screen_name")
+	#modal-wrap(ng-show="!$root.screenName")
 		#modal
 			form(ng-submit="register()")
-				label(for="screen_name_input") Enter your screen name
-				p.table_requirements.error(ng-show="register_error") {{register_error}}
-				input.input_left(type="text", ng-model="new_screen_name", ng-trim="true", required)
-				input#submit_name(type="submit", value="Submit")
-		#curtain(ng-show="!$root.screen_name")
-	table#table_list
+				label(for="screenName-input") Enter your screen name
+				p.table-requirements.error(ng-show="registerError") {{registerError}}
+				input.input-left(type="text", ng-model="newScreenName", ng-trim="true", required)
+				input#submit-name(type="submit", value="Submit")
+		#curtain(ng-show="!$root.screenName")
+	table#table-list
 		tr
-			th.dark_border Name
-			th.dark_border BB/SB
+			th.dark-border Name
+			th.dark-border BB/SB
 			th Players
-		tr(ng-repeat="table in lobby_tables")
+		tr(ng-repeat="table in lobbyTables")
 			td 
-				a(href="/table_{{table.seats_count}}/{{table.id}}") {{table.name}}
-			td.centered_text {{table.big_blind}}/{{table.small_blind}}
-			td.centered_text {{table.players_seated_count}}/{{table.seats_count}}
-p#developer_info 
+				a(href="/table-{{table.seatsCount}}/{{table.id}}") {{table.name}}
+			td.centered-text {{table.bigBlind}}/{{table.smallBlind}}
+			td.centered-text {{table.playersSeatedCount}}/{{table.seatsCount}}
+p#developer-info 
 	| Developed by George Balasis. View the code on 
-	a(href="https://github.com/geobalas/Poker", target="_blank") github
+	a(href="https://github.com/geobalas/Poker", target="-blank") github
 	|.

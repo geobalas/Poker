@@ -6,13 +6,13 @@ describe("Splitting the pot between two players", function() {
 
 	var table,
 		players = [],
-		initial_chips = 0;
+		initialChips = 0;
 
  	beforeEach(function() {
  		jasmine.Clock.useMock();
 
-		var event_emitter = function( table_id ) {
-			return function ( event_name, event_data ) {};
+		var eventEmitter = function( tableId ) {
+			return function ( eventName, eventData ) {};
 		}
 
  		var socket = {
@@ -21,7 +21,7 @@ describe("Splitting the pot between two players", function() {
 			}
 		};
 
-		table = new Table( 0, 'Sample 10-handed Table', event_emitter(0), 10, 2, 1, 200, 40, false );
+		table = new Table( 0, 'Sample 10-handed Table', eventEmitter(0), 10, 2, 1, 200, 40, false );
 
 		for( var i=0 ; i<3 ; i++ ) {
 			players[i] = new Player( socket, 'Player_'+i, 1000 );
@@ -29,10 +29,10 @@ describe("Splitting the pot between two players", function() {
 			
 		}
 
-		initial_chips = 200;
-		table.player_sat_on_the_table( players[0], 2, initial_chips );
-		table.player_sat_on_the_table( players[1], 6, initial_chips );
-		table.player_sat_on_the_table( players[2], 4, initial_chips );
+		initialChips = 200;
+		table.playerSatOnTheTable( players[0], 2, initialChips );
+		table.playerSatOnTheTable( players[1], 6, initialChips );
+		table.playerSatOnTheTable( players[2], 4, initialChips );
 
 		table.deck.cards[0] = 'Ah';
 		table.deck.cards[1] = 'Kh';
@@ -49,16 +49,16 @@ describe("Splitting the pot between two players", function() {
 		table.deck.cards[9] = 'Js';
 		table.deck.cards[10] = 'Qd';
 
-		table.player_posted_small_blind();
-		table.player_posted_big_blind();
-		table.player_called();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
+		table.playerPostedSmallBlind();
+		table.playerPostedBigBlind();
+		table.playerCalled();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
 
 		jasmine.Clock.tick(2000);
 
@@ -77,35 +77,35 @@ describe("Splitting the pot between two players", function() {
 		table.deck.cards[9] = 'Js';
 		table.deck.cards[10] = 'Qd';
 
-		table.player_posted_small_blind();
-		table.player_posted_big_blind();
-		table.player_called();
-		table.player_called();
-		table.player_checked();
-		table.player_betted( 33 );
-		table.player_called();
-		table.player_called();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
-		table.player_checked();
+		table.playerPostedSmallBlind();
+		table.playerPostedBigBlind();
+		table.playerCalled();
+		table.playerCalled();
+		table.playerChecked();
+		table.playerBetted( 33 );
+		table.playerCalled();
+		table.playerCalled();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
+		table.playerChecked();
 	});
 
 	it("should give an equal amount of chips back to the players, when there is no odd chip", function() {
-		table.player_checked();
+		table.playerChecked();
 		for( var i=0 ; i<3 ; i++ ) {
-			expect( players[i].public.chips_in_play ).toEqual( initial_chips );
+			expect( players[i].public.chipsInPlay ).toEqual( initialChips );
 		}
 	});
 
 	it("should give an extra chip to the player on the left of the dealer seat, when there is an odd chip", function() {
-		table.player_folded();
-		var player_on_dealers_left = table.find_next_player( table.public.dealer_seat );
-		var player_on_dealers_right = table.find_previous_player( table.public.dealer_seat );
-		console.log( player_on_dealers_right );
+		table.playerFolded();
+		var playerOnDealersLeft = table.findNextPlayer( table.public.dealerSeat );
+		var playerOnDealersRight = table.findPreviousPlayer( table.public.dealerSeat );
+		console.log( playerOnDealersRight );
 		for( var i=0 ; i<2 ; i++ ) {
-			expect( table.seats[player_on_dealers_left].public.chips_in_play ).toEqual( table.seats[player_on_dealers_right].public.chips_in_play+1 );
+			expect( table.seats[playerOnDealersLeft].public.chipsInPlay ).toEqual( table.seats[playerOnDealersRight].public.chipsInPlay+1 );
 		}
 	});
 });

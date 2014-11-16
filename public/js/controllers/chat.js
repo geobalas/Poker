@@ -7,27 +7,27 @@ app.controller( 'ChatController', ['$scope', function( $scope ) {
 	/**
 	 * Chat
 	 */
-	$scope.send_message = function() {
-		if ( $scope.message_text.trim() ) {
-			var message = $scope.message_text.trim();
-			var message_box = document.querySelector('#messages');
-			socket.emit( 'send_message', message );
+	$scope.sendMessage = function() {
+		if ( $scope.messageText.trim() ) {
+			var message = $scope.messageText.trim();
+			var messageBox = document.querySelector('#messages');
+			socket.emit( 'sendMessage', message );
 
-			var message_element = angular.element( '<p class="message"><b>You</b>: ' + html_entities( message ) + '</p>' );
-			angular.element( message_box ).append( message_element );
-			message_box.scrollTop = message_box.scrollHeight;
-			$scope.message_text = '';
+			var messageElement = angular.element( '<p class="message"><b>You</b>: ' + htmlEntities( message ) + '</p>' );
+			angular.element( messageBox ).append( messageElement );
+			messageBox.scrollTop = messageBox.scrollHeight;
+			$scope.messageText = '';
 		}
 	}
 
-	socket.on( 'receive_message', function( data ) {
-		var message_box = document.querySelector('#messages');
-		var message_element = angular.element( '<p class="message"><b>' + data.sender + '</b>: ' + data.message + '</p>' );
-		angular.element( message_box ).append( message_element );
-		message_box.scrollTop = message_box.scrollHeight;
+	socket.on( 'receiveMessage', function( data ) {
+		var messageBox = document.querySelector('#messages');
+		var messageElement = angular.element( '<p class="message"><b>' + data.sender + '</b>: ' + data.message + '</p>' );
+		angular.element( messageBox ).append( messageElement );
+		messageBox.scrollTop = messageBox.scrollHeight;
 	});
 
-	function html_entities(str) {
+	function htmlEntities(str) {
 	    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
 }]);

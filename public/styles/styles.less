@@ -1,30 +1,30 @@
-@light_purple: #9880e9;
-@dark_purple: #160726;
+@light-purple: #9880e9;
+@dark-purple: #160726;
 @purple: #2E1F3E;
-@transparent_purple: rgba(46,31,62,0.9);
+@transparent-purple: rgba(46,31,62,0.9);
 @lavender: #BE78E8;
-@felt_green: #387C41;
-@dark_greek: #17541D;
+@felt-green: #387C41;
+@dark-greek: #17541D;
 @brown: #724F39;
 
 body {
 	margin: 0;
 	background: #2E1F3E;
 	font-family: Arial;
-	color: @light_purple;
+	color: @light-purple;
 	font-size: 1em;
 }
 
 input[type="text"], input[type="number"] {
 	padding: 8px;
 	width: 228px;
-	border: 1px solid @light_purple;
+	border: 1px solid @light-purple;
 	border-radius: 5px;
-	color: @light_purple;
+	color: @light-purple;
 	font-size: 1.4em;
 }
 
-#bet_input {
+#bet-input {
 	width: 100%;
 	margin-top: 20px;
 }
@@ -37,20 +37,20 @@ input {
 button, input[type="submit"], .button {	
 	padding: 16px;
 	background-color: rgba(0,0,0,0);
-	border: 1px solid @light_purple;
+	border: 1px solid @light-purple;
 	border-radius: 5px;
-	color: @light_purple;
+	color: @light-purple;
 	font-size: 2em;
 	font-weight: lighter;
 	&.small {
 		font-size: 1em;
 	}
-	&.control_button {
+	&.control-button {
 		padding: 0;
 		height: 65%;
 		width: 85%;
-		background-color: @transparent_purple;
-		border: 3px solid @light_purple;
+		background-color: @transparent-purple;
+		border: 3px solid @light-purple;
 		border-radius: 10px;
 		cursor: pointer;
 		&.small {
@@ -66,7 +66,7 @@ h1, h2, h3, h4, h5 {
 a {
 	text-decoration: none;
 	font-family: Arial;
-	color: @light_purple;
+	color: @light-purple;
 	font-size: 1em;
 	white-space: nowrap;
 }
@@ -86,8 +86,8 @@ a {
 }
 
 table, tr, th, td {
-	border: 1px solid @light_purple;
-	color: @light_purple;
+	border: 1px solid @light-purple;
+	color: @light-purple;
 	border-collapse: collapse;
 	padding: 8px;
 }
@@ -96,19 +96,19 @@ table {
 	width: 100%;
 }
 
-#table_wrap {
+#table-wrap {
 	position: relative;
 }
 
-#table_list {
+#table-list {
 	th {
 		color: #2e1f3e;
 		background-color: #9880e9;
-		&.dark_border {
+		&.dark-border {
 			border-right: 1px solid #2e1f3e;
 		}
 	}
-	.centered_text {
+	.centered-text {
 		text-align: center;
 	}
 	margin: 40px 0 0;
@@ -123,9 +123,9 @@ table {
     top: 15%;
     width: 80%;
     z-index: 0;
-    box-shadow: 0 0 25px 0 @dark_purple;
+    box-shadow: 0 0 25px 0 @dark-purple;
     .felt {
-    	background-color: @felt_green;
+    	background-color: @felt-green;
     	border-radius: 175px;
     	width: 92%;
     	height: 86%;
@@ -142,7 +142,7 @@ div.row {
 	position: relative;
 	z-index: 2;
 	&.controls {
-		background-color: @felt_green;
+		background-color: @felt-green;
 		border-radius: 8px;
 		z-index: 1;
 	}
@@ -159,7 +159,7 @@ div.cell {
 	}
 }
 
-div.double_cell {
+div.double-cell {
 	float: left;
 	width: 50%;
 	height: 100%;
@@ -169,13 +169,13 @@ div.controls {
 	div.cell {
 		width: 15%;
 	}
-	div.double_cell {
+	div.double-cell {
 		width: 30%;
-		.cell_content {
+		.cell-content {
 			padding: 8%;
 		}
 	}
-	div.chat_cell {
+	div.chat-cell {
 		float: left;
 		width: 25%;
 	}
@@ -187,7 +187,7 @@ input[type="range"] {
 	padding: 0;
 }
 
-.sit_in {
+.sitIn {
 	padding: 12% 34%;
 	cursor: pointer;
 }
@@ -206,7 +206,7 @@ div#chat {
 	    	margin: 0;
 	    	word-wrap: break-word;
 
-	    	&.log_message {
+	    	&.log-message {
 	    		color: #A69029;
 	    	}
 	    }
@@ -228,7 +228,7 @@ div#chat {
 	}
 }
 
-div.player_wrap {
+div.player-wrap {
 	width: 64%;
 	margin: 36% auto 0;
 	position: relative;
@@ -248,7 +248,7 @@ div.player_wrap {
 		margin-top: 32%;
 	}
 
-	.player_cards {
+	.player-cards {
 		overflow: hidden;
 	    height: 60px;
 	    left: 32px;
@@ -272,14 +272,14 @@ div.player_wrap {
 div.seat {
 	padding: 10% 0;
 	background-color: @purple;
-	border: 3px solid @light_purple;
+	border: 3px solid @light-purple;
 	border-radius: 5px;
-	color: @light_purple;
+	color: @light-purple;
 	font-size: 1.4em;
 	font-weight: lighter;
 	text-align: center;
 	position: relative;
-	box-shadow: 0 0 5px 0 @dark_purple;
+	box-shadow: 0 0 5px 0 @dark-purple;
 	-webkit-transition: box-shadow 0.2s ease, border 0.2s ease;
     transition: box-shadow 0.2s ease, border 0.2s ease;
 	&.active {
@@ -294,14 +294,14 @@ div.seat {
 	}
 }
 
-div#board_wrap {
+div#board-wrap {
 	margin: 6% 8%;
 	.card {
 		box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 		border-radius: 8px;
 		margin: 0 auto;
 	}
-	.card_container {
+	.card-container {
 		width: 20%;
 		display: inline-block;
 	}
@@ -480,96 +480,96 @@ div#board_wrap {
 	}
 }
 
-#dealer_wrap_0 {
+#dealer-wrap-0 {
     top: 105%;
 	left: 82%;
 }
-#dealer_wrap_1 {
+#dealer-wrap-1 {
     top: 105%;
 	left: 5%;
 }
-#dealer_wrap_2 {
+#dealer-wrap-2 {
     top: 105%;
 	left: 80%;
 }
-#dealer_wrap_3 {
+#dealer-wrap-3 {
 	top: 105%;
 	left: 0px;
 }
-#dealer_wrap_4 {
+#dealer-wrap-4 {
     top: 75%;
 	left: -20%;
 }
-#dealer_wrap_5 {
+#dealer-wrap-5 {
     top: -30%;
 	left: 0%;
 }
-#dealer_wrap_6 {
+#dealer-wrap-6 {
     top: -35%;
 	left: 0%;
 }
-#dealer_wrap_7 {
+#dealer-wrap-7 {
 	left: 85%;
     top: -35%;
 }
-#dealer_wrap_8 {
+#dealer-wrap-8 {
     top: -35%;
 	left: 85%;
 }
-#dealer_wrap_9 {
+#dealer-wrap-9 {
     top: 70%;
 	left: 110%;
 }
 
-.dealer_button {
+.dealer-button {
 	position: absolute;
-	border: 2px solid @light_purple;
+	border: 2px solid @light-purple;
 	border-radius: 20px;
     width: 12%;
     height: 20%;
     text-align: center;
-    background-color: @transparent_purple;
+    background-color: @transparent-purple;
     line-height: 1.25;
     box-shadow: 0 3px 0 0 #604FAD;
 }
 
-#bets_0 {
+#bets-0 {
 	top: 75%;
 	left: 75%;
 }
-#bets_1 {
+#bets-1 {
     top: 110%;
 	left: 0;
 }
-#bets_2 {
+#bets-2 {
 	top: 110%;
 	left: 0;
 }
-#bets_3 {
+#bets-3 {
 	left: -75%;
     top: 75%;
 }
-#bets_4 {
+#bets-4 {
 	top: 40%;
 	left: -75%;
 }
-#bets_5 {
+#bets-5 {
     top: -30%;
 	left: -75%;
 }
-#bets_6 {
+#bets-6 {
     top: -66%;
 	left: -50%;
 }
-#bets_7 {
+#bets-7 {
     top: -66%;
 	left: 50%;
 }
-#bets_8 {
+#bets-8 {
     top: -30%;
 	left: 75%;
 }
-#bets_9 {
+#bets-9 {
     top: 33%;
 	left: 75%;
 }
@@ -582,7 +582,7 @@ div#board_wrap {
 	text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
-#pot_wrap {
+#pot-wrap {
 	height: 10%;
 	#pot {
 		display: block;
@@ -593,14 +593,14 @@ div#board_wrap {
 	}
 }
 
-#to_lobby {
+#to-lobby {
 	font-size: 1em;
 	position: absolute;
 	top: 2%;
 	left: 2%;
 }
 
-#modal_wrap {
+.modal-wrap {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -621,7 +621,7 @@ div#board_wrap {
 		    font-size: large;
 		    margin-bottom: 10px;
 		}
-		.input_left {
+		.input-left {
 			margin-right: 32px;
 			width: 50%;
 		}
@@ -637,7 +637,7 @@ div#board_wrap {
 	}
 }
 
-#developer_info {
+#developer-info {
 	margin-top: 8px;
 	font-size: 0.8em;
 	a {
@@ -656,16 +656,16 @@ div#board_wrap {
 		font-size: 0.5em;
 	}
 
-	#to_lobby {
+	#to-lobby {
 		padding: 10px;
 		font-size: 1.3em;
 	}
 
-	.table_requirements {
+	.table-requirements {
 		font-size: 1.6em;
 	}
 
-	div.player_wrap {
+	div.player-wrap {
 		margin: 25% auto 0;
 		&.top {
     		margin-top: 36%;
@@ -673,7 +673,7 @@ div#board_wrap {
 		&.side {
     		margin-top: 28%;
 		}
-		.player_cards {
+		.player-cards {
 			left: 8px;
 			height: 25px;
 			&.dealt {
@@ -697,7 +697,7 @@ div#board_wrap {
 	}
 
 	div.row.controls {
-		.chat_cell {
+		.chat-cell {
 			display: none;
 		}
 		.cell {
@@ -706,28 +706,28 @@ div#board_wrap {
 				margin: 15%;
 			}
 		}
-		.double_cell {
+		.double-cell {
 			width: 40%;
-			.cell_content {
+			.cell-content {
 			    padding: 4% 8%;
 			    input[type="range"] {
 				    margin-top: 0;
 				}
-				#bet_input {
+				#bet-input {
 				    margin-top: 5px;
 				}
 			}
 		}
 	}
 
-	#modal_wrap #modal {
+	.modal-wrap #modal {
 		width: 300px;
-		.input_left {
+		.input-left {
 			font-size: 2em;
 		}
 	}
 
-	#developer_info {
+	#developer-info {
 		font-size: 1.4em;
 	}
 }
@@ -743,9 +743,9 @@ div#board_wrap {
 		font-size: 0.75em;
 	}
 
-	div.player_wrap {
+	div.player-wrap {
 		margin: 34% auto 0;
-		.player_cards {
+		.player-cards {
 			left: 17px;
 			height: 50px;
 			&.dealt {
@@ -783,11 +783,11 @@ div#board_wrap {
 		font-size: 1.3em;
 	}
 
-	#modal_wrap #modal {
+	.modal-wrap #modal {
 		width: 320px;
 	}
 
-	#developer_info {
+	#developer-info {
 		font-size: 1em;
 	}
 }

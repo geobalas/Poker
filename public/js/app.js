@@ -1,18 +1,18 @@
 var socket = io.connect();
 
 var app = angular.module( 'app', ['ngRoute'] ).config( function( $routeProvider, $locationProvider ) {
-	$routeProvider.when('/table_10/:table_id', {
-		templateUrl: '/table_10_handed.html',
+	$routeProvider.when('/table-10/:tableId', {
+		templateUrl: '/table-10-handed.html',
 		controller: 'TableController', 
 	});
 
-	$routeProvider.when('/table_6/:table_id', {
-		templateUrl: '/table_6_handed.html',
+	$routeProvider.when('/table-6/:tableId', {
+		templateUrl: '/table-6-handed.html',
 		controller: 'TableController', 
 	});
 
-	$routeProvider.when('/table_2/:table_id', {
-		templateUrl: '/table_2_handed.html',
+	$routeProvider.when('/table-2/:tableId', {
+		templateUrl: '/table-2-handed.html',
 		controller: 'TableController', 
 	});
 
@@ -27,7 +27,7 @@ var app = angular.module( 'app', ['ngRoute'] ).config( function( $routeProvider,
 });
 
 app.run( function( $rootScope ) {
-	$rootScope.screen_name = '';
-	$rootScope.total_chips = 0;
-	$rootScope.sitting_on_table = '';
+	$rootScope.screenName = '';
+	$rootScope.totalChips = 0;
+	$rootScope.sittingOnTable = '';
 });
