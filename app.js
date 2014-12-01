@@ -18,7 +18,6 @@ app.use(express.bodyParser());
 app.use(app.router);
 app.use(lessMiddleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
-io.set('log level', 1);
 
 // Development Only
 if ( 'development' == app.get('env') ) {
@@ -36,11 +35,6 @@ console.log('Listening on port ' + port);
 // The lobby
 app.get('/', function( req, res ) {
 	res.render('index');
-});
-
-// The lobby markup
-app.get('/lobby.html', function( req, res ) {
-	res.render( 'lobby', { 'tables': tables } );
 });
 
 // The lobby data (the array of tables and their data)
@@ -61,29 +55,14 @@ app.get('/lobby-data', function( req, res ) {
 	res.send( lobbyTables );
 });
 
-// The 10-seat table markup
-app.get('/table-10-handed.html', function( req, res ) {
-	res.render('table_10_handed');
-});
-
 // If the table is requested manually, redirect to lobby
 app.get('/table-10/:tableId', function( req, res ) {
 	res.redirect('/');
 });
 
-// The 6-seat table markup
-app.get('/table-6-handed.html', function( req, res ) {
-	res.render('table_6_handed');
-});
-
 // If the table is requested manually, redirect to lobby
 app.get('/table-6/:tableId', function( req, res ) {
 	res.redirect('/');
-});
-
-// The 2-seat table markup
-app.get('/table-2-handed.html', function( req, res ) {
-	res.render('table_2_handed');
 });
 
 // If the table is requested manually, redirect to lobby

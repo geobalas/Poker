@@ -3,7 +3,9 @@
  * The table controller. It keeps track of the data on the interface,
  * depending on the replies from the server.
  */
-app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', 'sounds', function( $scope, $rootScope, $http, $routeParams, sounds ) {
+app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', 'sounds',
+function( $scope, $rootScope, $http, $routeParams, sounds ) {
+	var seat = null;
 	$scope.table = {};
 	$scope.showingChipsModal = false;
 	$scope.actionState = '';
@@ -28,18 +30,6 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 
 	// Joining the socket room
 	socket.emit( 'enterRoom', $routeParams.tableId );
-
-	$scope.getCardClass = function( seat, card ) {
-		if( $scope.mySeat === seat ) {
-			return $scope.myCards[card];
-		}
-		else if ( typeof $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && typeof $scope.table.seats[seat].cards !== 'undefined' && typeof $scope.table.seats[seat].cards[card] !== 'undefined' ) {
-			return 'card-' + $scope.table.seats[seat].cards[card];
-		}
-		else {
-			return 'card-back';
-		}
-	}
 
 	$scope.minBetAmount = function() {
 		if( $scope.mySeat === null || typeof $scope.table.seats[$scope.mySeat] === 'undefined' || $scope.table.seats[$scope.mySeat] === null ) return 0;
@@ -103,8 +93,9 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		return ($scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot")  && $scope.table.seats[$scope.mySeat].chipsInPlay && $scope.table.biggestBet < $scope.table.seats[$scope.mySeat].chipsInPlay;
 	}
 
-	$scope.seatOccupied = function( seat ) {
-		return !$rootScope.sittingOnTable || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
+	$scope.showBuyInModal = function( seat ) {
+		$scope.buyInModalVisible = true;
+		selectedSeat = seat;
 	}
 
 	$scope.potText = function() {
@@ -121,20 +112,36 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 		}
 	}
 
+	$scope.getCardClass = function( seat, card ) {
+		if( $scope.mySeat === seat ) {
+			return $scope.myCards[card];
+		}
+		else if ( typeof $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && typeof $scope.table.seats[seat].cards !== 'undefined' && typeof $scope.table.seats[seat].cards[card] !== 'undefined' ) {
+			return 'card-' + $scope.table.seats[seat].cards[card];
+		}
+		else {
+			return 'card-back';
+		}
+	}
+
+	$scope.seatOccupied = function( seat ) {
+		return !$rootScope.sittingOnTable || ( $scope.table.seats !== 'undefined' && typeof $scope.table.seats[seat] !== 'undefined' && $scope.table.seats[seat] && $scope.table.seats[seat].name );
+	}
+
 	// Leaving the socket room
 	$scope.leaveRoom = function() {
 		socket.emit( 'leaveRoom' );
 	};
 
 	// A request to sit on a specific seat on the table
-	$scope.sitOnTheTable = function( seat ) {
-		socket.emit( 'sitOnTheTable', { 'seat': seat, 'tableId': $routeParams.tableId, 'chips': $scope.buyInAmount }, function( response ){
+	$scope.sitOnTheTable = function() {
+		socket.emit( 'sitOnTheTable', { 'seat': selectedSeat, 'tableId': $routeParams.tableId, 'chips': $scope.buyInAmount }, function( response ) {
 			if( response.success ){
-				$scope.showBuyInModal = false;
+				$scope.buyInModalVisible = false;
 				$rootScope.sittingOnTable = $routeParams.tableId;
 				$rootScope.sittingIn = true;
 				$scope.buyInError = null;
-				$scope.mySeat = seat;
+				$scope.mySeat = selectedSeat;
 				$scope.actionState = 'waiting';
 				$scope.$digest();
 			} else {
@@ -148,7 +155,7 @@ app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routePara
 
 	// Sit in the game
 	$scope.sitIn = function() {
-		socket.emit( 'sitIn', function( response ){
+		socket.emit( 'sitIn', function( response ) {
 			if( response.success ) {
 				$rootScope.sittingIn = true;
 				$rootScope.$digest();

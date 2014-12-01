@@ -1,7 +1,7 @@
 <div id="table-wrap">
-	<div class="modal-wrap" ng-show="showBuyInModal">
+	<div class="modal-wrap" ng-show="buyInModalVisible">
 		<div class="modal">
-			<form ng-submit="sitOnTheTable(seat)">
+			<form ng-submit="sitOnTheTable()">
 				<h1>{{table.name}}</h1>
 				<span class="table-requirements">Max buy-in {{table.maxBuyIn}}</span>
 				<span class="table-requirements">Min buy-in {{table.minBuyIn}}</span>
@@ -11,7 +11,7 @@
 				<input type="submit" value="Sit in">
 			</form>
 		</div>
-		<div id="curtain" ng-show="showBuyInModal" ng-click="showBuyInModal=false"></div>
+		<div id="curtain" ng-show="buyInModalVisible" ng-click="buyInModalVisible=false"></div>
 	</div>
 	<div id="table">
 		<div id="felt"></div>
@@ -20,61 +20,52 @@
 		<div class="cell">
 			<a id="to-lobby" class="button" href="/" ng-show="!$root.sittingOnTable" ng-click="leaveRoom()">< Lobby</a>
 		</div>
-		<div class="cell"></div>
-		<div class="cell"></div>
+		<div class="cell">
+			<seat player="table.seats[0]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="0" cell-number="1"></seat>
+		</div>
+		<div class="cell">
+			<seat player="table.seats[1]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="1" cell-number="2"></seat>
+		</div>
 		<div class="cell"></div>
 	</div>
 	<div class="row">
 		<div class="cell">
-			.player-wrap.side
-				.player-cards(ng-class="{dealt: table.seats[0].hasCards}")
-					div.card(ng-show="seatOccupied(0)" ng-class="getCardClass( 0, 0 )")
-					div.card(ng-show="seatOccupied(0)" ng-class="getCardClass( 0, 1 )")
-				.seat(ng-show="seatOccupied(0)", ng-class="{active: table.activeSeat===0}")
-					a.sitIn(ng-show="!table.seats[0].name", ng-click="showBuyInModal=true; seat=0;") Sit In
-					.player-content(ng-show="table.seats[0].name")
-						p {{table.seats[0].name}}
-						p(ng-show="table.seats[0].sittingIn") {{table.seats[0].chipsInPlay}}
-						p(ng-show="!table.seats[0].sittingIn") Sitting Out
-				#dealer-wrap-9.dealer-button(ng-show="table.dealerSeat===0") D
-				#bets-9.bets
-					span(ng-show="table.seats[0].bet") {{table.seats[0].bet}}
+			<seat player="table.seats[5]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="5" cell-number="9" class="side"></seat>
 		</div>
 		<div class="double-cell">
-			#pot-wrap
-				span#pot(ng-show="table.pot[0].amount") {{potText()}}
-			#board-wrap
-				.card-container
-					.card(class="card-{{table.board[0]}}" ng-show="table.board[0]")
-				.card-container
-					.card(class="card-{{table.board[1]}}" ng-show="table.board[1]")
-				.card-container
-					.card(class="card-{{table.board[2]}}" ng-show="table.board[2]")
-				.card-container
-					.card(class="card-{{table.board[3]}}" ng-show="table.board[3]")
-				.card-container
-					.card(class="card-{{table.board[4]}}" ng-show="table.board[4]")
+			<div id="pot-wrap">
+				<span id="pot" ng-show="table.pot[0].amount">{{potText()}}</span>
+			</div>
+			<div id="board-wrap">
+				<div class="card-container">
+					<div class="card card-{{table.board[0]}}" ng-show="table.board[0]"></div>
+				</div>
+				<div class="card-container">
+					<div class="card card-{{table.board[1]}}" ng-show="table.board[1]"></div>
+				</div>
+				<div class="card-container">
+					<div class="card card-{{table.board[2]}}" ng-show="table.board[2]"></div>
+				</div>
+				<div class="card-container">
+					<div class="card card-{{table.board[3]}}" ng-show="table.board[3]"></div>
+				</div>
+				<div class="card-container">
+					<div class="card card-{{table.board[4]}}" ng-show="table.board[4]"></div>
+				</div>
+			</div>
 		</div>
 		<div class="cell">
-			.player-wrap.side
-				.player-cards(ng-class="{dealt: table.seats[1].hasCards}")
-					div.card(ng-show="seatOccupied(1)" ng-class="getCardClass( 1, 0 )")
-					div.card(ng-show="seatOccupied(1)" ng-class="getCardClass( 1, 1 )")
-				.seat(ng-show="seatOccupied(1)", ng-class="{active: table.activeSeat===1}")
-					a.sitIn(ng-show="!table.seats[1].name", ng-click="showBuyInModal=true; seat=1;") Sit In
-					.player-content(ng-show="table.seats[1].name")
-						p {{table.seats[1].name}}
-						p(ng-show="table.seats[1].sittingIn") {{table.seats[1].chipsInPlay}}
-						p(ng-show="!table.seats[1].sittingIn") Sitting Out
-				#dealer-wrap-4.dealer-button(ng-show="table.dealerSeat==1") D
-				#bets-4.bets
-					span(ng-show="table.seats[1].bet") {{table.seats[1].bet}}
+			<seat player="table.seats[2]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="2" cell-number="4" class="side"></seat>
 		</div>
 	</div>
 	<div class="row">
 		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
+		<div class="cell">
+			<seat player="table.seats[4]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="4" cell-number="7"></seat>
+		</div>
+		<div class="cell">
+			<seat player="table.seats[3]" active-seat="table.activeSeat" dealer-seat="table.dealerSeat" my-seat="mySeat" my-cards="myCards" sitting-on-table="$root.sittingOnTable" show-buy-in-modal="showBuyInModal(seat)" seat-index="3" cell-number="6"></seat>
+		</div>
 		<div class="cell"></div>
 	</div>
 	<div class="row controls">

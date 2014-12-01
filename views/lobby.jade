@@ -1,8 +1,8 @@
 #lobby
-	#modal-wrap(ng-show="!$root.screenName")
-		#modal
+	.modal-wrap(ng-show="!$root.screenName")
+		.modal
 			form(ng-submit="register()")
-				label(for="screenName-input") Enter your screen name
+				label(for="screen-name-input") Enter your screen name
 				p.table-requirements.error(ng-show="registerError") {{registerError}}
 				input.input-left(type="text", ng-model="newScreenName", ng-trim="true", required)
 				input#submit-name(type="submit", value="Submit")

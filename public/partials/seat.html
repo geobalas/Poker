@@ -1,0 +1,18 @@
+<div class="player-wrap">
+	<div class="player-cards" ng-class="{dealt: player.hasCards}">
+		<div class="card" ng-show="seatOccupied(seatIndex)" ng-class="getCardClass( seatIndex, 0 )"></div>
+		<div class="card" ng-show="seatOccupied(seatIndex)" ng-class="getCardClass( seatIndex, 1 )"></div>
+	</div>
+	<div class="seat" ng-show="seatOccupied(seatIndex)" ng-class="{active: activeSeat===seatIndex}">
+		<a class="sitIn" ng-show="!player.name" ng-click="showBuyInModal( {seat:seatIndex} )">Sit In</a>
+		<div class="player-content" ng-show="player.name">
+			<p>{{player.name}}</p>
+			<p ng-show="player.sittingIn">{{player.chipsInPlay}}</p>
+			<p ng-show="!player.sittingIn">Sitting Out</p>
+		</div>
+	</div>
+	<div id="dealer-wrap-{{cellNumber}}" class="dealer-button" ng-show="dealerSeat===seatIndex">D</div>
+	<div id="bets-{{cellNumber}}" class="bets">
+		<span ng-show="player.bet">{{player.bet}}</span>
+	</div>
+</div>
