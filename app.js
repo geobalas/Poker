@@ -3,10 +3,7 @@ var express = require('express'),
 	server = require('http').createServer(app),
 	io = require('socket.io').listen(server),
 	lessMiddleware = require('less-middleware'),
-	http = require('http'),
 	path = require('path'),
-	url = require('url'),
-	connect = require('connect'),
 	Table = require('./poker_modules/table'),
 	Player = require('./poker_modules/player');
 
