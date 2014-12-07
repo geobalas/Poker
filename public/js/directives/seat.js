@@ -15,6 +15,7 @@ app.directive( 'seat', [function() {
 			activeSeat: '=',
 			selectedSeat: '=',
 			sittingOnTable: '=',
+			dealerSeat: '=',
 			showBuyInModal: '&'
 		},
 		link: function(scope, element, attributes) {
