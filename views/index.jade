@@ -2,6 +2,8 @@ html(lang="en" ng-app="app")
 	head
 		title Poker
 		link(href="styles/styles.css" rel="stylesheet" type="text/css")
+	body
+		#content(ng-view)
 		script(type="text/javascript", src="socket.io/socket.io.js")
 		script(type="text/javascript", src="js/libs/angular.min.js")
 		script(type="text/javascript", src="js/libs/angular-route.min.js")
@@ -11,6 +13,4 @@ html(lang="en" ng-app="app")
 		script(type="text/javascript", src="js/controllers/chat.js")
 		script(type="text/javascript", src="js/services/sounds.js")
 		script(type="text/javascript", src="js/directives/seat.js")
-	body
-		#content(ng-view)
 			

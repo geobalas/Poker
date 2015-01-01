@@ -3,10 +3,11 @@
  * The table controller. It keeps track of the data on the interface,
  * depending on the replies from the server.
  */
-app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', 'sounds',
-function( $scope, $rootScope, $http, $routeParams, sounds ) {
+app.controller( 'TableController', ['$scope', '$rootScope', '$http', '$routeParams', '$timeout', 'sounds',
+function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 	var seat = null;
 	$scope.table = {};
+	$scope.notifications = [{},{},{},{},{},{},{},{},{},{}];
 	$scope.showingChipsModal = false;
 	$scope.actionState = '';
 	$scope.table.dealerSeat = null;
@@ -14,6 +15,7 @@ function( $scope, $rootScope, $http, $routeParams, sounds ) {
 	$scope.mySeat = null;
 	$scope.betAmount = 0;
 	$rootScope.sittingOnTable = null;
+	var showingNotification = false;
 
 	// Existing listeners should be removed
 	socket.removeAllListeners();
@@ -265,6 +267,20 @@ function( $scope, $rootScope, $http, $routeParams, sounds ) {
 			var messageElement = angular.element( '<p class="log-message">' + data.log.message + '</p>' );
 			angular.element( messageBox ).append( messageElement );
 			messageBox.scrollTop = messageBox.scrollHeight;
+			if(data.log.notification && data.log.seat !== '') {
+				if(!$scope.notifications[data.log.seat].message) {
+					$scope.notifications[data.log.seat].message = data.log.notification;
+					$scope.notifications[data.log.seat].timeout = $timeout(function() {
+						$scope.notifications[data.log.seat].message = '';
+					}, 1000);
+				} else {
+					$timeout.cancel($scope.notifications[data.log.seat].timeout);
+					$scope.notifications[data.log.seat].message = data.log.notification;
+					$scope.notifications[data.log.seat].timeout = $timeout(function() {
+						$scope.notifications[data.log.seat].message = '';
+					}, 1000);
+				}
+			}
 		}
 		$scope.$digest();
 	});

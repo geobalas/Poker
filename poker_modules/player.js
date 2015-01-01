@@ -61,6 +61,7 @@ Player.prototype.leaveTable = function() {
  */
 Player.prototype.sitOnTable = function( tableId, seat, chips ) {
     // Remove the chips that player will have on the table, from the player object
+    chips = parseInt(chips);
     this.chips -= chips;
     this.public.chipsInPlay = chips;
     // Add the table info in the player object
@@ -93,6 +94,7 @@ Player.prototype.fold = function() {
  * @param number amount
  */
 Player.prototype.bet = function( amount ) {
+    amount = parseInt(amount);
     if( amount > this.public.chipsInPlay ) {
         amount = this.public.chipsInPlay;
     }
@@ -105,6 +107,7 @@ Player.prototype.bet = function( amount ) {
  * @param number amount
  */
 Player.prototype.raise = function( amount ) {
+    amount = parseInt(amount);
     if( amount > this.public.chipsInPlay ) {
         amount = this.public.chipsInPlay;
     }

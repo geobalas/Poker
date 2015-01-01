@@ -6,9 +6,14 @@
 	<div class="seat" ng-show="seatOccupied(seatIndex)" ng-class="{active: activeSeat===seatIndex}">
 		<a class="sitIn" ng-show="!player.name" ng-click="showBuyInModal( {seat:seatIndex} )">Sit In</a>
 		<div class="player-content" ng-show="player.name">
-			<p>{{player.name}}</p>
-			<p ng-show="player.sittingIn">{{player.chipsInPlay}}</p>
-			<p ng-show="!player.sittingIn">Sitting Out</p>
+			<div ng-show="!notifications[seatIndex].message">
+				<span>{{player.name}}</span>
+				<span ng-show="player.sittingIn">{{player.chipsInPlay}}</span>
+				<span ng-show="!player.sittingIn">Sitting Out</span>
+			</div>
+			<div ng-show="notifications[seatIndex].message">
+				<span class="notification">{{notifications[seatIndex].message}}</span>
+			</div>
 		</div>
 	</div>
 	<div id="dealer-wrap-{{cellNumber}}" class="dealer-button" ng-show="dealerSeat===seatIndex">D</div>

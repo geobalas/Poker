@@ -16,6 +16,7 @@ app.directive( 'seat', [function() {
 			selectedSeat: '=',
 			sittingOnTable: '=',
 			dealerSeat: '=',
+			notifications: '=',
 			showBuyInModal: '&'
 		},
 		link: function(scope, element, attributes) {
@@ -35,7 +36,6 @@ app.directive( 'seat', [function() {
 			}
 
 			scope.seatOccupied = function( seat ) {
-				console.log(typeof scope.player);
 				return !scope.sittingOnTable || ( typeof scope.player !== 'undefinde' && scope.player && scope.player.name );
 			}
 		}
