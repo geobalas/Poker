@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": false,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "node ./node_modules/jasmine/bin/jasmine.js spec/*.js"
   },
-  "repository": { 
-    "type" : "git",
-    "url" : "https://github.com/geobalas/Poker"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geobalas/Poker"
   },
   "dependencies": {
     "express": "~3.4.7",
@@ -16,5 +17,8 @@
     "less-middleware": "~1.0.4",
     "socket.io": "~1.2.0",
     "connect": "~3.3.3"
+  },
+  "devDependencies": {
+    "jasmine": "^2.6.0"
   }
 }
