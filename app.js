@@ -15,7 +15,6 @@ app.use(express.bodyParser());
 app.use(app.router);
 app.use(lessMiddleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static('public/js/libs'));
 
 // Development Only
 if ( 'development' == app.get('env') ) {

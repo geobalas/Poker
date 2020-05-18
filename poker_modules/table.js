@@ -218,6 +218,10 @@ Table.prototype.initializeRound = function( changeDealer ) {
 		this.playersInHandCount = 0;
 
 		// If the blinds need to be increased then do so
+		console.log('blinds increase? ' + this.blindsIncrease);
+		console.log('increase blinds? ' + this.increaseBlinds);
+		console.log('small blind: ' + this.public.smallBlind);
+		console.log('big blind: ' + this.public.bigBlind);
 		if (this.increaseBlinds) {
 			this.public.smallBlind = 2 * this.public.smallBlind;
 			this.public.bigBlind = 2 * this.public.bigBlind;
@@ -437,6 +441,7 @@ Table.prototype.endPhase = function() {
 			break;
 		case 'river':
 			this.showdown();
+			this.initializeNextPhase();
 			break;
 	}
 };
