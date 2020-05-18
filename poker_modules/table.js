@@ -392,7 +392,7 @@ Table.prototype.showdown = function() {
 		}
 		currentPlayer = this.findNextPlayer( currentPlayer );
 	}
-	
+
 	var messages = this.pot.destributeToWinners( this.seats, currentPlayer );
 
 	var messagesCount = messages.length;
@@ -424,6 +424,7 @@ Table.prototype.endPhase = function() {
 			break;
 		case 'river':
 			this.showdown();
+			this.initializeNextPhase();
 			break;
 	}
 };
@@ -599,7 +600,7 @@ Table.prototype.playerSatOnTheTable = function( player, seat, chips ) {
 
 	// Increase the counters of the table
 	this.public.playersSeatedCount++;
-	
+
 	this.playerSatIn( seat );
 };
 
@@ -619,7 +620,7 @@ Table.prototype.playerSatIn = function( seat ) {
 	// The player is sitting in
 	this.seats[seat].public.sittingIn = true;
 	this.playersSittingInCount++;
-	
+
 	this.emitEvent( 'table-data', this.public );
 
 	// If there are no players playing right now, try to initialize a game with the new player

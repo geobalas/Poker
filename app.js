@@ -25,7 +25,7 @@ var players = [];
 var tables = [];
 var eventEmitter = {};
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
 server.listen(port);
 console.log('Listening on port ' + port);
 
@@ -177,7 +177,7 @@ io.sockets.on('connection', function( socket ) {
 	 * @param function callback
 	 */
 	socket.on('sitOnTheTable', function( data, callback ) {
-		if( 
+		if(
 			// A seat has been specified
 			typeof data.seat !== 'undefined'
 			// A table id is specified
@@ -186,7 +186,7 @@ io.sockets.on('connection', function( socket ) {
 			&& typeof tables[data.tableId] !== 'undefined'
 			// The seat number is an integer and less than the total number of seats
 			&& typeof data.seat === 'number'
-			&& data.seat >= 0 
+			&& data.seat >= 0
 			&& data.seat < tables[data.tableId].public.seatsCount
 			&& typeof players[socket.id] !== 'undefined'
 			// The seat is empty
@@ -197,7 +197,7 @@ io.sockets.on('connection', function( socket ) {
 			&& players[socket.id].room === data.tableId
 			// The chips number chosen is a number
 			&& typeof data.chips !== 'undefined'
-			&& !isNaN(parseInt(data.chips)) 
+			&& !isNaN(parseInt(data.chips))
 			&& isFinite(data.chips)
 			// The chips number is an integer
 			&& data.chips % 1 === 0
@@ -242,10 +242,10 @@ io.sockets.on('connection', function( socket ) {
 			var tableId = players[socket.id].sittingOnTable;
 			var activeSeat = tables[tableId].public.activeSeat;
 
-			if( tables[tableId] 
-				&& typeof tables[tableId].seats[activeSeat].public !== 'undefined' 
-				&& tables[tableId].seats[activeSeat].socket.id === socket.id 
-				&& ( tables[tableId].public.phase === 'smallBlind' || tables[tableId].public.phase === 'bigBlind' ) 
+			if( tables[tableId]
+				&& typeof tables[tableId].seats[activeSeat].public !== 'undefined'
+				&& tables[tableId].seats[activeSeat].socket.id === socket.id
+				&& ( tables[tableId].public.phase === 'smallBlind' || tables[tableId].public.phase === 'bigBlind' )
 			) {
 				if( postedBlind ) {
 					callback( { 'success': true } );
@@ -273,10 +273,10 @@ io.sockets.on('connection', function( socket ) {
 			var tableId = players[socket.id].sittingOnTable;
 			var activeSeat = tables[tableId].public.activeSeat;
 
-			if( tables[tableId] 
-				&& tables[tableId].seats[activeSeat].socket.id === socket.id 
+			if( tables[tableId]
+				&& tables[tableId].seats[activeSeat].socket.id === socket.id
 				&& !tables[tableId].public.biggestBet || ( tables[tableId].public.phase === 'preflop' && tables[tableId].public.biggestBet === players[socket.id].public.bet )
-				&& ['preflop','flop','turn','river'].indexOf(tables[tableId].public.phase) > -1 
+				&& ['preflop','flop','turn','river'].indexOf(tables[tableId].public.phase) > -1
 			) {
 				// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 				callback( { 'success': true } );
@@ -335,7 +335,7 @@ io.sockets.on('connection', function( socket ) {
 				if ( amount && isFinite( amount ) && amount <= tables[tableId].seats[activeSeat].public.chipsInPlay ) {
 					// Sending the callback first, because the next functions may need to send data to the same player, that shouldn't be overwritten
 					callback( { 'success': true } );
-					tables[tableId].playerBetted( amount ); 
+					tables[tableId].playerBetted( amount );
 				}
 			}
 		}
@@ -349,13 +349,13 @@ io.sockets.on('connection', function( socket ) {
 		if( players[socket.id].sittingOnTable !== 'undefined' ) {
 			var tableId = players[socket.id].sittingOnTable;
 			var activeSeat = tables[tableId].public.activeSeat;
-			
+
 			if(
 				// The table exists
-				typeof tables[tableId] !== 'undefined' 
+				typeof tables[tableId] !== 'undefined'
 				// The player who should act is the player who raised
 				&& tables[tableId].seats[activeSeat].socket.id === socket.id
-				// The pot was betted 
+				// The pot was betted
 				&& tables[tableId].public.biggestBet
 				// It's not a round of blinds
 				&& ['preflop','flop','turn','river'].indexOf(tables[tableId].public.phase) > -1
