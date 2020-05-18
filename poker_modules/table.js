@@ -14,13 +14,9 @@ var Deck = require('./deck'),
  * @param int 		minBuyIn (the minimum amount of chips that one can bring to the table)
  * @param bool 		privateTable (flag that shows whether the table will be shown in the lobby)
  */
-var Table = function( id, name, eventEmitter, seatsCount, bigBlind, smallBlind, maxBuyIn, minBuyIn, privateTable, blindsIncrease ) {
+var Table = function( id, name, eventEmitter, seatsCount, bigBlind, smallBlind, maxBuyIn, minBuyIn, privateTable ) {
 	// The table is not displayed in the lobby
 	this.privateTable = privateTable;
-	// The blinds increase
-	this.blindsIncrease = blindsIncrease;
-	// Increase blindsIncrease
-	this.increaseBlinds = false;
 	// The number of players who receive cards at the begining of each round
 	this.playersSittingInCount = 0;
 	// The number of players that currently hold cards in their hands
@@ -216,19 +212,6 @@ Table.prototype.initializeRound = function( changeDealer ) {
 		this.deck.shuffle();
 		this.headsUp = this.playersSittingInCount === 2;
 		this.playersInHandCount = 0;
-
-		// If the blinds need to be increased then do so
-		console.log('blinds increase? ' + this.blindsIncrease);
-		console.log('increase blinds? ' + this.increaseBlinds);
-		console.log('small blind: ' + this.public.smallBlind);
-		console.log('big blind: ' + this.public.bigBlind);
-		if (this.increaseBlinds) {
-			this.public.smallBlind = 2 * this.public.smallBlind;
-			this.public.bigBlind = 2 * this.public.bigBlind;
-			this.increaseBlinds = false;
-			console.log('small blind: ' + this.public.smallBlind);
-			console.log('big blind: ' + this.public.bigBlind);
-		}
 
 		for( var i=0 ; i<this.public.seatsCount ; i++ ) {
 			// If a player is sitting on the current seat
@@ -642,29 +625,10 @@ Table.prototype.playerSatIn = function( seat ) {
 
 	// If there are no players playing right now, try to initialize a game with the new player
 	if( !this.gameIsOn && this.playersSittingInCount > 1 ) {
-
-		// If table is set to increase blinds then at the start set a setInterval to do so
-		if (this.blindsIncrease) {
-			var self = this;
-			setInterval(function(){
-				self.setIncreaseBlinds();
-			}, 1*60*1000);
-		}
 		// Initialize the game
 		this.initializeRound( false );
 	}
 };
-
-Table.prototype.setIncreaseBlinds = function () {
-	this.increaseBlinds = true;
-	console.log('blinds increasing');
-	this.log({
-		message: 'Blinds increasing.',
-		action: '',
-		seat: '',
-		notification: ''
-	});
-}
 
 /**
  * Changes the data of the table when a player leaves
