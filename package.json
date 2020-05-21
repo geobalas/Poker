@@ -5,16 +5,16 @@
   "scripts": {
     "start": "node app.js"
   },
-  "repository": { 
-    "type" : "git",
-    "url" : "https://github.com/geobalas/Poker"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geobalas/Poker"
   },
   "dependencies": {
+    "connect": "~3.3.3",
     "express": "~3.4.7",
     "jade": "~1.7.0",
     "less": "~2.0.0",
-    "less-middleware": "~1.0.4",
-    "socket.io": "~1.2.0",
-    "connect": "~3.3.3"
+    "less-middleware": "^1.0.4",
+    "socket.io": "~1.2.0"
   }
 }
