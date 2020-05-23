@@ -16,6 +16,10 @@
 	<div id="table">
 		<div id="felt"></div>
 	</div>
+	<div class="blindInfo">
+		<input type="number" id="blinds-input" ng-show="actionState === 'postSmallBlind'" ng-model="smallBlindSetValue" value="{{betAmount}}">
+		<button class="button" ng-click="setBlinds()" ng-show="actionState === 'postSmallBlind'">Set blinds</button>
+	</div>
 	<div class="row">
 		<div class="cell">
 			<a id="to-lobby" class="button" href="/" ng-show="!$root.sittingOnTable" ng-click="leaveRoom()">< Lobby</a>
