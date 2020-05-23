@@ -771,6 +771,7 @@ Table.prototype.removeAllCardsFromPlay = function() {
 Table.prototype.endRound = function() {
 	// If there were any bets, they are added to the pot
 	this.pot.addTableBets( this.seats );
+	this.public.biggestBet = 0;
 	if( !this.pot.isEmpty() ) {
 		var winnersSeat = this.findNextPlayer( 0 );
 		this.pot.giveToWinner( this.seats[winnersSeat] );
