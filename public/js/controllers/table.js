@@ -189,7 +189,7 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 	$scope.setBlinds = function() {
 		socket.emit( 'setBlinds', $scope.smallBlindSetValue, function( response ) {
 			if( response.success ) {
-				sounds.playblindIncrease();
+				sounds.playBlindIncrease();
 				$scope.$digest();
 			}
 		});

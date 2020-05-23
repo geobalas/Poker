@@ -23,10 +23,10 @@ app.factory('sounds', [function() {
     	playBetSound: function() {
     		betSound.play();
     	},
-    	raiseSound: function() {
+    	playRaiseSound: function() {
     		raiseSound.play();
     	},
-    	playblindIncrease: function() {
+    	playBlindIncrease: function() {
     		blindIncrease.play();
     	}
     };
