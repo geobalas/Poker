@@ -55,6 +55,8 @@ var Table = function( id, name, eventEmitter, seatsCount, bigBlind, smallBlind, 
 		maxBuyIn: maxBuyIn,
 		// The amount of chips that are in the pot
 		pot: this.pot.pots,
+		// The last bet of the table in the current phase
+		lastRaise: 0,
 		// The biggest bet of the table in the current phase
 		biggestBet: 0,
 		// The seat of the dealer
@@ -320,6 +322,7 @@ Table.prototype.initializeNextPhase = function() {
 
 	this.pot.addTableBets( this.seats );
 	this.public.biggestBet = 0;
+	this.public.lastRaise = 0;
 	this.public.activeSeat = this.findNextPlayer( this.public.dealerSeat );
 	this.lastPlayerToAct = this.findPreviousPlayer( this.public.activeSeat );
 	this.emitEvent( 'table-data', this.public );
@@ -458,6 +461,7 @@ Table.prototype.playerPostedSmallBlind = function() {
 		notification: 'Posted blind'
 	});
 	this.public.biggestBet = this.public.biggestBet < bet ? bet : this.public.biggestBet;
+	this.public.lastRaise = this.public.lastRaise < bet ? bet : this.public.lastRaise;
 	this.emitEvent( 'table-data', this.public );
 	this.initializeBigBlind();
 };
@@ -476,6 +480,7 @@ Table.prototype.playerPostedBigBlind = function() {
 		notification: 'Posted blind'
 	});
 	this.public.biggestBet = this.public.biggestBet < bet ? bet : this.public.biggestBet;
+	this.public.lastRaise = this.public.lastRaise < bet ? bet : this.public.lastRaise;
 	this.emitEvent( 'table-data', this.public );
 	this.initializePreflop();
 };
@@ -585,6 +590,7 @@ Table.prototype.playerRaised = function( amount ) {
 	var oldBiggestBet = this.public.biggestBet;
 	this.public.biggestBet = this.public.biggestBet < this.seats[this.public.activeSeat].public.bet ? this.seats[this.public.activeSeat].public.bet : this.public.biggestBet;
 	var raiseAmount = this.public.biggestBet - oldBiggestBet;
+	this.public.lastRaise = raiseAmount;
 	this.log({
 		message: this.seats[this.public.activeSeat].public.name + ' raised to ' + this.public.biggestBet,
 		action: 'raise',
@@ -788,6 +794,7 @@ Table.prototype.endRound = function() {
 	// If there were any bets, they are added to the pot
 	this.pot.addTableBets( this.seats );
 	this.public.biggestBet = 0;
+	this.public.lastRaise = 0;
 	if( !this.pot.isEmpty() ) {
 		var winnersSeat = this.findNextPlayer( 0 );
 		this.pot.giveToWinner( this.seats[winnersSeat] );
