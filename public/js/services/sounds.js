@@ -23,6 +23,9 @@ app.factory('sounds', [function() {
     	playBetSound: function() {
     		betSound.play();
     	},
+    	raiseSound: function() {
+    		raiseSound.play();
+    	},
     	playblindIncrease: function() {
     		blindIncrease.play();
     	}
