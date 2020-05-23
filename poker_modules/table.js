@@ -429,6 +429,22 @@ Table.prototype.endPhase = function() {
 };
 
 /**
+ * When a player changes the blind amount
+ * @param int seat
+ */
+Table.prototype.playerChangedBlinds = function( amount ) {
+	this.log({
+		message: this.seats[this.public.activeSeat].public.name + ' changed the blind amounts to ' + amount + ' and ' + amount * 2,
+		action: 'what is this action',
+		seat: this.public.activeSeat,
+		notification: 'Blinds changed'
+	});
+	this.public.smallBlind = amount;
+	this.public.bigBlind = amount * 2;
+	this.emitEvent( 'table-data', this.public );
+};
+
+/**
  * When a player posts the small blind
  * @param int seat
  */

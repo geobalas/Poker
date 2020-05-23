@@ -8,6 +8,7 @@ app.factory('sounds', [function() {
 		callSound = document.getElementById("call-sound"),
 		betSound = document.getElementById("bet-sound"),
 		raiseSound = document.getElementById("raise-sound");
+		blindIncrease = document.getElementById("blindIncrease-sound");
 
     return {
     	playFoldSound: function() {
@@ -22,8 +23,8 @@ app.factory('sounds', [function() {
     	playBetSound: function() {
     		betSound.play();
     	},
-    	playRaiseSound: function() {
-    		raiseSound.play();
+    	playblindIncrease: function() {
+    		blindIncrease.play();
     	}
     };
 }]);

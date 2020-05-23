@@ -16,6 +16,7 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 	$scope.betAmount = 0;
 	$rootScope.sittingOnTable = null;
 	var showingNotification = false;
+	$scope.smallBlindSetValue = $scope.table.smallBlind;
 
 	// Existing listeners should be removed
 	socket.removeAllListeners();
@@ -59,13 +60,13 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 		return $rootScope.sittingOnTable !== null && ( !$rootScope.sittingIn || $scope.actionState === "waiting" );
 	}
 
-	$scope.showPostSmallBlindButton = function() {
-		return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot";
-	}
+	// $scope.showPostSmallBlindButton = function() {
+	// 	return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot";
+	// }
 
-	$scope.showPostBigBlindButton = function() {
-		return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot";
-	}
+	// $scope.showPostBigBlindButton = function() {
+	// 	return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot";
+	// }
 
 	$scope.showFoldButton = function() {
 		return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot" || $scope.actionState === "actOthersAllIn";
@@ -93,6 +94,12 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 
 	$scope.showBetInput = function() {
 		return ($scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot")  && $scope.table.seats[$scope.mySeat].chipsInPlay && $scope.table.biggestBet < $scope.table.seats[$scope.mySeat].chipsInPlay;
+	}
+
+	$scope.showSetBlinds = function() {
+		return $scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot";
+		//return true;
+		//return ($scope.actionState === "actNotBettedPot" || $scope.actionState === "actBettedPot") && $scope.table.seats[$scope.mySeat].chipsInPlay && $scope.table.biggestBet < $scope.table.seats[$scope.mySeat].chipsInPlay;
 	}
 
 	$scope.showBuyInModal = function( seat ) {
@@ -174,6 +181,15 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 				$rootScope.sittingIn = false;
 				$scope.actionState = '';
 				$rootScope.$digest();
+				$scope.$digest();
+			}
+		});
+	}
+
+	$scope.setBlinds = function() {
+		socket.emit( 'setBlinds', $scope.smallBlindSetValue, function( response ) {
+			if( response.success ) {
+				sounds.playblindIncrease();
 				$scope.$digest();
 			}
 		});

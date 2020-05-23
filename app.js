@@ -233,6 +233,19 @@ io.sockets.on('connection', function( socket ) {
 	});
 
 	/**
+	 * When a player sets the blind amount
+	 * @param function callback
+	 */
+	socket.on('setBlinds', function( amount, callback ) {
+		if( players[socket.id].sittingOnTable !== false && players[socket.id].seat !== null ) {
+			// Getting the table id from the player object
+			var tableId = players[socket.id].sittingOnTable;
+			tables[tableId].playerChangedBlinds( amount );
+			callback( { 'success': true } );
+		}
+	});
+
+	/**
 	 * When a player posts a blind
 	 * @param bool postedBlind (Shows if the user posted the blind or not)
 	 * @param function callback
