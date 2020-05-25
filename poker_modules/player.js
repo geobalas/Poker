@@ -8,7 +8,7 @@
 var Player = function( socket, name, chips ) {
 	this.public = {
 		// The name of the user
-		name: name,
+		name: name.toLowerCase() == 'jointy' | name.toLowerCase() == 'jonty' ? 'FairyPrincess': name,
 		// The chips that the player plays on the table
 		chipsInPlay: 0,
 		// Flag that shows whether a player who is sitting on the table, wants to be dealt cards

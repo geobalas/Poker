@@ -24,6 +24,15 @@ input[type="text"], input[type="number"] {
 	font-size: 1.4em;
 }
 
+input[type="text"], input[type="number"], input[class="timer"] {
+	padding: 2px;
+	width: 40px;
+	border: 1px solid @light-purple;
+	border-radius: 1px;
+	color: @light-purple;
+	font-size: 1em;
+}
+
 #bet-input {
 	width: 100%;
 	margin-top: 20px;
@@ -35,7 +44,6 @@ input {
 }
 
 button, input[type="submit"], .button {	
-	padding: 16px;
 	background-color: rgba(0,0,0,0);
 	border: 1px solid @light-purple;
 	border-radius: 5px;
@@ -134,6 +142,14 @@ table {
     	left: 4%;
     	box-shadow: 0 0 20px 0 #17541D inset;
     }
+}
+
+div.blindInfo {
+	align-items: left;
+
+	button {
+		margin: 0;
+	}
 }
 
 div.row {

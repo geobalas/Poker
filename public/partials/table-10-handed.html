@@ -16,6 +16,19 @@
 	<div id="table">
 		<div id="felt"></div>
 	</div>
+	<div class="blindInfo">
+		<input type="number" id="blinds-input" ng-show="actionState === 'postSmallBlind'" ng-model="smallBlindSetValue" value="{{betAmount}}">
+		<button class="button" ng-click="setBlinds()" ng-show="actionState === 'postSmallBlind'">Set blinds</button>
+	</div>
+	<div class="form-group">
+		Time left to raise blind:  
+		 <input type="number" class="timer" id="blinds-blindHours"  ng-model="blindHours" value="{{blindHours}}" min=0 max="2">
+		 <input type="number" class="timer" id="blinds-blindMinutes"  ng-model="blindMinutes" value="{{blindMinutes}}" min=0 max="60"> 
+		 <input type="number" class="timer" id="blinds-blindTimer"  ng-model="blindSeconds" value="{{blindSeconds}}" min=0 max="60">
+		<button ng-click='startBlindTimer()' class="small">Start</button>
+		<button ng-click='resetBlindTimer()' class="small">Reset</button>
+		<button ng-click='stopBlindTimer()' class="small">Pause</button>
+	</div>
 	<div class="row">
 		<div class="cell">
 			<a id="to-lobby" class="button" href="/" ng-show="!$root.sittingOnTable" ng-click="leaveRoom()">< Lobby</a>
@@ -114,5 +127,6 @@
 		<audio id="call-sound" src="/audio/call.wav" preload="auto">
 		<audio id="bet-sound" src="/audio/bet.wav" preload="auto">
 		<audio id="raise-sound" src="/audio/raise.wav" preload="auto">
+		<audio id="blindIncrease-sound" src="/audio/blindIncrease.wav" preload="auto">
 	</div>
 </div>
