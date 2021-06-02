@@ -1,9 +1,10 @@
+<<<<<<< HEAD
 name: Auto approve v55
 on: pull_request_target
 
 jobs:
   build:
-    if: github.head_ref == 'qa'
+    if: github.head_ref == 'qa' && github.base_ref == 'masters'
     runs-on: ubuntu-latest
     steps:
     - uses: hmarr/auto-approve-action@v2
