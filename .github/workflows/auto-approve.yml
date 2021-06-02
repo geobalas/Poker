@@ -1,4 +1,4 @@
-name: Auto approve
+name: Auto approve v2
 on: pull_request_target
 
 jobs:
@@ -7,4 +7,4 @@ jobs:
     steps:
     - uses: hmarr/auto-approve-action@v2
       with:
-        github-token: "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"
+        github-token: "${{ secrets.GITHUB_TOKEN }}"
