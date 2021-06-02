@@ -6,6 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: hmarr/auto-approve-action@v2
-      if: github.branch == 'qa'
+      if: github.head_ref == 'qa'
       with:
         github-token: "${{ secrets.GITHUB_TOKEN }}"
