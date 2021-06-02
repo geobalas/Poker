@@ -33,4 +33,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo test, and deploy your project.
+          return 4
           echo ok tested!
