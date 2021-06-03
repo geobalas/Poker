@@ -1,4 +1,4 @@
-name: Auto approve v56
+name: Auto approve v56s
 on: pull_request_target
 
 jobs:
