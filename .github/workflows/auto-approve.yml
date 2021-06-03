@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-name: Auto approve v55
+name: Auto approve v56
 on: pull_request_target
 
 jobs:
