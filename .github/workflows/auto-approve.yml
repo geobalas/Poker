@@ -1,9 +1,9 @@
-name: Auto approve v56
+name: Auto approve v56s
 on: pull_request_target
 
 jobs:
   build:
-    if: github.head_ref == 'qa' && github.base_ref == 'masters'
+    if: github.head_ref == 'qa' && github.base_ref == 'master'
     runs-on: ubuntu-latest
     steps:
     - uses: hmarr/auto-approve-action@v2
