@@ -18,6 +18,6 @@ node app
 
 **Installation with docker**
 
-docker pull <placeholder from ecr>
+docker pull <placeholder_ecr_url>
 
-  docker run -it -p 127.0.0.1:80:3000 <image_name_from_ecr>
+docker run -it -p 127.0.0.1:80:3000 <image_name_from_ecr>
