@@ -3,7 +3,7 @@ Poker
 
 A poker application running on node.js with socket.io, using angularJS on the front-end for data binding.
 
-Play with Jamie anytime at http://34.200.239.62/
+Play with us anytime at http://barstool-poker.com/
 
 
 
