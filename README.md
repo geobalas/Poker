@@ -6,7 +6,6 @@ A poker application running on node.js with socket.io, using angularJS on the fr
 Play for free at http://barstool-poker.com/
 
 
-
 **Installation without docker**
 
 You need node and npm installed for this.
