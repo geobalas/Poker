@@ -17,9 +17,9 @@ node app
 
 **Installation with docker**
 
-docker pull public.ecr.aws/o6b6b8o0/poker-win:dev
+docker pull public.ecr.aws/o6b6b8o0/poker_win_frontend:dev
 
-docker run -it -p 127.0.0.1:80:3000 public.ecr.aws/o6b6b8o0/poker-win:dev
+docker run -it -p 127.0.0.1:80:3000 public.ecr.aws/o6b6b8o0/poker_win_frontend:dev
 
 **Play!**
 
