@@ -1,8 +1,11 @@
 <div id="lobby">
+	<strong class=“red”>
+		<p3>Welcome to Barstool Poker. Face coverings are required at all times.</p3>
+	</strong>
 	<div class="modal-wrap" ng-show="!$root.screenName">
 		<div class="modal">
 			<form ng-submit="register()">
-				<label for="screen-name-input">Enter your screen name</label>
+				<label for="screen-name-input">Enter your PENN or PI's email name, e.g. it would be sylvester.stallone if your PENN email is sylvester.stallone@pngaming.com</label>
 				<p class="table-requirements error" ng-show="registerError">{{registerError}}</p>
 				<input id="screen-name-input" class="input-left" type="text" ng-model="newScreenName" ng-trim="true" required>
 				<input type="submit" value="Submit">
@@ -23,9 +26,12 @@
 		</tr>
 	</table>
 </div>			
+<br>
+<br>
+<br>
+<br>
 <p id="developer-info">
 	Base web framework developed by George Balasis.<br>
 	Additional features and customization developed by Poker team from PI's 2021 hachathon.<br>
 	Check out new features like side betting, insurance and maybe live dealer on <a href="http://dev.barstool-poker.com/" target="_blank">dev site</a>.<br>
-	Good luck.
 </p>
