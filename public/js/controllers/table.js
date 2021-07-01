@@ -263,7 +263,7 @@ function( $scope, $rootScope, $http, $routeParams, $timeout, sounds ) {
 				break;
 		}
 		if( data.log.message ) {
-			var messageBox = document.querySelector('#messages');
+			var messageBox = document.querySelector('#game-log');
 			var messageElement = angular.element( '<p class="log-message">' + data.log.message + '</p>' );
 			angular.element( messageBox ).append( messageElement );
 			messageBox.scrollTop = messageBox.scrollHeight;
